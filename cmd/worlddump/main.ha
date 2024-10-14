@@ -1,4 +1,7 @@
+use compress::zlib;
 use fmt;
+use io;
+use memio;
 use os;
 use world;
 
@@ -6,17 +9,12 @@ export fn main() void = {
 	const region = world::region_open(os::args[1])!;
 	defer world::region_close(&region);
 
-	fmt::println("Chunks present:")!;
-	for (let x = 0; x < 32; x += 1)
-	for (let y = 0; y < 32; y += 1) {
-		const chunk = match (world::region_getchunk(&region, x, y)) {
-		case let c: *world::chunk_header =>
-			yield c;
-		case null =>
-			continue;
-		};
+	const chunk = world::region_getchunk(&region, 0, 0) as *world::chunk_header;
+	assert(chunk.scheme == world::compression::DEFLATE);
+	const data = world::chunk_data(chunk);
+	fmt::errorfln("<{},{}>: {} bytes", 0, 0, len(data))!;
 
-		const data = world::chunk_data(chunk);
-		fmt::printfln("<{},{}>: {} bytes", x, y, len(data))!;
-	};
+	const data = memio::fixed(data);
+	const rd = zlib::decompress(&data)!;
+	io::copy(os::stdout, &rd)!;
 };

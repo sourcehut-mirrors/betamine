@@ -21,10 +21,17 @@ export type region_file = struct {
 	pages: [*][PAGE_SIZE]u8,
 };
 
+// Chunk data compression scheme. In practice only DEFLATE is used.
+export type compression = enum u8 {
+	PLAIN = 0,
+	GZIP = 1,
+	DEFLATE = 2,
+};
+
 // Header of the chunk data stored in a [[region_file]].
 export type chunk_header = struct {
 	length: u32,
-	scheme: u8,
+	scheme: compression,
 	data: [*]u8,
 };
 
