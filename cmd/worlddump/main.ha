@@ -2,7 +2,10 @@ use compress::zlib;
 use fmt;
 use io;
 use memio;
+use nbt;
+use nbt::{nbt_tag};
 use os;
+use types;
 use world;
 
 export fn main() void = {
@@ -15,6 +18,7 @@ export fn main() void = {
 	fmt::errorfln("<{},{}>: {} bytes", 0, 0, len(data))!;
 
 	const data = memio::fixed(data);
-	const rd = zlib::decompress(&data)!;
-	io::copy(os::stdout, &rd)!;
+	const zrd = zlib::decompress(&data)!;
+	const rd = nbt::read(&zrd);
+	nbt::dump(os::stdout, &rd)!;
 };
