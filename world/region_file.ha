@@ -2,9 +2,10 @@ use endian;
 use errors;
 use fs;
 use io;
+use math;
 use os;
 
-def PAGE_SIZE = 4096;
+export def PAGE_SIZE = 4096;
 
 // 32x32 chunk region of the world, mapped to a file on disk.
 export type region = struct {
@@ -21,10 +22,16 @@ export type region_file = struct {
 };
 
 // Header of the chunk data stored in a [[region_file]].
-export type chunk_hdr = struct {
+export type chunk_header = struct {
 	length: u32,
 	scheme: u8,
 	data: [*]u8,
+};
+
+// Returns a slice of chunk data represented by a [[chunk_header]].
+export fn chunk_data(chdr: *chunk_header) const []u8 = {
+	const length = endian::ntohu32(chdr.length);
+	return chdr.data[..length];
 };
 
 // Opens a [[region]] file from disk.
@@ -54,4 +61,22 @@ export fn region_open(
 export fn region_close(r: *region) void = {
 	io::munmap(r.data, r.length)!;
 	io::close(r.file)!;
+};
+
+// Returns the chunk header associated with the given coordinates, if any,
+// specified in global chunk coordinates.
+export fn region_getchunk(r: *region, x: int, z: int) nullable *chunk_header = {
+	const ix = math::absi(x % 32) + math::absi(z % 32) * 32;
+
+	let offs = endian::ntohu32(r.data.offs[ix]);
+	if (offs == 0) {
+		return null;
+	};
+
+	const length = (offs & 0xFF) * PAGE_SIZE;
+	offs >>= 8;
+
+	const chdr = &r.data.pages[offs - 2]: *chunk_header;
+	assert(endian::ntohu32(chdr.length) <= length);
+	return chdr;
 };
