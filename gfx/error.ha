@@ -1,3 +1,4 @@
+use fmt;
 use fs;
 use gl;
 use io;
@@ -13,6 +14,15 @@ export fn glcheck() (void | glerror) = {
 		return;
 	};
 	return err: glerror;
+};
+
+fn glassert() void = {
+	match (glcheck()) {
+	case let err: glerror =>
+		fmt::fatalf("Fatal OpenGL error: {:x}", err: u32);
+	case void =>
+		return;
+	};
 };
 
 // Possible errors produced by the game engine.

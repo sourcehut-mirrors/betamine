@@ -67,7 +67,6 @@ export fn main() void = {
 		WIN_WIDTH, WIN_HEIGHT,
 		SDL_WindowFlags::OPENGL | SDL_WindowFlags::INPUT_GRABBED)!;
 	defer sdl2::SDL_DestroyWindow(win);
-
 	sdl2::SDL_SetRelativeMouseMode(true);
 
 	// TODO: Load via SDL_GL_GetProcAddress
@@ -75,11 +74,7 @@ export fn main() void = {
 
 	const ctx = sdl2::SDL_GL_CreateContext(win);
 	glViewport(0, 0, WIN_WIDTH, WIN_HEIGHT);
-	glClearColor(0.2, 0.2, 0.2, 1.0);
-	glEnable(gl::GL_DEPTH_TEST);
-	glEnable(gl::GL_BLEND);
-	//glEnable(gl::GL_CULL_FACE); // TODO: Fix cube model
-	glBlendFunc(gl::GL_SRC_ALPHA, gl::GL_ONE_MINUS_SRC_ALPHA);
+	gfx::init();
 
 	const terrain = gfx::load_terrain()!;
 
@@ -122,8 +117,9 @@ export fn main() void = {
 
 	let quit = false;
 	let move: movement = 0;
-	let prev_ticks = 0u32;
-	for (!quit) {
+	let prev_time = 0u32;
+	let frames = 0u64, ticks = 0u64;
+	for (!quit; frames += 1) {
 		let mx = 0i32, my = 0i32;
 		let ev = sdl2::event { ... };
 		for (sdl2::SDL_PollEvent(&ev)! == 1) {
@@ -161,11 +157,13 @@ export fn main() void = {
 			};
 		};
 
-		glClear(gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT);
+		if (frames % 3 == 0) {
+			ticks += 1;
+		};
 
-		const ticks = sdl2::SDL_GetTicks();
-		defer prev_ticks = ticks;
-		const delta = (ticks - prev_ticks): f32 / 1000.0;
+		const time = sdl2::SDL_GetTicks();
+		defer prev_time = time;
+		const delta = (time - prev_time): f32 / 1000.0;
 
 		const forward: glm::v3 = [
 			math::sinf64(camera.yaw): f32 * delta * SPEED,
@@ -198,6 +196,7 @@ export fn main() void = {
 		};
 
 		gfx::camera_matrix(&camera, &vp);
+		gfx::render_sky(&camera, ticks);
 
 		// vertex buffer
 		glEnableVertexAttribArray(0);
