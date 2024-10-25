@@ -191,6 +191,11 @@ export fn main() void = {
 		camera.yaw += MOUSE_SPEED * delta * -mx: f32;
 		camera.pitch += MOUSE_SPEED * delta * -my: f32;
 
+		def PITCH_MIN = -(math::PI / 2.0): f32;
+		def PITCH_MAX = (math::PI / 2.0): f32;
+		if (camera.pitch < PITCH_MIN) camera.pitch = PITCH_MIN;
+		if (camera.pitch > PITCH_MAX) camera.pitch = PITCH_MAX;
+
 		if (move != 0 || mx != 0 || my != 0) {
 			gfx::camera_apply(&camera);
 		};
@@ -218,6 +223,16 @@ export fn main() void = {
 		for (let z = -5; z < 5; z += 1) {
 			model = glm::m4_new_ident();
 			glm::translate(&model, &glm::v3_new(x: f32, 0.0, z: f32));
+
+			glm::m4_mul_to(&vp, &model, &mvp);
+			gfx::terrain_bind(&terrain, &mvp);
+			glDrawArrays(gl::GL_TRIANGLES, 0, 12*3);
+		};
+
+		for (let x = -5; x < 5; x += 1)
+		for (let z = -5; z < 5; z += 1) {
+			model = glm::m4_new_ident();
+			glm::translate(&model, &glm::v3_new(x: f32, 5.0, z: f32));
 
 			glm::m4_mul_to(&vp, &model, &mvp);
 			gfx::terrain_bind(&terrain, &mvp);
