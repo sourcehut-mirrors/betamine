@@ -8,40 +8,35 @@ use gl::{
 	glDeleteShader,
 	glDetachShader,
 	glGetError,
-	glGetProgramiv,
 	glGetProgramInfoLog,
+	glGetProgramiv,
 	glGetShaderInfoLog,
 	glGetShaderiv,
+	glGetUniformLocation,
 	glLinkProgram,
 	glShaderSource,
+	glUseProgram,
 };
 use io;
 use os;
 use strings;
 use types::c;
 
-// Returns the program ID.
-fn load_shader(vert: str, frag: str) uint = {
-	const file = os::open(vert)!;
-	const vsrc = io::drain(file)!;
-	defer free(vsrc);
-	io::close(file)!;
+// A GPU shader. Usually subclassed by specific implementations.
+export type shader = struct {
+	id: uint,
+};
 
-	const vsrc = strings::fromutf8(vsrc)!;
-	const vsrc = c::fromstr(vsrc);
-	defer free(vsrc);
+// Loads a shader from the given vertex and fragment GLSL.
+export fn shader_load(vert: str, frag: str) (shader | glerror) = {
+	const vert_src = c::fromstr(vert);
+	defer free(vert_src);
 
-	const file = os::open(frag)!;
-	const fsrc = io::drain(file)!;
-	defer free(fsrc);
-	io::close(file)!;
-
-	const fsrc = strings::fromutf8(fsrc)!;
-	const fsrc = c::fromstr(fsrc);
-	defer free(fsrc);
+	const frag_src = c::fromstr(frag);
+	defer free(frag_src);
 
 	const vert_id = glCreateShader(gl::GL_VERTEX_SHADER);
-	glShaderSource(vert_id, 1, &vsrc: *const nullable *const i8, null);
+	glShaderSource(vert_id, 1, &vert_src: *const nullable *const i8, null);
 	glCompileShader(vert_id);
 
 	let result = 0i32, log_length = 0i32;
@@ -56,7 +51,7 @@ fn load_shader(vert: str, frag: str) uint = {
 	};
 
 	const frag_id = glCreateShader(gl::GL_FRAGMENT_SHADER);
-	glShaderSource(frag_id, 1, &fsrc: *const nullable *const i8, null);
+	glShaderSource(frag_id, 1, &frag_src: *const nullable *const i8, null);
 	glCompileShader(frag_id);
 
 	glGetShaderiv(frag_id, gl::GL_COMPILE_STATUS, &result);
@@ -89,7 +84,15 @@ fn load_shader(vert: str, frag: str) uint = {
 	glDeleteShader(vert_id);
 	glDeleteShader(frag_id);
 
-	assert(glGetError() == gl::GL_NO_ERROR);
+	glcheck()?;
 
-	return prog_id;
+	return shader {
+		id = prog_id,
+	};
+};
+
+// Binds a shader to the OpenGL context.
+export fn shader_bind(shader: *shader) void = {
+	glUseProgram(shader.id);
+	glcheck()!;
 };

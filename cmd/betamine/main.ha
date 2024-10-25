@@ -1,3 +1,4 @@
+use gfx;
 use gl;
 use gl::{
 	glActiveTexture,
@@ -64,14 +65,7 @@ export fn main() void = {
 	glEnable(gl::GL_BLEND);
 	glBlendFunc(gl::GL_SRC_ALPHA, gl::GL_ONE_MINUS_SRC_ALPHA);
 
-	const terrain = load_texture("assets/terrain.png");
-	const grass = load_texture("assets/misc/grasscolor.png");
-
-	const shader = load_shader("gfx/glsl/common.vert", "gfx/glsl/terrain.frag");
-
-	const umvp = glGetUniformLocation(shader, c::nulstr("mvp\0"): *i8);
-	const utex = glGetUniformLocation(shader, c::nulstr("tex\0"): *i8);
-	const ugrass = glGetUniformLocation(shader, c::nulstr("grass\0"): *i8);
+	const terrain = gfx::load_terrain()!;
 
 	let proj = glm::m4_new_zero();
 	glm::perspective(&proj, 45.0, WIDTH: f32 / HEIGHT: f32, 0.1, 100.0);
@@ -123,8 +117,6 @@ export fn main() void = {
 
 		glClear(gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT);
 
-		glUseProgram(shader);
-
 		let model = glm::m4_new_ident();
 		let ticks = sdl2::SDL_GetTicks();
 		glm::rotate(&model,
@@ -133,40 +125,24 @@ export fn main() void = {
 		let mvp = glm::m4_mul(&proj, &view);
 		mvp = glm::m4_mul(&mvp, &model);
 
-		// Uniforms
-		glUniformMatrix4fv(umvp, 1, 0, &mvp[0][0]);
-		assert(glGetError() == gl::GL_NO_ERROR);
-
-		glActiveTexture(gl::GL_TEXTURE0);
-		glBindTexture(gl::GL_TEXTURE_2D, terrain);
-		glUniform1i(utex, 0);
-		assert(glGetError() == gl::GL_NO_ERROR);
-
-		glActiveTexture(gl::GL_TEXTURE1);
-		glBindTexture(gl::GL_TEXTURE_2D, grass);
-		glUniform1i(ugrass, 1);
-		assert(glGetError() == gl::GL_NO_ERROR);
+		gfx::terrain_bind(&terrain, &mvp);
 
 		// vertex buffer
 		glEnableVertexAttribArray(0);
 		glBindBuffer(gl::GL_ARRAY_BUFFER, vbuf);
 		glVertexAttribPointer(0, 3, gl::GL_FLOAT, 0, 0, null);
-		assert(glGetError() == gl::GL_NO_ERROR);
 
 		// uv buffer
 		glEnableVertexAttribArray(1);
 		glBindBuffer(gl::GL_ARRAY_BUFFER, uvbuf);
 		glVertexAttribPointer(1, 2, gl::GL_FLOAT, 0, 0, null);
-		assert(glGetError() == gl::GL_NO_ERROR);
 
 		// color buffer
 		glEnableVertexAttribArray(2);
 		glBindBuffer(gl::GL_ARRAY_BUFFER, colorbuf);
 		glVertexAttribPointer(2, 3, gl::GL_FLOAT, 0, 0, null);
-		assert(glGetError() == gl::GL_NO_ERROR);
 
 		glDrawArrays(gl::GL_TRIANGLES, 0, 12*3);
-		assert(glGetError() == gl::GL_NO_ERROR);
 
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
