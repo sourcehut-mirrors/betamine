@@ -26,6 +26,7 @@ use gl::{
 	glViewport,
 };
 use glm;
+use math;
 use sdl2;
 use sdl2::{SDL_RendererFlags, SDL_WindowFlags, SDL_EventType, SDL_Scancode};
 use sdl2::image;
@@ -167,13 +168,13 @@ export fn main() void = {
 		const delta = ticks - prev_ticks;
 
 		const forward: glm::v3 = [
-			camera.dir[0] * delta: f32 / 100.0 * SPEED,
-			camera.dir[1] * delta: f32 / 100.0 * SPEED,
-			camera.dir[2] * delta: f32 / 100.0 * SPEED,
+			math::sinf64(camera.yaw): f32 * delta: f32 / 100.0 * SPEED,
+			0.0,
+			math::cosf64(camera.yaw): f32 * delta: f32 / 100.0 * SPEED,
 		];
 		const right: glm::v3 = [
 			camera.right[0] * delta: f32 / 100.0 * SPEED,
-			camera.right[1] * delta: f32 / 100.0 * SPEED,
+			0.0,
 			camera.right[2] * delta: f32 / 100.0 * SPEED,
 		];
 		if (move & movement::FORWARD != 0) {
