@@ -35,8 +35,8 @@ use types::c;
 
 def WIN_WIDTH = 1280;
 def WIN_HEIGHT = 720;
-def SPEED: f32 = 1.0; // Meters per second
-def MOUSE_SPEED: f32 = 0.5;
+def SPEED: f32 = 4.317; // Meters per second
+def MOUSE_SPEED: f32 = 0.75;
 def HEIGHT: f32 = 1.85; // Player height in meters
 
 type movement = enum uint {
@@ -165,17 +165,17 @@ export fn main() void = {
 
 		const ticks = sdl2::SDL_GetTicks();
 		defer prev_ticks = ticks;
-		const delta = ticks - prev_ticks;
+		const delta = (ticks - prev_ticks): f32 / 1000.0;
 
 		const forward: glm::v3 = [
-			math::sinf64(camera.yaw): f32 * delta: f32 / 100.0 * SPEED,
+			math::sinf64(camera.yaw): f32 * delta * SPEED,
 			0.0,
-			math::cosf64(camera.yaw): f32 * delta: f32 / 100.0 * SPEED,
+			math::cosf64(camera.yaw): f32 * delta * SPEED,
 		];
 		const right: glm::v3 = [
-			camera.right[0] * delta: f32 / 100.0 * SPEED,
+			camera.right[0] * delta * SPEED,
 			0.0,
-			camera.right[2] * delta: f32 / 100.0 * SPEED,
+			camera.right[2] * delta * SPEED,
 		];
 		if (move & movement::FORWARD != 0) {
 			camera.pos = glm::v3_add(&camera.pos, &forward);
@@ -190,22 +190,14 @@ export fn main() void = {
 			camera.pos = glm::v3_add(&camera.pos, &right);
 		};
 
-		camera.yaw += MOUSE_SPEED * delta: f32 / 1000.0 * -mx: f32;
-		camera.pitch += MOUSE_SPEED * delta: f32 / 1000.0 * -my: f32;
+		camera.yaw += MOUSE_SPEED * delta * -mx: f32;
+		camera.pitch += MOUSE_SPEED * delta * -my: f32;
 
 		if (move != 0 || mx != 0 || my != 0) {
 			gfx::camera_apply(&camera);
 		};
 
-		let model = glm::m4_new_ident();
-		//glm::rotate(&model,
-		//	ticks: f32 / 1000.0,
-		//	&glm::v3_new(0.0, 1.0, 0.0));
-
 		gfx::camera_matrix(&camera, &vp);
-		glm::m4_mul_to(&vp, &model, &mvp);
-
-		gfx::terrain_bind(&terrain, &mvp);
 
 		// vertex buffer
 		glEnableVertexAttribArray(0);
@@ -222,7 +214,16 @@ export fn main() void = {
 		glBindBuffer(gl::GL_ARRAY_BUFFER, colorbuf);
 		glVertexAttribPointer(2, 3, gl::GL_FLOAT, 0, 0, null);
 
-		glDrawArrays(gl::GL_TRIANGLES, 0, 12*3);
+		let model = glm::m4_new_ident();
+		for (let x = -5; x < 5; x += 1)
+		for (let z = -5; z < 5; z += 1) {
+			model = glm::m4_new_ident();
+			glm::translate(&model, &glm::v3_new(x: f32, 0.0, z: f32));
+
+			glm::m4_mul_to(&vp, &model, &mvp);
+			gfx::terrain_bind(&terrain, &mvp);
+			glDrawArrays(gl::GL_TRIANGLES, 0, 12*3);
+		};
 
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
