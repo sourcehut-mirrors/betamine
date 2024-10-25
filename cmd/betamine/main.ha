@@ -1,4 +1,3 @@
-use fmt;
 use gl;
 use gl::{
 	glActiveTexture,
@@ -62,30 +61,14 @@ export fn main() void = {
 	glClearColor(0.2, 0.2, 0.2, 1.0);
 	glEnable(gl::GL_DEPTH_TEST);
 
-	let terrainTexture = 0u;
-	glGenTextures(1, &terrainTexture);
-	glBindTexture(gl::GL_TEXTURE_2D, terrainTexture);
-
-	const terrain = image::IMG_Load("assets/terrain.png")!;
-	fmt::println(sdl2::SDL_GetPixelFormatName(terrain.format.format))!;
-
-	// TODO: Free surface
-	glTexImage2D(gl::GL_TEXTURE_2D, 0,
-		gl::GL_BGRA: i32,
-		terrain.w: i32, terrain.h: i32, 0,
-		gl::GL_RGBA, gl::GL_UNSIGNED_BYTE,
-		terrain.pixels);
-	assert(glGetError() == gl::GL_NO_ERROR);
-
-	glTexParameteri(gl::GL_TEXTURE_2D,
-		gl::GL_TEXTURE_MAG_FILTER, gl::GL_NEAREST: i32);
-	glTexParameteri(gl::GL_TEXTURE_2D,
-		gl::GL_TEXTURE_MIN_FILTER, gl::GL_NEAREST: i32);
+	const terrain = load_texture("assets/terrain.png");
+	const grass = load_texture("assets/misc/grasscolor.png");
 
 	const shader = load_shader("gfx/glsl/common.vert", "gfx/glsl/terrain.frag");
 
 	const umvp = glGetUniformLocation(shader, c::nulstr("mvp\0"): *i8);
 	const utex = glGetUniformLocation(shader, c::nulstr("tex\0"): *i8);
+	const ugrass = glGetUniformLocation(shader, c::nulstr("grass\0"): *i8);
 
 	let proj = glm::m4_new_zero();
 	glm::perspective(&proj, 45.0, WIDTH: f32 / HEIGHT: f32, 0.1, 100.0);
@@ -116,6 +99,16 @@ export fn main() void = {
 		gl::GL_STATIC_DRAW);
 	assert(glGetError() == gl::GL_NO_ERROR);
 
+	// Prepare color buffer
+	let colorbuf = 0u;
+	glGenBuffers(1, &colorbuf);
+	glBindBuffer(gl::GL_ARRAY_BUFFER, colorbuf);
+	glBufferData(gl::GL_ARRAY_BUFFER,
+		(size(f32) * len(cube_color)): uintptr,
+		&cube_color[0],
+		gl::GL_STATIC_DRAW);
+	assert(glGetError() == gl::GL_NO_ERROR);
+
 	let quit = false;
 	for (!quit) {
 		let ev = sdl2::event { ... };
@@ -142,8 +135,13 @@ export fn main() void = {
 		assert(glGetError() == gl::GL_NO_ERROR);
 
 		glActiveTexture(gl::GL_TEXTURE0);
-		glBindTexture(gl::GL_TEXTURE_2D, terrainTexture);
+		glBindTexture(gl::GL_TEXTURE_2D, terrain);
 		glUniform1i(utex, 0);
+		assert(glGetError() == gl::GL_NO_ERROR);
+
+		glActiveTexture(gl::GL_TEXTURE1);
+		glBindTexture(gl::GL_TEXTURE_2D, grass);
+		glUniform1i(ugrass, 1);
 		assert(glGetError() == gl::GL_NO_ERROR);
 
 		// vertex buffer
@@ -156,6 +154,12 @@ export fn main() void = {
 		glEnableVertexAttribArray(1);
 		glBindBuffer(gl::GL_ARRAY_BUFFER, uvbuf);
 		glVertexAttribPointer(1, 2, gl::GL_FLOAT, 0, 0, null);
+		assert(glGetError() == gl::GL_NO_ERROR);
+
+		// color buffer
+		glEnableVertexAttribArray(2);
+		glBindBuffer(gl::GL_ARRAY_BUFFER, colorbuf);
+		glVertexAttribPointer(2, 3, gl::GL_FLOAT, 0, 0, null);
 		assert(glGetError() == gl::GL_NO_ERROR);
 
 		glDrawArrays(gl::GL_TRIANGLES, 0, 12*3);
