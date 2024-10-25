@@ -36,7 +36,7 @@ use types::c;
 def WIN_WIDTH = 1280;
 def WIN_HEIGHT = 720;
 def SPEED: f32 = 4.317; // Meters per second
-def MOUSE_SPEED: f32 = 0.75;
+def MOUSE_SPEED: f32 = 2.0;
 def HEIGHT: f32 = 1.85; // Player height in meters
 
 type movement = enum uint {
