@@ -3,6 +3,7 @@ use gl::{
 	glActiveTexture,
 	glBindBuffer,
 	glBindTexture,
+	glBlendFunc,
 	glBufferData,
 	glClear,
 	glClearColor,
@@ -60,6 +61,8 @@ export fn main() void = {
 	glViewport(0, 0, WIDTH, HEIGHT);
 	glClearColor(0.2, 0.2, 0.2, 1.0);
 	glEnable(gl::GL_DEPTH_TEST);
+	glEnable(gl::GL_BLEND);
+	glBlendFunc(gl::GL_SRC_ALPHA, gl::GL_ONE_MINUS_SRC_ALPHA);
 
 	const terrain = load_texture("assets/terrain.png");
 	const grass = load_texture("assets/misc/grasscolor.png");
