@@ -1,7 +1,7 @@
 use glm;
 use math;
 
-def DEFAULT_FOV: f32 = 102.0;
+def DEFAULT_FOV: f32 = 70.0;
 
 // Encapsulates state for the player's point-of-view "camera".
 export type camera = struct {
