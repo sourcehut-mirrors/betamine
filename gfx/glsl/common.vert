@@ -5,9 +5,9 @@ layout(location = 1) in vec2 vert_uv;
 
 out vec2 uv;
 
-uniform mat4 proj;
+uniform mat4 mvp;
 
 void main() {
-	gl_Position = proj * vec4(vert_pos, 1);
+	gl_Position = mvp * vec4(vert_pos, 1);
 	uv = vert_uv;
 }
