@@ -1,3 +1,4 @@
+use fmt;
 use gfx;
 use gl;
 use gl::{
@@ -26,13 +27,22 @@ use gl::{
 };
 use glm;
 use sdl2;
-use sdl2::{SDL_RendererFlags, SDL_WindowFlags, SDL_EventType};
+use sdl2::{SDL_RendererFlags, SDL_WindowFlags, SDL_EventType, SDL_Scancode};
 use sdl2::image;
 use sdl2::mixer;
 use types::c;
 
-def WIDTH = 1280;
-def HEIGHT = 720;
+def WIN_WIDTH = 1280;
+def WIN_HEIGHT = 720;
+def SPEED: f32 = 1.0; // Meters per second
+def HEIGHT: f32 = 1.85; // Meters
+
+type movement = enum uint {
+	LEFT		= 1 << 0,
+	RIGHT		= 1 << 1,
+	FORWARD		= 1 << 2,
+	BACKWARD	= 1 << 3,
+};
 
 export fn main() void = {
 	sdl2::SDL_Init(sdl2::SDL_INIT_VIDEO | sdl2::SDL_INIT_AUDIO)!;
@@ -52,29 +62,25 @@ export fn main() void = {
 
 	const win = sdl2::SDL_CreateWindow("betamine",
 		sdl2::SDL_WINDOWPOS_UNDEFINED, sdl2::SDL_WINDOWPOS_UNDEFINED,
-		WIDTH, HEIGHT, SDL_WindowFlags::OPENGL)!;
+		WIN_WIDTH, WIN_HEIGHT, SDL_WindowFlags::OPENGL)!;
 	defer sdl2::SDL_DestroyWindow(win);
 
 	// TODO: Load via SDL_GL_GetProcAddress
 	gl::load();
 
 	const ctx = sdl2::SDL_GL_CreateContext(win);
-	glViewport(0, 0, WIDTH, HEIGHT);
+	glViewport(0, 0, WIN_WIDTH, WIN_HEIGHT);
 	glClearColor(0.2, 0.2, 0.2, 1.0);
 	glEnable(gl::GL_DEPTH_TEST);
 	glEnable(gl::GL_BLEND);
+	//glEnable(gl::GL_CULL_FACE); // TODO: Fix cube model
 	glBlendFunc(gl::GL_SRC_ALPHA, gl::GL_ONE_MINUS_SRC_ALPHA);
 
 	const terrain = gfx::load_terrain()!;
 
-	let proj = glm::m4_new_zero();
-	glm::perspective(&proj, 45.0, WIDTH: f32 / HEIGHT: f32, 0.1, 100.0);
-
-	let view = glm::lookat(
-		&glm::v3_new(4.0, 3.0, 3.0),
-		&glm::v3_new(0.0, 0.0, 0.0),
-		&glm::v3_new(0.0, 1.0, 0.0),
-	);
+	let camera = gfx::camera_new(WIN_WIDTH: f32 / WIN_HEIGHT: f32);
+	camera.pos = [1.0, 1.0 + HEIGHT, -4.0];
+	gfx::camera_apply(&camera);
 
 	// Prepare vertex buffer
 	let vbuf = 0u;
@@ -106,24 +112,85 @@ export fn main() void = {
 		gl::GL_STATIC_DRAW);
 	assert(glGetError() == gl::GL_NO_ERROR);
 
+	let vp = glm::m4_new_zero();
+	let mvp = glm::m4_new_zero();
+
 	let quit = false;
+	let move: movement = 0;
+	let prev_ticks = 0u32;
 	for (!quit) {
 		let ev = sdl2::event { ... };
 		for (sdl2::SDL_PollEvent(&ev)! == 1) {
-			if (ev.event_type == SDL_EventType::QUIT) {
+			switch (ev.event_type) {
+			case SDL_EventType::QUIT =>
 				quit = true;
+			case SDL_EventType::KEYDOWN =>
+				switch (ev.key.keysym.scancode) {
+				case SDL_Scancode::W =>
+					move |= movement::FORWARD;
+				case SDL_Scancode::S =>
+					move |= movement::BACKWARD;
+				case SDL_Scancode::A =>
+					move |= movement::LEFT;
+				case SDL_Scancode::D =>
+					move |= movement::RIGHT;
+				case => void;
+				};
+			case SDL_EventType::KEYUP =>
+				switch (ev.key.keysym.scancode) {
+				case SDL_Scancode::W =>
+					move &= ~movement::FORWARD;
+				case SDL_Scancode::S =>
+					move &= ~movement::BACKWARD;
+				case SDL_Scancode::A =>
+					move &= ~movement::LEFT;
+				case SDL_Scancode::D =>
+					move &= ~movement::RIGHT;
+				case => void;
+				};
+			case => void;
 			};
 		};
 
 		glClear(gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT);
 
+		const ticks = sdl2::SDL_GetTicks();
+		defer prev_ticks = ticks;
+		const delta = ticks - prev_ticks;
+
+		const forward: glm::v3 = [
+			camera.dir[0] * delta: f32 / 100.0 * SPEED,
+			camera.dir[1] * delta: f32 / 100.0 * SPEED,
+			camera.dir[2] * delta: f32 / 100.0 * SPEED,
+		];
+		const right: glm::v3 = [
+			camera.right[0] * delta: f32 / 100.0 * SPEED,
+			camera.right[1] * delta: f32 / 100.0 * SPEED,
+			camera.right[2] * delta: f32 / 100.0 * SPEED,
+		];
+		if (move & movement::FORWARD != 0) {
+			camera.pos = glm::v3_add(&camera.pos, &forward);
+		};
+		if (move & movement::BACKWARD != 0) {
+			camera.pos = glm::v3_sub(&camera.pos, &forward);
+		};
+		if (move & movement::LEFT != 0) {
+			camera.pos = glm::v3_sub(&camera.pos, &right);
+		};
+		if (move & movement::RIGHT != 0) {
+			camera.pos = glm::v3_add(&camera.pos, &right);
+		};
+		if (move != 0) {
+			gfx::camera_apply(&camera);
+		};
+
 		let model = glm::m4_new_ident();
-		let ticks = sdl2::SDL_GetTicks();
 		glm::rotate(&model,
 			ticks: f32 / 1000.0,
 			&glm::v3_new(0.0, 1.0, 0.0));
-		let mvp = glm::m4_mul(&proj, &view);
-		mvp = glm::m4_mul(&mvp, &model);
+
+		gfx::camera_matrix(&camera, &vp);
+		glm::m4_mul_to(&vp, &model, &mvp);
 
 		gfx::terrain_bind(&terrain, &mvp);
 
