@@ -25,10 +25,11 @@ export type camera = struct {
 };
 
 // Creates a new camera with the desired aspect ratio.
-export fn camera_new(ratio: f32) camera = {
+export fn camera_new() camera = {
+	const (w, h) = dims;
 	let c = camera {
 		fov = DEFAULT_FOV,
-		ratio = ratio,
+		ratio = w: f32 / h: f32,
 		znear = 0.1,
 		zfar = 100.0,
 		...

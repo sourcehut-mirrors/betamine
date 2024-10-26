@@ -69,16 +69,12 @@ export fn main() void = {
 	defer sdl2::SDL_DestroyWindow(win);
 	sdl2::SDL_SetRelativeMouseMode(true);
 
-	// TODO: Load via SDL_GL_GetProcAddress
-	gl::load();
-
 	const ctx = sdl2::SDL_GL_CreateContext(win);
-	glViewport(0, 0, WIN_WIDTH, WIN_HEIGHT);
-	gfx::init();
+	sdl2::SDL_GL_SetSwapInterval(1);
+	gfx::init(WIN_WIDTH, WIN_HEIGHT);
 
 	const terrain = gfx::load_terrain()!;
-
-	let camera = gfx::camera_new(WIN_WIDTH: f32 / WIN_HEIGHT: f32);
+	let camera = gfx::camera_new();
 	camera.pos = [1.0, 1.0 + HEIGHT, -4.0];
 	gfx::camera_apply(&camera);
 
@@ -112,8 +108,8 @@ export fn main() void = {
 		gl::GL_STATIC_DRAW);
 	assert(glGetError() == gl::GL_NO_ERROR);
 
-	let vp = glm::m4_new_zero();
-	let mvp = glm::m4_new_zero();
+	let vp = glm::M4_ZERO;
+	let mvp = glm::M4_ZERO;
 
 	let quit = false;
 	let move: movement = 0;
@@ -218,10 +214,10 @@ export fn main() void = {
 		glBindBuffer(gl::GL_ARRAY_BUFFER, colorbuf);
 		glVertexAttribPointer(2, 3, gl::GL_FLOAT, 0, 0, null);
 
-		let model = glm::m4_new_ident();
+		let model = glm::M4_IDENT;
 		for (let x = -5; x < 5; x += 1)
 		for (let z = -5; z < 5; z += 1) {
-			model = glm::m4_new_ident();
+			model = glm::M4_IDENT;
 			glm::translate(&model, &glm::v3_new(x: f32, 0.0, z: f32));
 
 			glm::m4_mul_to(&vp, &model, &mvp);
@@ -231,7 +227,7 @@ export fn main() void = {
 
 		for (let x = -5; x < 5; x += 1)
 		for (let z = -5; z < 5; z += 1) {
-			model = glm::m4_new_ident();
+			model = glm::M4_IDENT;
 			glm::translate(&model, &glm::v3_new(x: f32, 5.0, z: f32));
 
 			glm::m4_mul_to(&vp, &model, &mvp);
@@ -242,22 +238,13 @@ export fn main() void = {
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
 
-		let ortho = glm::m4_new_zero();
-		glm::ortho(&ortho, 0.0, WIN_WIDTH: f32,
-			WIN_HEIGHT: f32, 0.0, -1.0, 1.0);
-		let model = glm::m4_new_ident();
+		let model = glm::M4_IDENT;
+		// TODO: Apply an initial scale factor in sprite_draw
 		glm::scale(&model, &glm::v3_new(32.0, 32.0, 1.0));
 		glm::translate(&model, &glm::v3_new(32.0, 32.0, 0.0));
-		gfx::sprite_draw(&gfx::font.tex, &ortho, &model,
-			[
-				0.0,
-				4.0 * 8.0 / 128.0,
-				8.0 / 128.0,
-				8.0 / 128.0,
-			],
-			[1.0, 0.0, 0.0, 1.0]);
+		gfx::sprite_draw(&gfx::font.tex, &model,
+			[0.0, 4.0 * 8.0, 8.0, 8.0]);
 
 		sdl2::SDL_GL_SwapWindow(win);
-		sdl2::SDL_Delay(1000 / 60);
 	};
 };

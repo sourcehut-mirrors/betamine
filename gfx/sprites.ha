@@ -60,12 +60,29 @@ fn sprites_init() void = {
 
 // Draws a sprite.
 export fn sprite_draw(
-	texture: *texture,
-	proj: *glm::m4,
+	tex: *texture,
 	model: *glm::m4,
-	clip: glm::v4 = [0.0, 0.0, 1.0, 1.0],
+	clip: glm::v4 = [0.0, 0.0, 0.0, 0.0],
 	color: glm::v4 = [1.0, 1.0, 1.0, 1.0],
 ) void = {
+	let noclip = true;
+	for (let v .. clip) {
+		if (v != 0.0) {
+			noclip = false;
+			break;
+		};
+	};
+
+	// Set default clip to 0..1 if unspecified
+	if (noclip) {
+		clip = [0.0, 0.0, 1.0, 1.0];
+	} else {
+		clip[0] /= tex.w: f32;
+		clip[1] /= tex.h: f32;
+		clip[2] /= tex.w: f32;
+		clip[3] /= tex.h: f32;
+	};
+
 	shader_bind(&sprite);
 
 	glEnableVertexAttribArray(0);
@@ -73,14 +90,18 @@ export fn sprite_draw(
 	glVertexAttribPointer(0, 4, gl::GL_FLOAT, 0, 0, null);
 	defer glDisableVertexAttribArray(0);
 
-	const mat = glm::m4_mul(proj, model);
-	glUniformMatrix4fv(sprite.uniform.mp, 1, 0, &mat[0][0]);
+	const (w, h) = dims;
+	let ortho = glm::M4_ZERO;
+	glm::ortho(&ortho, 0.0, w: f32, h: f32, 0.0, -1.0, 1.0);
+	const mp = glm::m4_mul(&ortho, model);
+
+	glUniformMatrix4fv(sprite.uniform.mp, 1, 0, &mp[0][0]);
 	glUniform4fv(sprite.uniform.color, 1, &color[0]);
 	glUniform4fv(sprite.uniform.clip, 1, &clip[0]);
 	glcheck()!;
 
 	glActiveTexture(gl::GL_TEXTURE0);
-	texture_bind(texture);
+	texture_bind(tex);
 	glUniform1i(sprite.uniform.image, 0);
 	glcheck()!;
 

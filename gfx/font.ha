@@ -1,3 +1,6 @@
+def CHAR_WIDTH = 8;
+def CHAR_HEIGHT = 8;
+
 export type fontmap = struct {
 	tex: texture,
 	uv: [256](u8, u8),
