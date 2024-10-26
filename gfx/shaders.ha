@@ -27,6 +27,23 @@ export type shader = struct {
 	id: uint,
 };
 
+// Loads a shader from the given vertex and fragment GLSL files as paths.
+export fn shader_loadfrom(vert: str, frag: str) (shader | glerror) = {
+	const file = os::open(vert)!;
+	defer io::close(file)!;
+	const data = io::drain(file)!;
+	const vert = strings::fromutf8(data)!;
+	defer free(vert);
+
+	const file = os::open(frag)!;
+	defer io::close(file)!;
+	const data = io::drain(file)!;
+	const frag = strings::fromutf8(data)!;
+	defer free(frag);
+
+	return shader_load(vert, frag)!;
+};
+
 // Loads a shader from the given vertex and fragment GLSL.
 export fn shader_load(vert: str, frag: str) (shader | glerror) = {
 	const vert_src = c::fromstr(vert);
@@ -46,7 +63,7 @@ export fn shader_load(vert: str, frag: str) (shader | glerror) = {
 		let log: []i8 = alloc([0...], log_length: size);
 		defer free(log);
 		glGetShaderInfoLog(vert_id, log_length, null, &log[0]);
-		fmt::fatalf("Error loading {}: {}", vert,
+		fmt::fatalf("Error loading vertex: {}",
 			strings::fromutf8(log: []u8)!);
 	};
 
@@ -60,7 +77,7 @@ export fn shader_load(vert: str, frag: str) (shader | glerror) = {
 		let log: []i8 = alloc([0...], log_length: size);
 		defer free(log);
 		glGetShaderInfoLog(frag_id, log_length, null, &log[0]);
-		fmt::fatalf("Error loading {}: {}", frag,
+		fmt::fatalf("Error loading fragment: {}",
 			strings::fromutf8(log: []u8)!);
 	};
 
@@ -94,5 +111,15 @@ export fn shader_load(vert: str, frag: str) (shader | glerror) = {
 // Binds a shader to the OpenGL context.
 export fn shader_bind(shader: *shader) void = {
 	glUseProgram(shader.id);
+	glcheck()!;
+};
+
+// Populates a set of uniform locations associated with this shader. The strings
+// must be nul terminated.
+fn shader_uniforms(shader: *shader, un: (str, *i32)...) void = {
+	const id = shader.id;
+	for (let u .. un) {
+		*u.1 = glGetUniformLocation(id, c::nulstr(u.0): *i8);
+	};
 	glcheck()!;
 };

@@ -7,9 +7,6 @@ use gl::{
 	glUniformMatrix4fv,
 };
 use glm;
-use io;
-use os;
-use strings;
 use types::c;
 
 // Terrain shader.
@@ -24,19 +21,7 @@ export type terrain = struct {
 
 // Loads the terrain shader.
 export fn load_terrain() (terrain | error) = {
-	const file = os::open("gfx/glsl/common.vert")?;
-	defer io::close(file)!;
-	const data = io::drain(file)?;
-	const vert = strings::fromutf8(data)!;
-	defer free(vert);
-
-	const file = os::open("gfx/glsl/terrain.frag")?;
-	defer io::close(file)!;
-	const data = io::drain(file)?;
-	const frag = strings::fromutf8(data)!;
-	defer free(frag);
-
-	const shader = shader_load(vert, frag)?;
+	const shader = shader_loadfrom("gfx/glsl/common.vert", "gfx/glsl/terrain.frag")?;
 	const umvp = glGetUniformLocation(shader.id, c::nulstr("mvp\0"): *i8);
 	const utex = glGetUniformLocation(shader.id, c::nulstr("tex\0"): *i8);
 

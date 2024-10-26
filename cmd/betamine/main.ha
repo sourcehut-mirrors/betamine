@@ -242,6 +242,21 @@ export fn main() void = {
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
 
+		let ortho = glm::m4_new_zero();
+		glm::ortho(&ortho, 0.0, WIN_WIDTH: f32,
+			WIN_HEIGHT: f32, 0.0, -1.0, 1.0);
+		let model = glm::m4_new_ident();
+		glm::scale(&model, &glm::v3_new(32.0, 32.0, 1.0));
+		glm::translate(&model, &glm::v3_new(32.0, 32.0, 0.0));
+		gfx::sprite_draw(&gfx::font.tex, &ortho, &model,
+			[
+				0.0,
+				4.0 * 8.0 / 128.0,
+				8.0 / 128.0,
+				8.0 / 128.0,
+			],
+			[1.0, 0.0, 0.0, 1.0]);
+
 		sdl2::SDL_GL_SwapWindow(win);
 		sdl2::SDL_Delay(1000 / 60);
 	};

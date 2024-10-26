@@ -14,9 +14,6 @@ use gl::{
 	glVertexAttribPointer,
 };
 use glm;
-use io;
-use os;
-use strings;
 use types::c;
 
 // Verticies of the unit plane in the x/z coordinate space
@@ -44,22 +41,12 @@ fn plane_init() void = {
 
 	glcheck()!;
 
-	const file = os::open("gfx/glsl/plane.vert")!;
-	defer io::close(file)!;
-	const data = io::drain(file)!;
-	const vert = strings::fromutf8(data)!;
-	defer free(vert);
-
-	const file = os::open("gfx/glsl/plane.frag")!;
-	defer io::close(file)!;
-	const data = io::drain(file)!;
-	const frag = strings::fromutf8(data)!;
-	defer free(frag);
-
-	const shader = shader_load(vert, frag)!;
+	const shader = shader_loadfrom("gfx/glsl/plane.vert", "gfx/glsl/plane.frag")!;
 	plane_shader = shader.id;
-	plane_mvp = glGetUniformLocation(shader.id, c::nulstr("mvp\0"): *i8);
-	plane_color = glGetUniformLocation(shader.id, c::nulstr("color_in\0"): *i8);
+	shader_uniforms(&shader,
+		("mvp\0", &plane_mvp),
+		("color_in\0", &plane_color),
+	);
 };
 
 // Draws a unit plane with the given matrix applied.

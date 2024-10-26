@@ -13,4 +13,6 @@ export fn init() void = {
 
 	// Initialize subsystems
 	plane_init();
+	sprites_init();
+	font_init();
 };
