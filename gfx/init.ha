@@ -24,7 +24,7 @@ export fn init(width: i32, height: i32) void = {
 	glEnable(gl::GL_BLEND);
 
 	glEnable(gl::GL_DEPTH_TEST);
-	//glEnable(gl::GL_CULL_FACE); // TODO: Fix cube model
+	glEnable(gl::GL_CULL_FACE);
 
 	// Initialize subsystems
 	plane_init();
