@@ -1,3 +1,4 @@
+use engine;
 use fmt;
 use gfx;
 use gl;
@@ -246,6 +247,12 @@ export fn main() void = {
 
 		gfx::font_draw(&glm::v2_new(0.0, 0.0 * 24.0), "Betamine 0.0.0");
 		gfx::font_draw(&glm::v2_new(0.0, 1.0 * 24.0), pos);
+
+		const dir = engine::radtocard(camera.yaw);
+		const look = fmt::bsprintf(buf, "  look: {}\n   yaw: {}\npitch: {}",
+			engine::cardtostr(dir),
+			camera.pitch, camera.yaw);
+		gfx::font_draw(&glm::v2_new(256.0, 1.0 * 24.0), look);
 
 		sdl2::SDL_GL_SwapWindow(win);
 	};

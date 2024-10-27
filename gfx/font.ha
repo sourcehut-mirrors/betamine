@@ -28,6 +28,11 @@ fn font_init() void = {
 	// Calculate horizontal advance
 	const pixels = surf.pixels: *[*]u32;
 	for (let ord = 0u; ord < 0x100; ord += 1) {
+		if (ord == ' ') {
+			font.hadv[ord] = 2;
+			continue;
+		};
+
 		const row = (ord & 0xF0) >> 4;
 		const col = (ord & 0x0F);
 		const base_x = col * CHAR_WIDTH;
