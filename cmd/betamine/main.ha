@@ -116,6 +116,7 @@ export fn main() void = {
 	let move: movement = 0;
 	let prev_time = 0u32;
 	let frames = 0u64, ticks = 0u64;
+	let fps = 0u, nframe = 0u;
 	for (!quit; frames += 1) {
 		let mx = 0i32, my = 0i32;
 		let ev = sdl2::event { ... };
@@ -161,6 +162,11 @@ export fn main() void = {
 		const time = sdl2::SDL_GetTicks();
 		defer prev_time = time;
 		const delta = (time - prev_time): f32 / 1000.0;
+		if (prev_time / 1000 != time / 1000) {
+			fps = nframe;
+			nframe = 0;
+		};
+		defer nframe += 1;
 
 		const forward: glm::v3 = [
 			math::sinf64(camera.yaw): f32 * delta * SPEED,
@@ -216,20 +222,10 @@ export fn main() void = {
 		glVertexAttribPointer(2, 3, gl::GL_FLOAT, 0, 0, null);
 
 		let model = glm::M4_IDENT;
-		for (let x = -5; x < 5; x += 1)
-		for (let z = -5; z < 5; z += 1) {
+		for (let x = -8; x < 8; x += 1)
+		for (let z = -8; z < 8; z += 1) {
 			model = glm::M4_IDENT;
 			glm::translate(&model, &glm::v3_new(x: f32, 0.0, z: f32));
-
-			glm::m4_mul_to(&vp, &model, &mvp);
-			gfx::terrain_bind(&terrain, &mvp);
-			glDrawArrays(gl::GL_TRIANGLES, 0, 12*3);
-		};
-
-		for (let x = -5; x < 5; x += 1)
-		for (let z = -5; z < 5; z += 1) {
-			model = glm::M4_IDENT;
-			glm::translate(&model, &glm::v3_new(x: f32, 5.0, z: f32));
 
 			glm::m4_mul_to(&vp, &model, &mvp);
 			gfx::terrain_bind(&terrain, &mvp);
@@ -253,6 +249,10 @@ export fn main() void = {
 			engine::cardtostr(dir),
 			camera.pitch, camera.yaw);
 		gfx::font_draw(&glm::v2_new(256.0, 1.0 * 24.0), look);
+
+		const fps = fmt::bsprintf(buf, "FPS: {}", fps);
+		const (fw, _) = gfx::font_measure(fps);
+		gfx::font_draw(&glm::v2_new((WIN_WIDTH - fw): f32, 0.0), fps);
 
 		sdl2::SDL_GL_SwapWindow(win);
 	};

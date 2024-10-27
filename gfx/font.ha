@@ -59,6 +59,17 @@ fn font_init() void = {
 	font.tex = texture_fromsurf(surf)!;
 };
 
+// Returns the ordinal font index associated with this rune.
+fn rune_ord(rn: rune) u8 = {
+	if (ascii::valid(rn)) {
+		return rn: u32: u8;
+	} else {
+		// TODO: The font includes some non-ASCII characters
+		// Use ▪ as replacement char
+		return 0xFE;
+	};
+};
+
 // Draws text at the given location.
 export fn font_draw(
 	pos: *glm::v2,
@@ -69,19 +80,21 @@ export fn font_draw(
 	let cur = *pos;
 	const iter = strings::iter(text);
 	for (const rn => strings::next(&iter)) {
+		const ord = rune_ord(rn);
 		switch (rn) {
 		case '\n' =>
 			cur[0] = pos[0];
 			cur[1] += CHAR_FHEIGHT * fsize: f32;
 		case =>
 			// Body
-			const ord = font_drawrune(&cur, rn, color, fsize);
+			font_drawrune(&cur, rn, color, fsize);
 
 			// Shadow
 			font_drawrune(&glm::v2_new(
 				cur[0] + fsize: f32,
 				cur[1] + fsize: f32,
 			), rn, [0.25, 0.25, 0.25, 1.0], fsize);
+
 			cur[0] += font.hadv[ord]: f32 * fsize: f32;
 		};
 	};
@@ -93,16 +106,8 @@ export fn font_drawrune(
 	rn: rune,
 	color: glm::v4 = [1.0, 1.0, 1.0, 1.0],
 	fsize: uint = 3,
-) u8 = {
-	let ord = 0u8;
-	if (ascii::valid(rn)) {
-		ord = rn: u32: u8;
-	} else {
-		// TODO: The font includes some non-ASCII characters
-		// Use ▪ as replacement char
-		ord = 0xFE;
-	};
-
+) void = {
+	const ord = rune_ord(rn);
 	const row = ord >> 4;
 	const col = ord & 0xF;
 
@@ -115,6 +120,20 @@ export fn font_drawrune(
 		CHAR_FWIDTH,
 		CHAR_FHEIGHT,
 	], color);
+};
 
-	return ord;
+// Returns the pixel size of the specified text when rendered.
+export fn font_measure(text: str, fsize: uint = 3) (uint, uint) = {
+	let w: uint = 0, h: uint = CHAR_HEIGHT * fsize;
+	const iter = strings::iter(text);
+	for (const rn => strings::next(&iter)) {
+		const ord = rune_ord(rn);
+		switch (rn) {
+		case '\n' =>
+			abort(); // TODO
+		case =>
+			w += font.hadv[ord] * fsize;
+		};
+	};
+	return (w, h);
 };
