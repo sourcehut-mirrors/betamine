@@ -15,10 +15,19 @@ export fn main() void = {
 	const chunk = world::region_getchunk(&region, 0, 0) as *world::chunk_header;
 	assert(chunk.scheme == world::compression::DEFLATE);
 	const data = world::chunk_data(chunk);
-	fmt::errorfln("<{},{}>: {} bytes", 0, 0, len(data))!;
+	fmt::errorfln("Chunk <{},{}>: {} bytes", 0, 0, len(data))!;
 
 	const data = memio::fixed(data);
 	const zrd = zlib::decompress(&data)!;
 	const rd = nbt::read(&zrd);
 	nbt::dump(os::stdout, &rd)!;
+
+	io::seek(&data, 0, io::whence::SET)!;
+	const zrd = zlib::decompress(&data)!;
+	const rd = nbt::read(&zrd);
+	let chunk = world::chunk { ... };
+	world::chunk_fromnbt(&chunk, &rd)!;
+
+	fmt::printfln("Last update: {}", chunk.last_update)!;
+	fmt::printfln("Populated: {}", chunk.populated)!;
 };
