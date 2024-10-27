@@ -49,15 +49,18 @@ def TEST2_EXPECT = `TAG_Compound('Level'):
     TAG_Long(None): 14
     TAG_Long(None): 15
   }
-  TAG_Compound(None): 
+  TAG_List('listTest (compound)'): 2 entries
   {
-    TAG_String('name'): 'Compound tag #0'
-    TAG_Long('created-on'): 1264099775885
-  }
-  TAG_Compound(None): 
-  {
-    TAG_String('name'): 'Compound tag #1'
-    TAG_Long('created-on'): 1264099775885
+    TAG_Compound(None): 
+    {
+      TAG_String('name'): 'Compound tag #0'
+      TAG_Long('created-on'): 1264099775885
+    }
+    TAG_Compound(None): 
+    {
+      TAG_String('name'): 'Compound tag #1'
+      TAG_Long('created-on'): 1264099775885
+    }
   }
   TAG_Byte('byteTest'): 127
   TAG_Byte_Array('byteArrayTest (the first 1000 values of (n*n*255+n*7)%100, starting with n=0 (0, 62, 34, 16, 8, ...))'): [1000 bytes]

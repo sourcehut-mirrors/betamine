@@ -46,11 +46,13 @@ fn _dump(
 	depth: uint,
 	length: uint = types::UINT_MAX,
 ) (void | io::error) = {
-	for (const tag => next(rd)!) {
-		if (length == 0) {
-			return;
+	for (length > 0; length -= 1) {
+		const tag = match (next(rd)!) {
+		case io::EOF =>
+			break;
+		case let v: value =>
+			yield v;
 		};
-		defer length -= 1;
 
 		if (tag.tag != nbt_tag::END) {
 			do_indent(out, depth)?;
