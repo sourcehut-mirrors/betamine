@@ -9,6 +9,9 @@ betamine:
 run:
 	hare run $(LIBS) cmd/betamine
 
+check:
+	hare test
+
 clean:
 	rm -rf betamine
 
