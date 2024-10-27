@@ -100,10 +100,6 @@ export fn sprite_draw(
 	glVertexAttribPointer(0, 4, gl::GL_FLOAT, 0, 0, null);
 	defer glDisableVertexAttribArray(0);
 
-	const (w, h) = dims;
-	let ortho = glm::M4_ZERO;
-	glm::ortho(&ortho, 0.0, w: f32, h: f32, 0.0, -1.0, 1.0);
-
 	let mm = glm::M4_IDENT;
 	glm::scale(&mm, &glm::v3_new(
 		tex.w: f32 * clip[2],
@@ -113,7 +109,6 @@ export fn sprite_draw(
 	mm = glm::m4_mul(model, &mm);
 
 	const model_proj = glm::m4_mul(&ortho, &mm);
-
 	glUniformMatrix4fv(sprite.uniform.mp, 1, 0, &model_proj[0][0]);
 	glUniform4fv(sprite.uniform.color, 1, &color[0]);
 	glUniform4fv(sprite.uniform.clip, 1, &clip[0]);

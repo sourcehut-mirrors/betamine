@@ -18,20 +18,25 @@ export type texture = struct {
 
 // Loads a texture from the filesystem.
 export fn texture_load(path: str) (texture | sdl2::error | glerror) = {
+	const surf = image::IMG_Load(path)?;
+	defer sdl2::SDL_FreeSurface(surf);
+	return texture_fromsurf(surf)?;
+};
+
+// Similar to [[texture_load]] but the caller provides an [[sdl2::SDL_Surface]]
+// to load from.
+export fn texture_fromsurf(surf: *sdl2::SDL_Surface) (texture | glerror) = {
+	assert(surf.format.format == 0x16762004); // SDL_PIXELFORMAT_ABGR8888
+
 	let id = 0u;
 	glGenTextures(1, &id);
 	glBindTexture(gl::GL_TEXTURE_2D, id);
 
-	const image = image::IMG_Load(path)?;
-	defer sdl2::SDL_FreeSurface(image);
-
-	assert(image.format.format == 0x16762004); // SDL_PIXELFORMAT_ABGR8888
-
 	glTexImage2D(gl::GL_TEXTURE_2D, 0,
 		gl::GL_BGRA: i32,
-		image.w, image.h, 0,
+		surf.w, surf.h, 0,
 		gl::GL_RGBA, gl::GL_UNSIGNED_BYTE,
-		image.pixels);
+		surf.pixels);
 	glcheck()?;
 
 	glTexParameteri(gl::GL_TEXTURE_2D,
@@ -41,8 +46,8 @@ export fn texture_load(path: str) (texture | sdl2::error | glerror) = {
 
 	return texture {
 		id = id,
-		w = image.w,
-		h = image.h,
+		w = surf.w,
+		h = surf.h,
 	};
 };
 

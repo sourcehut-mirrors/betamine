@@ -238,11 +238,14 @@ export fn main() void = {
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
 
-		let model = glm::M4_IDENT;
-		glm::scale(&model, &glm::v3_new(4.0, 4.0, 1.0));
-		glm::translate(&model, &glm::v3_new(4.0, 4.0, 0.0));
-		gfx::sprite_draw(&gfx::font.tex, &model,
-			[0.0, 4.0 * 8.0, 8.0, 8.0]);
+		static let buf: [512]u8 = [0...];
+		const pos = fmt::bsprintf(buf, "x: {}\ny: {}\nz: {}",
+			camera.pos[0],
+			camera.pos[1],
+			camera.pos[2]);
+
+		gfx::font_draw(&glm::v2_new(0.0, 0.0 * 24.0), "Betamine 0.0.0");
+		gfx::font_draw(&glm::v2_new(0.0, 1.0 * 24.0), pos);
 
 		sdl2::SDL_GL_SwapWindow(win);
 	};
