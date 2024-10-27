@@ -14,6 +14,8 @@ use gl::{
 	glVertexAttribPointer,
 };
 use types::c;
+// XXX TEMP
+use fmt;
 
 const sprite_vert: [_]f32 = [
         // pos    // tex
@@ -59,6 +61,14 @@ fn sprites_init() void = {
 };
 
 // Draws a sprite.
+//
+// The model matrix can be used to scale, rotate, or translate the sprite. Note
+// that the sprite is scaled to the pixel dimensions of the texture (factoring
+// in the clip, if specified), and the model matrix is applied on top of this
+// initial scale factor.
+//
+// clip, if specified, gives the [x, y, w, h] coordinates to clip from the
+// source texture. color, if specified, is multiplied to each pixel.
 export fn sprite_draw(
 	tex: *texture,
 	model: *glm::m4,
@@ -93,9 +103,18 @@ export fn sprite_draw(
 	const (w, h) = dims;
 	let ortho = glm::M4_ZERO;
 	glm::ortho(&ortho, 0.0, w: f32, h: f32, 0.0, -1.0, 1.0);
-	const mp = glm::m4_mul(&ortho, model);
 
-	glUniformMatrix4fv(sprite.uniform.mp, 1, 0, &mp[0][0]);
+	let mm = glm::M4_IDENT;
+	glm::scale(&mm, &glm::v3_new(
+		tex.w: f32 * clip[2],
+		tex.h: f32 * clip[3],
+		1.0,
+	));
+	mm = glm::m4_mul(model, &mm);
+
+	const model_proj = glm::m4_mul(&ortho, &mm);
+
+	glUniformMatrix4fv(sprite.uniform.mp, 1, 0, &model_proj[0][0]);
 	glUniform4fv(sprite.uniform.color, 1, &color[0]);
 	glUniform4fv(sprite.uniform.clip, 1, &clip[0]);
 	glcheck()!;

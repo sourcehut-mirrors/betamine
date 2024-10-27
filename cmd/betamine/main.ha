@@ -239,9 +239,8 @@ export fn main() void = {
 		glDisableVertexAttribArray(1);
 
 		let model = glm::M4_IDENT;
-		// TODO: Apply an initial scale factor in sprite_draw
-		glm::scale(&model, &glm::v3_new(32.0, 32.0, 1.0));
-		glm::translate(&model, &glm::v3_new(32.0, 32.0, 0.0));
+		glm::scale(&model, &glm::v3_new(4.0, 4.0, 1.0));
+		glm::translate(&model, &glm::v3_new(4.0, 4.0, 0.0));
 		gfx::sprite_draw(&gfx::font.tex, &model,
 			[0.0, 4.0 * 8.0, 8.0, 8.0]);
 
