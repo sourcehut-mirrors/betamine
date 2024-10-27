@@ -67,25 +67,6 @@ export fn main() void = {
 	//camera.pos = [0.0, 72.0 + HEIGHT, 0.0];
 	camera.pos = [0.0, 1.0 + HEIGHT, 0.0];
 	gfx::camera_apply(&camera);
-	gl::glPointSize(3.0);
-
-	// XXX TEMP: Test chunk rendering stuff
-	let cbuf = 0u;
-	glGenBuffers(1, &cbuf);
-	glBindBuffer(gl::GL_ARRAY_BUFFER, cbuf);
-	glBufferData(gl::GL_ARRAY_BUFFER,
-		(size(glm::v3) * len(engine::chunk_vpos)): uintptr,
-		&engine::chunk_vpos[0][0],
-		gl::GL_STATIC_DRAW);
-	assert(glGetError() == gl::GL_NO_ERROR);
-
-	const point_shader = gfx::shader_loadfrom(
-		"gfx/glsl/points.vert", "gfx/glsl/points.frag")!;
-	let point_mvp = 0i32;
-	gfx::shader_uniforms(&point_shader,
-		("mvp\0", &point_mvp));
-
-	// XXX: END TEMP
 
 	// Prepare vertex buffer
 	let vbuf = 0u;
@@ -242,14 +223,6 @@ export fn main() void = {
 
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
-
-		gfx::shader_bind(&point_shader);
-		glEnableVertexAttribArray(0);
-		glBindBuffer(gl::GL_ARRAY_BUFFER, cbuf);
-		glVertexAttribPointer(0, 3, gl::GL_FLOAT, 0, 0, null);
-
-		glUniformMatrix4fv(point_mvp, 1, 0, &vp[0][0]);
-		glDrawArrays(gl::GL_POINTS, 0, (len(engine::chunk_vpos)): i32);
 
 		static let buf: [512]u8 = [0...];
 		const pos = fmt::bsprintf(buf, "x: {}\ny: {}\nz: {}",
