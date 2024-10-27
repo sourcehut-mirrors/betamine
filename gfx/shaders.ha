@@ -116,7 +116,7 @@ export fn shader_bind(shader: *shader) void = {
 
 // Populates a set of uniform locations associated with this shader. The strings
 // must be nul terminated.
-fn shader_uniforms(shader: *shader, un: (str, *i32)...) void = {
+export fn shader_uniforms(shader: *shader, un: (str, *i32)...) void = {
 	const id = shader.id;
 	for (let u .. un) {
 		*u.1 = glGetUniformLocation(id, c::nulstr(u.0): *i8);
