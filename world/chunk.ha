@@ -2,10 +2,10 @@ use io;
 use nbt;
 
 // Width and depth of a world chunk in blocks.
-export def CHUNK_WIDTH: size = 16;
+export def CHUNK_WIDTH: uint = 16;
 
 // Height of a world chunk in blocks.
-export def CHUNK_HEIGHT: size = 128;
+export def CHUNK_HEIGHT: uint = 128;
 
 export def CHUNK_BLOCKS = CHUNK_WIDTH * CHUNK_WIDTH * CHUNK_HEIGHT;
 
