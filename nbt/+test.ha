@@ -1,7 +1,6 @@
 use io;
 use memio;
 use os;
-use encoding::hex;
 use strings;
 
 def TEST1_EXPECT = `TAG_Compound('hello world'): 
@@ -16,8 +15,6 @@ def TEST1_EXPECT = `TAG_Compound('hello world'):
 	const rd = read(src);
 	const sink = memio::dynamic();
 	dump(&sink, &rd)!;
-	hex::dump(os::stdout, memio::buffer(&sink))!;
-	hex::dump(os::stdout, strings::toutf8(TEST1_EXPECT))!;
 	assert(memio::string(&sink)! == TEST1_EXPECT);
 };
 
@@ -74,7 +71,51 @@ def TEST2_EXPECT = `TAG_Compound('Level'):
 	const rd = read(src);
 	const sink = memio::dynamic();
 	dump(&sink, &rd)!;
-	hex::dump(os::stdout, memio::buffer(&sink))!;
-	hex::dump(os::stdout, strings::toutf8(TEST2_EXPECT))!;
 	assert(memio::string(&sink)! == TEST2_EXPECT);
+};
+
+@test fn skip() void = {
+	const src = os::open("nbt/test2.nbt")!;
+	defer io::close(src)!;
+	const rd = read(src);
+
+	let tag = next(&rd)! as value;
+	assert(tag.tag == nbt_tag::COMPOUND && tag.name == "Level");
+
+	tag = next(&rd)! as value;
+	assert(tag.tag == nbt_tag::LONG && tag.name == "longTest");
+	skip(&rd, tag)!; // no-op for LONG
+
+	tag = next(&rd)! as value;
+	assert(tag.tag == nbt_tag::SHORT && tag.name == "shortTest");
+
+	tag = next(&rd)! as value;
+	assert(tag.tag == nbt_tag::STRING && tag.name == "stringTest");
+	skip(&rd, tag)!;
+
+	tag = next(&rd)! as value;
+	assert(tag.tag == nbt_tag::FLOAT && tag.name == "floatTest");
+
+	tag = next(&rd)! as value; // intTest
+	tag = next(&rd)! as value; // nested compound test
+	skip(&rd, tag)!;
+	tag = next(&rd)! as value; // listTest (long)
+
+	assert(tag.tag == nbt_tag::LIST && tag.name == "listTest (long)");
+	skip(&rd, tag)!;
+
+	tag = next(&rd)! as value; // listTest (compound)
+	assert(tag.tag == nbt_tag::LIST && tag.name == "listTest (compound)");
+	skip(&rd, tag)!;
+
+	tag = next(&rd)! as value; // byteTest
+	assert(tag.tag == nbt_tag::BYTE && tag.name == "byteTest");
+	skip(&rd, tag)!;
+
+	tag = next(&rd)! as value; // byteArrayTest (...)
+	assert(tag.tag == nbt_tag::BYTE_ARRAY);
+	skip(&rd, tag)!;
+
+	tag = next(&rd)! as value; // doubleTest
+	assert(tag.tag == nbt_tag::DOUBLE && tag.name == "doubleTest");
 };

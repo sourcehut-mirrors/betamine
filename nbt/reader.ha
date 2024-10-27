@@ -146,3 +146,30 @@ export fn next(rd: *reader) (value | io::EOF | io::error) = {
 
 	return val;
 };
+
+// Skips the current value (recursively, if compound or list) from an NBT
+// [[reader]], advancing to the next position.
+export fn skip(rd: *reader, tag: value) (void | io::EOF | io::error) = {
+	switch (tag.tag) {
+	case nbt_tag::LIST =>
+		for (let l = tag.length; l > 0; l -= 1) {
+			match (next(rd)?) {
+			case io::EOF =>
+				break;
+			case let t: value =>
+				skip(rd, t)?;
+			};
+		};
+	case nbt_tag::COMPOUND =>
+		for (const t => next(rd)?) {
+			if (t.tag == nbt_tag::END) {
+				break;
+			};
+			skip(rd, t)?;
+		};
+	case nbt_tag::STRING, nbt_tag::BYTE_ARRAY =>
+		const lim = io::limitreader(rd, tag.length);
+		io::copy(io::empty, &lim)!;
+	case => void; // no-op
+	};
+};
