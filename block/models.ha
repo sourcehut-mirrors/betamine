@@ -52,6 +52,8 @@ fn model_cube(b: *block, out: *[]vertex, pos: *glm::v3, face: faces) void = {
 		for (let i = 0u; i < 6; i += 1) {
 			const vert_pos = &mesh[i];
 			const vert_uv = &uv[i];
+			const ux = b.tex.0: f32 / 16.0;
+			const uy = b.tex.1: f32 / 16.0;
 			append(out, vertex {
 				pos = [
 					vert_pos[0] + pos[0],
@@ -59,10 +61,10 @@ fn model_cube(b: *block, out: *[]vertex, pos: *glm::v3, face: faces) void = {
 					vert_pos[2] + pos[2],
 				],
 				uv = [
-					vert_uv[0] * b.tex.0: f32,
-					vert_uv[1] * b.tex.1: f32,
+					vert_uv[0] * (1.0 / 16.0) + ux,
+					vert_uv[1] * (1.0 / 16.0) + uy,
 				],
-				color = [1.0, 0.0, 0.0],
+				color = glm::V3_ONE,
 			});
 		};
 	};

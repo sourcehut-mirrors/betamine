@@ -12,18 +12,17 @@ export type chunk_mesh = struct {
 
 // Generate meshes for a given [[world::chunk]].
 export fn chunk_genmesh(chunk: *world::chunk) chunk_mesh = {
+	def FW = world::CHUNK_WIDTH: f32;
+	def FH = world::CHUNK_HEIGHT: f32;
+
 	let mesh = chunk_mesh { ... };
 
 	let i = 0u;
-	let pos: glm::v3 = glm::V3_ZERO;
-	//def FW = world::CHUNK_WIDTH: f32;
-	//def FH = world::CHUNK_HEIGHT: f32;
-	def FW = 1.0;
-	def FH = 1.0;
-	for (pos[0] < FW; pos[0] += 1.0)
-	for (pos[2] < FW; pos[2] += 1.0)
-	for (pos[1] < FH; pos[1] += 1.0) {
+	for (let x: f32 = 0.0; x < FW; x += 1.0)	// x
+	for (let z: f32 = 0.0; z < FW; z += 1.0)	// z
+	for (let y: f32 = 0.0; y < FH; y += 1.0) {	// y
 		defer i += 1;
+
 		const id = chunk.blocks[i];
 		if (id == 0) continue;
 
@@ -37,6 +36,8 @@ export fn chunk_genmesh(chunk: *world::chunk) chunk_mesh = {
 		if (block.flags & block::flag::TRANSLUCENT != 0) {
 			vbo = &mesh.vert_translucent;
 		};
+
+		const pos: glm::v3 = [x, y, z];
 		block.model(block, vbo, &pos, block::faces::ALL);
 	};
 

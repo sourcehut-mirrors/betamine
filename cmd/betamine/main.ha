@@ -72,8 +72,8 @@ export fn main() void = {
 
 	const terrain = gfx::load_terrain()!;
 	let camera = gfx::camera_new();
-	//camera.pos = [0.0, 72.0 + HEIGHT, 0.0];
-	camera.pos = [0.0, 1.0 + HEIGHT, 0.0];
+	camera.pos = [0.0, 72.0 + HEIGHT, 0.0];
+	//camera.pos = [0.0, 1.0 + HEIGHT, 0.0];
 	gfx::camera_apply(&camera);
 
 	// XXX TEMP Chunk rendering test
@@ -90,12 +90,6 @@ export fn main() void = {
 	const diff = time::diff(start, end);
 	fmt::printfln("chunk mesh generation completed in {:.04}ms",
 		diff: f32 / time::MILLISECOND: f32)!;
-
-	for (let vert .. mesh.vert_opaque) {
-		fmt::println("pos", vert.pos[0], vert.pos[1], vert.pos[2])!;
-		fmt::println("uv", vert.uv[0], vert.uv[1])!;
-		fmt::println("color", vert.color[0], vert.color[1], vert.color[2])!;
-	};
 
 	let chunk_vbo = 0u;
 	glGenBuffers(1, &chunk_vbo);
@@ -212,19 +206,24 @@ export fn main() void = {
 
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 3, gl::GL_FLOAT, 0,
-			size(block::vertex): i32,
-			offset(mesh.vert_opaque[0].pos): uintptr: *opaque);
+			(8 * size(f32)): i32,
+			(0 * size(f32)): uintptr: *opaque);
+
+		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, 2, gl::GL_FLOAT, 0,
-			size(block::vertex): i32,
-			offset(mesh.vert_opaque[0].uv): uintptr: *opaque);
+			(8 * size(f32)): i32,
+			(3 * size(f32)): uintptr: *opaque);
+
+		glEnableVertexAttribArray(2);
 		glVertexAttribPointer(2, 3, gl::GL_FLOAT, 0,
-			size(block::vertex): i32,
-			offset(mesh.vert_opaque[0].color): uintptr: *opaque);
+			(8 * size(f32)): i32,
+			(5 * size(f32)): uintptr: *opaque);
 
 		let model = glm::M4_IDENT;
 		glm::m4_mul_to(&vp, &model, &mvp);
 		gfx::terrain_bind(&terrain, &mvp);
-		glDrawArrays(gl::GL_TRIANGLES, 0, 12*3);
+		glDrawArrays(gl::GL_TRIANGLES, 0,
+			len(mesh.vert_opaque): i32);
 
 		// XXX END TEMP
 
