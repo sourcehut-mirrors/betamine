@@ -23,11 +23,13 @@ use sdl2::mixer;
 use types::c;
 // XXX TEMP Chunk testing
 use block;
+use compress::zlib;
 use io;
+use memio;
 use nbt;
 use os;
-use world;
 use time;
+use world;
 // XXX END TEMP
 
 def WIN_WIDTH = 1280;
@@ -47,6 +49,10 @@ type movement = enum uint {
 	UP		= 1 << 4,
 	DOWN		= 1 << 5,
 };
+
+let chunks: [8][8]gfx::chunk_mesh = [
+	[gfx::chunk_mesh { ... }...]...
+];
 
 export fn main() void = {
 	sdl2::SDL_Init(sdl2::SDL_INIT_VIDEO | sdl2::SDL_INIT_AUDIO)!;
@@ -83,36 +89,37 @@ export fn main() void = {
 
 	// XXX TEMP Chunk rendering test
 
-	const file = os::open("assets/chunk.nbt")!;
-	const rd = nbt::read(file);
-	let chunk = world::chunk { ... };
-	world::chunk_fromnbt(&chunk, &rd)!;
-	io::close(file)!;
+	const region = world::region_open(os::args[1])!;
+	defer world::region_close(&region);
 
 	const start = time::now(time::clock::MONOTONIC);
-	const mesh = engine::chunk_genmesh(&chunk);
+	for (let x = 0; x < 8; x += 1)
+	for (let z = 0; z < 8; z += 1) {
+		const chunk = world::region_getchunk(&region, x, z)
+			as *world::chunk_header;
+		assert(chunk.scheme == world::compression::DEFLATE);
+		const data = world::chunk_data(chunk);
+
+		const data = memio::fixed(data);
+		const zrd = zlib::decompress(&data)!;
+		const rd = nbt::read(&zrd);
+		let chunk = world::chunk { ... };
+		world::chunk_fromnbt(&chunk, &rd)!;
+
+		const start = time::now(time::clock::MONOTONIC);
+		const mesh = engine::chunk_genmesh(&chunk);
+		const end = time::now(time::clock::MONOTONIC);
+		const diff = time::diff(start, end);
+		fmt::printfln("Chunk {},{} mesh generation completed in {:.04}ms",
+			x, z, diff: f32 / time::MILLISECOND: f32)!;
+		const chunk = gfx::chunk_init(&mesh);
+		chunks[x][z] = chunk;
+	};
+
 	const end = time::now(time::clock::MONOTONIC);
 	const diff = time::diff(start, end);
-	fmt::printfln("chunk mesh generation completed in {:.04}ms",
+	fmt::printfln("all chunk geometry completed in {:.04}ms",
 		diff: f32 / time::MILLISECOND: f32)!;
-
-	let chunk_opaque_vbo = 0u;
-	glGenBuffers(1, &chunk_opaque_vbo);
-	glBindBuffer(gl::GL_ARRAY_BUFFER, chunk_opaque_vbo);
-	glBufferData(gl::GL_ARRAY_BUFFER,
-		(size(block::vertex) * len(mesh.vert_opaque)): uintptr,
-		&mesh.vert_opaque[0],
-		gl::GL_STATIC_DRAW);
-	assert(glGetError() == gl::GL_NO_ERROR);
-
-	let chunk_translucent_vbo = 0u;
-	glGenBuffers(1, &chunk_translucent_vbo);
-	glBindBuffer(gl::GL_ARRAY_BUFFER, chunk_translucent_vbo);
-	glBufferData(gl::GL_ARRAY_BUFFER,
-		(size(block::vertex) * len(mesh.vert_translucent)): uintptr,
-		&mesh.vert_translucent[0],
-		gl::GL_STATIC_DRAW);
-	assert(glGetError() == gl::GL_NO_ERROR);
 
 	// XXX END TEMP
 
@@ -242,47 +249,29 @@ export fn main() void = {
 
 		// XXX TEMP Render test chunk
 
-		let model = glm::M4_IDENT;
-		glm::m4_mul_to(&vp, &model, &mvp);
-		gfx::terrain_bind(&terrain, &mvp);
+		for (let x = 0u; x < 8; x += 1)
+		for (let z = 0u; z < 8; z += 1) {
+			const mesh = &chunks[x][z];
 
-		glBindBuffer(gl::GL_ARRAY_BUFFER, chunk_opaque_vbo);
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, gl::GL_FLOAT, 0,
-			(8 * size(f32)): i32,
-			(0 * size(f32)): uintptr: *opaque);
+			let model = glm::M4_IDENT;
+			glm::translate(&model, &glm::v3_new(
+				(x * world::CHUNK_WIDTH): f32,
+				0.0,
+				(z * world::CHUNK_WIDTH): f32,
+			));
+			glm::m4_mul_to(&vp, &model, &mvp);
+			gfx::terrain_bind(&terrain, &mvp);
 
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 2, gl::GL_FLOAT, 0,
-			(8 * size(f32)): i32,
-			(3 * size(f32)): uintptr: *opaque);
+			gfx::chunk_begin(&chunks[x][z], false);
+			glDrawArrays(gl::GL_TRIANGLES, 0,
+				mesh.nopaque: i32);
 
-		glEnableVertexAttribArray(2);
-		glVertexAttribPointer(2, 3, gl::GL_FLOAT, 0,
-			(8 * size(f32)): i32,
-			(5 * size(f32)): uintptr: *opaque);
+			gfx::chunk_begin(&chunks[x][z], true);
+			glDrawArrays(gl::GL_TRIANGLES, 0,
+				mesh.ntransparent: i32);
+		};
 
-		glDrawArrays(gl::GL_TRIANGLES, 0,
-			len(mesh.vert_opaque): i32);
-
-		glBindBuffer(gl::GL_ARRAY_BUFFER, chunk_translucent_vbo);
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, gl::GL_FLOAT, 0,
-			(8 * size(f32)): i32,
-			(0 * size(f32)): uintptr: *opaque);
-
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 2, gl::GL_FLOAT, 0,
-			(8 * size(f32)): i32,
-			(3 * size(f32)): uintptr: *opaque);
-
-		glEnableVertexAttribArray(2);
-		glVertexAttribPointer(2, 3, gl::GL_FLOAT, 0,
-			(8 * size(f32)): i32,
-			(5 * size(f32)): uintptr: *opaque);
-
-		glDrawArrays(gl::GL_TRIANGLES, 0,
-			len(mesh.vert_translucent): i32);
+		gfx::chunk_end(&chunks[0][0]);
 
 		// XXX END TEMP
 

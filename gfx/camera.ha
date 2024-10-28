@@ -31,7 +31,7 @@ export fn camera_new() camera = {
 		fov = DEFAULT_FOV,
 		ratio = w: f32 / h: f32,
 		znear = 0.1,
-		zfar = 100.0,
+		zfar = 1000.0,
 		...
 	};
 	camera_apply(&c);
