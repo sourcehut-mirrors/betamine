@@ -3,6 +3,24 @@ use glm;
 // TODO: Source this color from the biome
 def VEGITATION: glm::v3 = [0.57, 0.74, 0.35];
 
+// Minecraft renders a constant ambient lighting factor based on the face
+const ambient: [_]glm::v3 = [
+	[1.0, 1.0, 1.0], // Top
+	[0.6, 0.6, 0.6], // North
+	[0.8, 0.8, 0.8], // East
+	[0.6, 0.6, 0.6], // South
+	[0.8, 0.8, 0.8], // West
+	[0.5, 0.5, 0.5], // Bottom
+];
+
+fn light(v: *voxel, f: face, c: glm::v3) glm::v3 = {
+	return [
+		c[0] * ambient[f][0],
+		c[1] * ambient[f][1],
+		c[2] * ambient[f][2],
+	];
+};
+
 // Vertex of a block model.
 export type vertex = struct @packed {
 	pos: glm::v3,
@@ -12,16 +30,12 @@ export type vertex = struct @packed {
 
 // Faces of a cube.
 export type face = enum uint {
-	NONE = 0,
-
-	T = 1 << 0,
-	B = 1 << 1,
-	N = 1 << 2,
-	E = 1 << 3,
-	S = 1 << 4,
-	W = 1 << 5,
-
-	ALL = T | B | N | E | S | W,
+	T = 0,
+	B = 1,
+	N = 2,
+	E = 3,
+	S = 4,
+	W = 5,
 };
 
 // Function that generates a 3D model for a [[block]].
@@ -66,7 +80,7 @@ fn model_cube(
 
 	for (let f &.. face_map) {
 		const (mask, mesh, uv) = *f;
-		if (mask & face == 0) {
+		if ((1 << mask) & face == 0) {
 			continue;
 		};
 
@@ -85,7 +99,7 @@ fn model_cube(
 					vert_uv[0] * (1.0 / 16.0) + ux,
 					vert_uv[1] * (1.0 / 16.0) + uy,
 				],
-				color = color,
+				color = light(v, mask, color),
 			});
 		};
 	};
@@ -127,7 +141,7 @@ fn model_grass(
 
 	for (let f &.. face_map) {
 		const (mask, mesh, uv) = *f;
-		if (mask & face == 0) {
+		if ((1 << mask) & face == 0) {
 			continue;
 		};
 
@@ -154,7 +168,7 @@ fn model_grass(
 					vert_uv[0] * (1.0 / 16.0) + ux,
 					vert_uv[1] * (1.0 / 16.0) + uy,
 				],
-				color = color,
+				color = light(v, mask, color),
 			});
 		};
 	};
@@ -191,7 +205,7 @@ fn model_snow(
 					_vux + ux,
 					_vuy + uy,
 				],
-				color = glm::V3_ONE,
+				color = light(v, mask, glm::V3_ONE),
 			});
 		};
 	};
@@ -218,12 +232,12 @@ fn model_fluid(
 		b.tex = (15, 15);
 	};
 
-	if (isfluid(v.neighbors.top)) f &= ~face::T;
-	if (isfluid(v.neighbors.bottom)) f &= ~face::B;
-	if (isfluid(v.neighbors.north)) f &= ~face::N;
-	if (isfluid(v.neighbors.east)) f &= ~face::E;
-	if (isfluid(v.neighbors.south)) f &= ~face::S;
-	if (isfluid(v.neighbors.west)) f &= ~face::W;
+	if (isfluid(v.neighbors.top)) f &= ~(1 << face::T);
+	if (isfluid(v.neighbors.bottom)) f &= ~(1 << face::B);
+	if (isfluid(v.neighbors.north)) f &= ~(1 << face::N);
+	if (isfluid(v.neighbors.east)) f &= ~(1 << face::E);
+	if (isfluid(v.neighbors.south)) f &= ~(1 << face::S);
+	if (isfluid(v.neighbors.west)) f &= ~(1 << face::W);
 
 	model_cube(&b, v, out, pos, f);
 };

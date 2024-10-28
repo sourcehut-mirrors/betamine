@@ -72,7 +72,7 @@ export fn chunk_genmesh(chunk: *world::chunk) chunk_mesh = {
 		case null => continue;
 		};
 
-		let faces = face::NONE;
+		let faces: face = 0;
 		voxel.id = id;
 		voxel_neighbors(chunk, &voxel, &faces, i, x, y, z);
 
@@ -112,7 +112,7 @@ fn voxel_neighbors(
 		// Unconditionally render faces on chunk edges
 		if (axis == edge) {
 			*ptr = 0;
-			*faces |= face;
+			*faces |= 1 << face;
 			continue;
 		};
 
@@ -123,7 +123,7 @@ fn voxel_neighbors(
 		match (block::blocks[id]) {
 		case let b: *block::block => void;
 			if (b.flags & flag::NON_OCCLUDING != 0) {
-				*faces |= face;
+				*faces |= 1 << face;
 			};
 		case null => void;
 		};
