@@ -424,6 +424,7 @@ const block_wood = block {
 const block_leaves = block {
 	id = LEAVES,
 	model = &model_cube,
+	flags = flag::TRANSLUCENT | flag::NON_OCCLUDING,
 	display_name = "Leaves",
 	tex = (4, 3),
 	hardness = 0.20,

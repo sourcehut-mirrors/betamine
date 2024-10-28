@@ -39,6 +39,7 @@ transparent_blocks = [
     "LAVA_STATIONARY",
     "ICE",
     "PORTAL",
+    "LEAVES",
 ]
 
 # betamine uses more intuitive names than Minecraft, so we hardcode these
