@@ -122,6 +122,9 @@ fn model_grass(
 	pos: *glm::v3,
 	face: face,
 ) void = {
+	// TODO: Render proper biome color and replace with snow if beneath a
+	// snow block (requires depth func = GL_LEQUAL)
+
 	for (let f &.. face_map) {
 		const (mask, mesh, uv) = *f;
 		if (mask & face == 0) {
