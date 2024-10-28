@@ -36,6 +36,9 @@ def SPEED: f32 = 4.317; // Meters per second
 def MOUSE_SPEED: f32 = 2.0;
 def HEIGHT: f32 = 1.85; // Player height in meters
 
+// Enable flying in any direction
+def FLYING: bool = true;
+
 type movement = enum uint {
 	LEFT		= 1 << 0,
 	RIGHT		= 1 << 1,
@@ -161,16 +164,28 @@ export fn main() void = {
 		};
 		defer nframe += 1;
 
-		const forward: glm::v3 = [
-			math::sinf64(camera.yaw): f32 * delta * SPEED,
-			0.0,
-			math::cosf64(camera.yaw): f32 * delta * SPEED,
-		];
+		let forward: glm::v3 = glm::V3_ZERO;
+
+		if (FLYING) {
+			forward = [
+				camera.dir[0] * delta: f32 * SPEED * 2.0,
+				camera.dir[1] * delta: f32 * SPEED * 2.0,
+				camera.dir[2] * delta: f32 * SPEED * 2.0,
+			];
+		} else {
+			forward = [
+				math::sinf64(camera.yaw): f32 * delta * SPEED,
+				0.0,
+				math::cosf64(camera.yaw): f32 * delta * SPEED,
+			];
+		};
+
 		const right: glm::v3 = [
 			camera.right[0] * delta * SPEED,
 			0.0,
 			camera.right[2] * delta * SPEED,
 		];
+
 		if (move & movement::FORWARD != 0) {
 			camera.pos = glm::v3_add(&camera.pos, &forward);
 		};
