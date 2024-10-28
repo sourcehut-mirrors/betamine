@@ -1,0 +1,36 @@
+// File generated with scripts/genblocks.py
+
+// Block information database, indexed by block ID.
+export const blocks: [256]nullable *block = [
+{%- for block in block_names %}
+	&block_{{block.lower()}},
+{%- endfor -%}
+{%- for i in range(num_null) %}
+	null,
+{%- endfor %}
+];
+
+const block_air = block {
+	id = AIR,
+	model = &model_none,
+	...
+};
+{% for block in blocks %}
+{% set flag = flags(block) %}
+const block_{{block_names[block.id].lower()}} = block {
+	id = {{block_names[block.id]}},
+	model = &{{model(block)}},
+	{%- if flag %}
+	flags = {{flag}},
+	{%- endif %}
+	display_name =
+		{%- if block.display_name %} "{{block.display_name}}"
+		{%- else %} "{{block.name}}"
+		{%- endif -%},
+	{%- if block.texture %}
+	tex = ({{block.texture.x}}, {{block.texture.y}}),
+	{%- endif %}
+	hardness = {{"{:.2f}".format(block["hardness"])}},
+	...
+};
+{%- endfor %}

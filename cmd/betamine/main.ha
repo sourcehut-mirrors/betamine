@@ -21,6 +21,12 @@ use sdl2::{SDL_RendererFlags, SDL_WindowFlags, SDL_EventType, SDL_Scancode};
 use sdl2::image;
 use sdl2::mixer;
 use types::c;
+// XXX TEMP Chunk testing
+use io;
+use nbt;
+use os;
+use world;
+// XXX END TEMP
 
 def WIN_WIDTH = 1280;
 def WIN_HEIGHT = 720;
@@ -67,6 +73,18 @@ export fn main() void = {
 	//camera.pos = [0.0, 72.0 + HEIGHT, 0.0];
 	camera.pos = [0.0, 1.0 + HEIGHT, 0.0];
 	gfx::camera_apply(&camera);
+
+	// XXX TEMP Chunk rendering test
+
+	const file = os::open("assets/chunk.nbt")!;
+	const rd = nbt::read(file);
+	let chunk = world::chunk { ... };
+	world::chunk_fromnbt(&chunk, &rd)!;
+	io::close(file)!;
+
+	const mesh = engine::chunk_genmesh(&chunk);
+
+	// XXX END TEMP
 
 	// Prepare vertex buffer
 	let vbuf = 0u;

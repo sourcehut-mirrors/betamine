@@ -1,22 +1,26 @@
+use block;
 use glm;
 use world;
-
-// A vertex in a chunk mesh.
-export type chunk_vertex = struct @packed {
-	pos: glm::v3,
-	color: glm::v3,
-	uv: glm::v2,
-};
 
 // A chunk mesh.
 export type chunk_mesh = struct {
 	// List of opaque verticies
-	vert_opaque: []chunk_vertex,
+	vert_opaque: []block::vertex,
 	// List of transparent verticies
-	vert_transp: []chunk_vertex,
+	vert_transp: []block::vertex,
 };
 
 // Generate meshes for a given [[world::chunk]].
 export fn chunk_genmesh(chunk: *world::chunk) chunk_mesh = {
-	abort(); // TODO
+	let mesh = chunk_mesh { ... };
+
+	let i = 0u;
+	for (let x = 0u; x < world::CHUNK_WIDTH; x += 1)
+	for (let z = 0u; z < world::CHUNK_WIDTH; z += 1)
+	for (let y = 0u; y < world::CHUNK_HEIGHT; y += 1) {
+		defer i += 1;
+		const id = chunk.blocks[i];
+	};
+
+	return mesh;
 };
