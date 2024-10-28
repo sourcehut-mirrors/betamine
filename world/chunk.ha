@@ -76,8 +76,8 @@ export fn chunk_getmeta(c: *chunk, x: uint, y: uint, z: uint) u8 = {
 	assert(x < CHUNK_WIDTH && z < CHUNK_WIDTH);
 	assert(y < CHUNK_HEIGHT);
 	const base = x * (CHUNK_WIDTH * CHUNK_HEIGHT) + z * CHUNK_HEIGHT + y;
-	const ix = base / 2, off = base % 2;
-	return c.metadata[ix + off];
+	const ix = base / 2, off = (base % 2): u8;
+	return (c.metadata[ix] >> (off * 4)) & 0xF;
 };
 
 // Gets the block light from a [[chunk]] at the given coordinates.
@@ -85,8 +85,8 @@ export fn chunk_getblocklight(c: *chunk, x: uint, y: uint, z: uint) u8 = {
 	assert(x < CHUNK_WIDTH && z < CHUNK_WIDTH);
 	assert(y < CHUNK_HEIGHT);
 	const base = x * (CHUNK_WIDTH * CHUNK_HEIGHT) + z * CHUNK_HEIGHT + y;
-	const ix = base / 2, off = base % 2;
-	return c.block_light[ix + off];
+	const ix = base / 2, off = (base % 2): u8;
+	return (c.block_light[ix] >> (off * 4)) & 0xF;
 };
 
 // Gets the sky light from a [[chunk]] at the given coordinates.
@@ -94,8 +94,8 @@ export fn chunk_getskylight(c: *chunk, x: uint, y: uint, z: uint) u8 = {
 	assert(x < CHUNK_WIDTH && z < CHUNK_WIDTH);
 	assert(y < CHUNK_HEIGHT);
 	const base = x * (CHUNK_WIDTH * CHUNK_HEIGHT) + z * CHUNK_HEIGHT + y;
-	const ix = base / 2, off = base % 2;
-	return c.sky_light[ix + off];
+	const ix = base / 2, off = (base % 2): u8;
+	return (c.sky_light[ix] >> (off * 4)) & 0xF;
 };
 
 // Gets the height from a [[chunk]] at the given coordinates.
