@@ -176,12 +176,13 @@ def getflags(block):
     flags = []
 
     name = block_names[block["id"]]
-    model = getmodel(block)
     transparent = name in transparent_blocks
 
     if transparent:
         flags.append("flag::TRANSLUCENT")
-    if model in onequad_models + twoquad_models or transparent or name in non_occluding:
+    if name in onequad_models + twoquad_models \
+            or transparent \
+            or name in non_occluding:
         flags.append("flag::NON_OCCLUDING")
 
     return " | ".join(flags)
