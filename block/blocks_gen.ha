@@ -959,6 +959,7 @@ const block_button = block {
 const block_snow = block {
 	id = SNOW,
 	model = &model_snow,
+	flags = flag::NON_OCCLUDING,
 	display_name = "Snow",
 	tex = (2, 4),
 	hardness = 0.10,

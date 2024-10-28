@@ -43,6 +43,7 @@ custom_models = {
 
 non_occluding = [
     "LEAVES",
+    "SNOW",
 ]
 
 transparent_blocks = [
