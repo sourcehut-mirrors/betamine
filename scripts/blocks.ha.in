@@ -13,6 +13,7 @@ export const blocks: [256]nullable *block = [
 const block_air = block {
 	id = AIR,
 	model = &model_none,
+	flags = flag::NON_OCCLUDING,
 	...
 };
 {% for block in blocks %}

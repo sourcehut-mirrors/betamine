@@ -35,7 +35,15 @@ twoquad_models = [
 custom_models = {
     "GRASS": "grass",
     "SNOW": "snow",
+    "WATER": "fluid",
+    "WATER_STATIONARY": "fluid",
+    "LAVA": "fluid",
+    "LAVA_STATIONARY": "fluid",
 }
+
+non_occluding = [
+    "LEAVES",
+]
 
 transparent_blocks = [
     "WATER",
@@ -172,7 +180,7 @@ def getflags(block):
 
     if transparent:
         flags.append("flag::TRANSLUCENT")
-    if model != "model_cube" or transparent:
+    if model in onequad_models + twoquad_models or transparent or name in non_occluding:
         flags.append("flag::NON_OCCLUDING")
 
     return " | ".join(flags)
