@@ -78,16 +78,25 @@ fn model_cube(
 	v: *voxel,
 	out: *[]vertex,
 	pos: *glm::v3,
-	face: face,
+	faces: face,
 ) void = {
 	let color = glm::V3_ONE;
 	if (b.id == LEAVES) {
 		color = VEGITATION;
 	};
 
+	if (b.flags & flag::TRANSLUCENT != 0) {
+		if (v.neighbors.top == b.id) faces &= ~(1 << face::T);
+		if (v.neighbors.bottom == b.id) faces &= ~(1 << face::B);
+		if (v.neighbors.north == b.id) faces &= ~(1 << face::N);
+		if (v.neighbors.east == b.id) faces &= ~(1 << face::E);
+		if (v.neighbors.south == b.id) faces &= ~(1 << face::S);
+		if (v.neighbors.west == b.id) faces &= ~(1 << face::W);
+	};
+
 	for (let f &.. face_map) {
 		const (mask, mesh, uv) = *f;
-		if ((1 << mask) & face == 0) {
+		if ((1 << mask) & faces == 0) {
 			continue;
 		};
 
@@ -119,7 +128,7 @@ fn model_onequad(
 	v: *voxel,
 	out: *[]vertex,
 	pos: *glm::v3,
-	f: face,
+	faces: face,
 ) void = {
 	return; // TODO
 };
@@ -131,7 +140,7 @@ fn model_twoquad(
 	v: *voxel,
 	out: *[]vertex,
 	pos: *glm::v3,
-	f: face,
+	faces: face,
 ) void = {
 	return; // TODO
 };
@@ -141,14 +150,14 @@ fn model_grass(
 	v: *voxel,
 	out: *[]vertex,
 	pos: *glm::v3,
-	face: face,
+	faces: face,
 ) void = {
 	// TODO: Render proper biome color and replace with snow if beneath a
 	// snow block (requires depth func = GL_LEQUAL)
 
 	for (let f &.. face_map) {
 		const (mask, mesh, uv) = *f;
-		if ((1 << mask) & face == 0) {
+		if ((1 << mask) & faces == 0) {
 			continue;
 		};
 
@@ -186,7 +195,7 @@ fn model_snow(
 	v: *voxel,
 	out: *[]vertex,
 	pos: *glm::v3,
-	face: face,
+	faces: face,
 ) void = {
 	for (let f &.. face_map) {
 		const (mask, mesh, uv) = *f;
@@ -228,7 +237,7 @@ fn model_fluid(
 	v: *voxel,
 	out: *[]vertex,
 	pos: *glm::v3,
-	f: face,
+	faces: face,
 ) void = {
 	// TODO: Implement this properly
 	let b = *b;
@@ -239,12 +248,12 @@ fn model_fluid(
 		b.tex = (15, 15);
 	};
 
-	if (isfluid(v.neighbors.top)) f &= ~(1 << face::T);
-	if (isfluid(v.neighbors.bottom)) f &= ~(1 << face::B);
-	if (isfluid(v.neighbors.north)) f &= ~(1 << face::N);
-	if (isfluid(v.neighbors.east)) f &= ~(1 << face::E);
-	if (isfluid(v.neighbors.south)) f &= ~(1 << face::S);
-	if (isfluid(v.neighbors.west)) f &= ~(1 << face::W);
+	if (isfluid(v.neighbors.top)) faces &= ~(1 << face::T);
+	if (isfluid(v.neighbors.bottom)) faces &= ~(1 << face::B);
+	if (isfluid(v.neighbors.north)) faces &= ~(1 << face::N);
+	if (isfluid(v.neighbors.east)) faces &= ~(1 << face::E);
+	if (isfluid(v.neighbors.south)) faces &= ~(1 << face::S);
+	if (isfluid(v.neighbors.west)) faces &= ~(1 << face::W);
 
-	model_cube(&b, v, out, pos, f);
+	model_cube(&b, v, out, pos, faces);
 };
