@@ -86,14 +86,14 @@ export fn font_draw(
 			cur[0] = pos[0];
 			cur[1] += CHAR_FHEIGHT * fsize: f32;
 		case =>
-			// Body
-			font_drawrune(&cur, rn, color, fsize);
-
 			// Shadow
 			font_drawrune(&glm::v2_new(
 				cur[0] + fsize: f32,
 				cur[1] + fsize: f32,
 			), rn, [0.25, 0.25, 0.25, 1.0], fsize);
+
+			// Body
+			font_drawrune(&cur, rn, color, fsize);
 
 			cur[0] += font.hadv[ord]: f32 * fsize: f32;
 		};

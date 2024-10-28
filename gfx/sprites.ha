@@ -4,8 +4,10 @@ use gl::{
 	glActiveTexture,
 	glBindBuffer,
 	glBufferData,
+	glDisable,
 	glDisableVertexAttribArray,
 	glDrawArrays,
+	glEnable,
 	glEnableVertexAttribArray,
 	glGenBuffers,
 	glUniform1i,
@@ -75,6 +77,9 @@ export fn sprite_draw(
 	clip: glm::v4 = [0.0, 0.0, 0.0, 0.0],
 	color: glm::v4 = [1.0, 1.0, 1.0, 1.0],
 ) void = {
+	glDisable(gl::GL_DEPTH_TEST);
+	defer glEnable(gl::GL_DEPTH_TEST);
+
 	let noclip = true;
 	for (let v .. clip) {
 		if (v != 0.0) {

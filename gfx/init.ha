@@ -1,6 +1,7 @@
 use gl;
 use gl::{
 	glBlendFunc,
+	glDepthFunc,
 	glEnable,
 	glViewport,
 };
@@ -23,6 +24,7 @@ export fn init(width: i32, height: i32) void = {
 	glBlendFunc(gl::GL_SRC_ALPHA, gl::GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(gl::GL_BLEND);
 
+	glDepthFunc(gl::GL_LEQUAL);
 	glEnable(gl::GL_DEPTH_TEST);
 	glEnable(gl::GL_CULL_FACE);
 
