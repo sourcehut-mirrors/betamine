@@ -32,6 +32,11 @@ twoquad_models = [
     "SUGARCANE",
 ]
 
+custom_models = {
+    "GRASS": "grass",
+    "SNOW": "snow",
+}
+
 transparent_blocks = [
     "WATER",
     "WATER_STATIONARY",
@@ -40,6 +45,8 @@ transparent_blocks = [
     "ICE",
     "PORTAL",
     "LEAVES",
+    "GLASS",
+    "SPAWNER",
 ]
 
 # betamine uses more intuitive names than Minecraft, so we hardcode these
@@ -155,7 +162,8 @@ def getmodel(block):
         return "model_onequad"
     if name in twoquad_models:
         return "model_twoquad"
-    # TODO: Custom models (slabs, levers, etc)
+    if name in custom_models:
+        return f"model_{custom_models[name]}"
     return "model_cube"
 
 def getflags(block):

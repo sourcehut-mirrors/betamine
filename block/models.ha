@@ -1,5 +1,8 @@
 use glm;
 
+// TODO: Source this color from the biome
+def VEGITATION: glm::v3 = [0.57, 0.74, 0.35];
+
 // Vertex of a block model.
 export type vertex = struct @packed {
 	pos: glm::v3,
@@ -43,6 +46,11 @@ const face_map = [
 
 // Generates a mesh for a basic cuboid block.
 fn model_cube(b: *block, out: *[]vertex, pos: *glm::v3, face: faces) void = {
+	let color = glm::V3_ONE;
+	if (b.id == LEAVES) {
+		color = VEGITATION;
+	};
+
 	for (let f &.. face_map) {
 		const (mask, mesh, uv) = *f;
 		if (mask & face == 0) {
@@ -64,7 +72,7 @@ fn model_cube(b: *block, out: *[]vertex, pos: *glm::v3, face: faces) void = {
 					vert_uv[0] * (1.0 / 16.0) + ux,
 					vert_uv[1] * (1.0 / 16.0) + uy,
 				],
-				color = glm::V3_ONE,
+				color = color,
 			});
 		};
 	};
@@ -80,4 +88,71 @@ fn model_onequad(b: *block, out: *[]vertex, pos: *glm::v3, f: faces) void = {
 // (e.g. sugarcane).
 fn model_twoquad(b: *block, out: *[]vertex, pos: *glm::v3, f: faces) void = {
 	return; // TODO
+};
+
+fn model_grass(b: *block, out: *[]vertex, pos: *glm::v3, face: faces) void = {
+	for (let f &.. face_map) {
+		const (mask, mesh, uv) = *f;
+		if (mask & face == 0) {
+			continue;
+		};
+
+		for (let i = 0u; i < 6; i += 1) {
+			const vert_pos = &mesh[i];
+			const vert_uv = &uv[i];
+			let ux = b.tex.0: f32 / 16.0;
+			let uy = b.tex.1: f32 / 16.0;
+			let color = glm::V3_ONE;
+
+			if (mask == faces::T) {
+				ux = 0.0;
+				uy = 0.0;
+				color = VEGITATION;
+			};
+
+			append(out, vertex {
+				pos = [
+					vert_pos[0] + pos[0],
+					vert_pos[1] + pos[1],
+					vert_pos[2] + pos[2],
+				],
+				uv = [
+					vert_uv[0] * (1.0 / 16.0) + ux,
+					vert_uv[1] * (1.0 / 16.0) + uy,
+				],
+				color = color,
+			});
+		};
+	};
+};
+
+fn model_snow(b: *block, out: *[]vertex, pos: *glm::v3, face: faces) void = {
+	for (let f &.. face_map) {
+		const (mask, mesh, uv) = *f;
+		for (let i = 0u; i < 6; i += 1) {
+			const vert_pos = &mesh[i];
+			const vert_uv = &uv[i];
+			let _vux = vert_uv[0] * (1.0 / 16.0);
+			let _vuy = vert_uv[1] * (1.0 / 16.0);
+			const ux = b.tex.0: f32 / 16.0;
+			const uy = b.tex.1: f32 / 16.0;
+
+			if (mask != faces::T && mask != faces::B) {
+				_vuy *= 1.0 / 8.0;
+			};
+
+			append(out, vertex {
+				pos = [
+					vert_pos[0] + pos[0],
+					(1.0 / 8.0) * vert_pos[1] + pos[1],
+					vert_pos[2] + pos[2],
+				],
+				uv = [
+					_vux + ux,
+					_vuy + uy,
+				],
+				color = glm::V3_ONE,
+			});
+		};
+	};
 };

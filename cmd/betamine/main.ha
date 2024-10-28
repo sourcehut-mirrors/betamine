@@ -44,6 +44,8 @@ type movement = enum uint {
 	RIGHT		= 1 << 1,
 	FORWARD		= 1 << 2,
 	BACKWARD	= 1 << 3,
+	UP		= 1 << 4,
+	DOWN		= 1 << 5,
 };
 
 export fn main() void = {
@@ -94,12 +96,21 @@ export fn main() void = {
 	fmt::printfln("chunk mesh generation completed in {:.04}ms",
 		diff: f32 / time::MILLISECOND: f32)!;
 
-	let chunk_vbo = 0u;
-	glGenBuffers(1, &chunk_vbo);
-	glBindBuffer(gl::GL_ARRAY_BUFFER, chunk_vbo);
+	let chunk_opaque_vbo = 0u;
+	glGenBuffers(1, &chunk_opaque_vbo);
+	glBindBuffer(gl::GL_ARRAY_BUFFER, chunk_opaque_vbo);
 	glBufferData(gl::GL_ARRAY_BUFFER,
 		(size(block::vertex) * len(mesh.vert_opaque)): uintptr,
 		&mesh.vert_opaque[0],
+		gl::GL_STATIC_DRAW);
+	assert(glGetError() == gl::GL_NO_ERROR);
+
+	let chunk_translucent_vbo = 0u;
+	glGenBuffers(1, &chunk_translucent_vbo);
+	glBindBuffer(gl::GL_ARRAY_BUFFER, chunk_translucent_vbo);
+	glBufferData(gl::GL_ARRAY_BUFFER,
+		(size(block::vertex) * len(mesh.vert_translucent)): uintptr,
+		&mesh.vert_translucent[0],
 		gl::GL_STATIC_DRAW);
 	assert(glGetError() == gl::GL_NO_ERROR);
 
@@ -130,6 +141,10 @@ export fn main() void = {
 					move |= movement::LEFT;
 				case SDL_Scancode::D =>
 					move |= movement::RIGHT;
+				case SDL_Scancode::LSHIFT =>
+					move |= movement::DOWN;
+				case SDL_Scancode::SPACE =>
+					move |= movement::UP;
 				case => void;
 				};
 			case SDL_EventType::KEYUP =>
@@ -142,6 +157,10 @@ export fn main() void = {
 					move &= ~movement::LEFT;
 				case SDL_Scancode::D =>
 					move &= ~movement::RIGHT;
+				case SDL_Scancode::LSHIFT =>
+					move &= ~movement::DOWN;
+				case SDL_Scancode::SPACE =>
+					move &= ~movement::UP;
 				case => void;
 				};
 			case SDL_EventType::MOUSEMOTION =>
@@ -168,9 +187,9 @@ export fn main() void = {
 
 		if (FLYING) {
 			forward = [
-				camera.dir[0] * delta: f32 * SPEED * 2.0,
-				camera.dir[1] * delta: f32 * SPEED * 2.0,
-				camera.dir[2] * delta: f32 * SPEED * 2.0,
+				camera.dir[0] * delta: f32 * SPEED * 2.5,
+				camera.dir[1] * delta: f32 * SPEED * 2.5,
+				camera.dir[2] * delta: f32 * SPEED * 2.5,
 			];
 		} else {
 			forward = [
@@ -185,6 +204,7 @@ export fn main() void = {
 			0.0,
 			camera.right[2] * delta * SPEED,
 		];
+		const up: glm::v3 = [0.0, delta * SPEED * 2.0, 0.0];
 
 		if (move & movement::FORWARD != 0) {
 			camera.pos = glm::v3_add(&camera.pos, &forward);
@@ -197,6 +217,12 @@ export fn main() void = {
 		};
 		if (move & movement::RIGHT != 0) {
 			camera.pos = glm::v3_add(&camera.pos, &right);
+		};
+		if (move & movement::UP != 0 && FLYING) {
+			camera.pos = glm::v3_add(&camera.pos, &up);
+		};
+		if (move & movement::DOWN != 0 && FLYING) {
+			camera.pos = glm::v3_sub(&camera.pos, &up);
 		};
 
 		camera.yaw += MOUSE_SPEED * delta * -mx: f32;
@@ -216,9 +242,11 @@ export fn main() void = {
 
 		// XXX TEMP Render test chunk
 
-		// chunk_vbo
-		glBindBuffer(gl::GL_ARRAY_BUFFER, chunk_vbo);
+		let model = glm::M4_IDENT;
+		glm::m4_mul_to(&vp, &model, &mvp);
+		gfx::terrain_bind(&terrain, &mvp);
 
+		glBindBuffer(gl::GL_ARRAY_BUFFER, chunk_opaque_vbo);
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 3, gl::GL_FLOAT, 0,
 			(8 * size(f32)): i32,
@@ -234,11 +262,27 @@ export fn main() void = {
 			(8 * size(f32)): i32,
 			(5 * size(f32)): uintptr: *opaque);
 
-		let model = glm::M4_IDENT;
-		glm::m4_mul_to(&vp, &model, &mvp);
-		gfx::terrain_bind(&terrain, &mvp);
 		glDrawArrays(gl::GL_TRIANGLES, 0,
 			len(mesh.vert_opaque): i32);
+
+		glBindBuffer(gl::GL_ARRAY_BUFFER, chunk_translucent_vbo);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, gl::GL_FLOAT, 0,
+			(8 * size(f32)): i32,
+			(0 * size(f32)): uintptr: *opaque);
+
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 2, gl::GL_FLOAT, 0,
+			(8 * size(f32)): i32,
+			(3 * size(f32)): uintptr: *opaque);
+
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 3, gl::GL_FLOAT, 0,
+			(8 * size(f32)): i32,
+			(5 * size(f32)): uintptr: *opaque);
+
+		glDrawArrays(gl::GL_TRIANGLES, 0,
+			len(mesh.vert_translucent): i32);
 
 		// XXX END TEMP
 
