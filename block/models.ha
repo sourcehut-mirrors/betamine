@@ -4,21 +4,28 @@ use glm;
 def VEGITATION: glm::v3 = [0.57, 0.74, 0.35];
 
 // Minecraft renders a constant ambient lighting factor based on the face
-const ambient: [_]glm::v3 = [
-	[1.0, 1.0, 1.0], // Top
-	[0.6, 0.6, 0.6], // North
-	[0.8, 0.8, 0.8], // East
-	[0.6, 0.6, 0.6], // South
-	[0.8, 0.8, 0.8], // West
-	[0.5, 0.5, 0.5], // Bottom
+const ambient: [_]f32 = [
+	1.0, // Top
+	0.6, // North
+	0.8, // East
+	0.6, // South
+	0.8, // West
+	0.5, // Bottom
+];
+
+const block_light: [_]f32 = [
+	0.050, 0.067, 0.085, 0.106, // [ 0..3 ]
+	0.129, 0.156, 0.186, 0.221, // [ 4..7 ]
+	0.261, 0.309, 0.367, 0.437, // [ 8..11]
+	0.525, 0.638, 0.789, 1.000 //  [12..15]
 ];
 
 fn light(v: *voxel, f: face, c: glm::v3) glm::v3 = {
-	return [
-		c[0] * ambient[f][0],
-		c[1] * ambient[f][1],
-		c[2] * ambient[f][2],
-	];
+	const factor = block_light[15]; // TODO
+	c[0] *= ambient[f] * factor;
+	c[1] *= ambient[f] * factor;
+	c[2] *= ambient[f] * factor;
+	return c;
 };
 
 // Vertex of a block model.
