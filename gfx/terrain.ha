@@ -21,7 +21,9 @@ export type terrain = struct {
 
 // Loads the terrain shader.
 export fn load_terrain() (terrain | error) = {
-	const shader = shader_loadfrom("gfx/glsl/common.vert", "gfx/glsl/terrain.frag")?;
+	const shader = shader_loadfrom(
+		"gfx/glsl/terrain.vert",
+		"gfx/glsl/terrain.frag")?;
 	const umvp = glGetUniformLocation(shader.id, c::nulstr("mvp\0"): *i8);
 	const utex = glGetUniformLocation(shader.id, c::nulstr("tex\0"): *i8);
 

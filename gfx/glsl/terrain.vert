@@ -10,8 +10,7 @@ out vec3 color;
 uniform mat4 mvp;
 
 void main() {
-	vec3 pos = vert_common[vert_pos];
-	gl_Position = mvp * vec4(pos, 1);
+	gl_Position = mvp * vec4(vert_pos, 1);
 	uv = vert_uv;
-	color = vec3(1.0);
+	color = vert_color;
 }

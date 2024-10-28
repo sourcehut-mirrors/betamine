@@ -22,10 +22,12 @@ use sdl2::image;
 use sdl2::mixer;
 use types::c;
 // XXX TEMP Chunk testing
+use block;
 use io;
 use nbt;
 use os;
 use world;
+use time;
 // XXX END TEMP
 
 def WIN_WIDTH = 1280;
@@ -82,39 +84,29 @@ export fn main() void = {
 	world::chunk_fromnbt(&chunk, &rd)!;
 	io::close(file)!;
 
+	const start = time::now(time::clock::MONOTONIC);
 	const mesh = engine::chunk_genmesh(&chunk);
+	const end = time::now(time::clock::MONOTONIC);
+	const diff = time::diff(start, end);
+	fmt::printfln("chunk mesh generation completed in {:.04}ms",
+		diff: f32 / time::MILLISECOND: f32)!;
+
+	for (let vert .. mesh.vert_opaque) {
+		fmt::println("pos", vert.pos[0], vert.pos[1], vert.pos[2])!;
+		fmt::println("uv", vert.uv[0], vert.uv[1])!;
+		fmt::println("color", vert.color[0], vert.color[1], vert.color[2])!;
+	};
+
+	let chunk_vbo = 0u;
+	glGenBuffers(1, &chunk_vbo);
+	glBindBuffer(gl::GL_ARRAY_BUFFER, chunk_vbo);
+	glBufferData(gl::GL_ARRAY_BUFFER,
+		(size(block::vertex) * len(mesh.vert_opaque)): uintptr,
+		&mesh.vert_opaque[0],
+		gl::GL_STATIC_DRAW);
+	assert(glGetError() == gl::GL_NO_ERROR);
 
 	// XXX END TEMP
-
-	// Prepare vertex buffer
-	let vbuf = 0u;
-	glGenBuffers(1, &vbuf);
-	glBindBuffer(gl::GL_ARRAY_BUFFER, vbuf);
-	glBufferData(gl::GL_ARRAY_BUFFER,
-		(size(f32) * len(cube_verticies)): uintptr,
-		&cube_verticies[0],
-		gl::GL_STATIC_DRAW);
-	assert(glGetError() == gl::GL_NO_ERROR);
-
-	// Prepare UV buffer
-	let uvbuf = 0u;
-	glGenBuffers(1, &uvbuf);
-	glBindBuffer(gl::GL_ARRAY_BUFFER, uvbuf);
-	glBufferData(gl::GL_ARRAY_BUFFER,
-		(size(f32) * len(cube_uv)): uintptr,
-		&cube_uv[0],
-		gl::GL_STATIC_DRAW);
-	assert(glGetError() == gl::GL_NO_ERROR);
-
-	// Prepare color buffer
-	let colorbuf = 0u;
-	glGenBuffers(1, &colorbuf);
-	glBindBuffer(gl::GL_ARRAY_BUFFER, colorbuf);
-	glBufferData(gl::GL_ARRAY_BUFFER,
-		(size(f32) * len(cube_color)): uintptr,
-		&cube_color[0],
-		gl::GL_STATIC_DRAW);
-	assert(glGetError() == gl::GL_NO_ERROR);
 
 	let vp = glm::M4_ZERO;
 	let mvp = glm::M4_ZERO;
@@ -213,34 +205,28 @@ export fn main() void = {
 		gfx::camera_matrix(&camera, &vp);
 		gfx::render_sky(&camera, ticks);
 
-		// vertex buffer
+		// XXX TEMP Render test chunk
+
+		// chunk_vbo
+		glBindBuffer(gl::GL_ARRAY_BUFFER, chunk_vbo);
+
 		glEnableVertexAttribArray(0);
-		glBindBuffer(gl::GL_ARRAY_BUFFER, vbuf);
-		glVertexAttribPointer(0, 3, gl::GL_FLOAT, 0, 0, null);
-
-		// uv buffer
-		glEnableVertexAttribArray(1);
-		glBindBuffer(gl::GL_ARRAY_BUFFER, uvbuf);
-		glVertexAttribPointer(1, 2, gl::GL_FLOAT, 0, 0, null);
-
-		// color buffer
-		glEnableVertexAttribArray(2);
-		glBindBuffer(gl::GL_ARRAY_BUFFER, colorbuf);
-		glVertexAttribPointer(2, 3, gl::GL_FLOAT, 0, 0, null);
+		glVertexAttribPointer(0, 3, gl::GL_FLOAT, 0,
+			size(block::vertex): i32,
+			offset(mesh.vert_opaque[0].pos): uintptr: *opaque);
+		glVertexAttribPointer(1, 2, gl::GL_FLOAT, 0,
+			size(block::vertex): i32,
+			offset(mesh.vert_opaque[0].uv): uintptr: *opaque);
+		glVertexAttribPointer(2, 3, gl::GL_FLOAT, 0,
+			size(block::vertex): i32,
+			offset(mesh.vert_opaque[0].color): uintptr: *opaque);
 
 		let model = glm::M4_IDENT;
-		for (let x = 0; x < 16; x += 1)
-		for (let z = 0; z < 16; z += 1) {
-			model = glm::M4_IDENT;
-			glm::translate(&model, &glm::v3_new(x: f32, 0.0, z: f32));
+		glm::m4_mul_to(&vp, &model, &mvp);
+		gfx::terrain_bind(&terrain, &mvp);
+		glDrawArrays(gl::GL_TRIANGLES, 0, 12*3);
 
-			glm::m4_mul_to(&vp, &model, &mvp);
-			gfx::terrain_bind(&terrain, &mvp);
-			glDrawArrays(gl::GL_TRIANGLES, 0, 12*3);
-		};
-
-		glDisableVertexAttribArray(0);
-		glDisableVertexAttribArray(1);
+		// XXX END TEMP
 
 		static let buf: [512]u8 = [0...];
 		const pos = fmt::bsprintf(buf, "x: {}\ny: {}\nz: {}",
