@@ -6,5 +6,9 @@ in vec3 color;
 uniform sampler2D tex;
 
 void main() {
-	gl_FragColor = texture(tex, uv).rgba * vec4(color, 1.0);
+	vec4 color = texture(tex, uv).rgba * vec4(color, 1.0);
+	if (color.a == 0) {
+		discard;
+	}
+	gl_FragColor = color;
 }
