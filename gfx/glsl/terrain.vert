@@ -1,4 +1,6 @@
 #version 420 compatibility
+#extension GL_ARB_shading_language_include : require
+#include "/lib/global.glsl"
 
 layout(location = 0) in vec3 vert_pos;
 layout(location = 1) in vec2 vert_uv;

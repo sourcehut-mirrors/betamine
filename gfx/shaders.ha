@@ -7,7 +7,6 @@ use gl::{
 	glCreateShader,
 	glDeleteShader,
 	glDetachShader,
-	glGetError,
 	glGetProgramInfoLog,
 	glGetProgramiv,
 	glGetShaderInfoLog,
@@ -28,6 +27,7 @@ use types::c;
 
 const shader_lib = [
 	"fog.glsl",
+	"global.glsl",
 ];
 
 fn shaders_init() void = {
