@@ -71,6 +71,7 @@ export fn render_plane(
 	tex: *texture,
 	ticks: u64,
 	color: *glm::v4,
+	enable_fog: bool = true,
 ) void = {
 	glUseProgram(plane.shader);
 
@@ -89,9 +90,14 @@ export fn render_plane(
 	defer glDisableVertexAttribArray(1);
 
 	// TODO: Move this to UBO
-	const cangle = celestial_angle(ticks);
-	const fog = world_fog_color(cangle);
-	glUniform3fv(plane.uniform.fog, 1, &fog[0]);
+	if (enable_fog) {
+		const cangle = celestial_angle(ticks);
+		const fog = world_fog_color(cangle);
+		glUniform3fv(plane.uniform.fog, 1, &fog[0]);
+	} else {
+		const white = glm::v3_new_fill(1.0);
+		glUniform3fv(plane.uniform.fog, 1, &white[0]);
+	};
 	glUniform4fv(plane.uniform.color, 1, &color[0]);
 	glUniformMatrix4fv(plane.uniform.mvp, 1, 0, &mat[0][0]);
 

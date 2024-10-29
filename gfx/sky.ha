@@ -1,47 +1,29 @@
 // Reference: https://github.com/ddevault/TrueCraft/wiki/Sky
 use gl;
 use gl::{
-	glClearColor,
+	glBlendFunc,
 	glClear,
+	glClearColor,
+	glDepthMask,
 	glDisable,
 	glEnable,
 };
 use glm;
 use math;
 
-// https://stackoverflow.com/questions/2353211/hsl-to-rgb-color-conversion
-def ONE_THIRD: f32 = 1.0 / 3.0;
-def ONE_SIXTH: f32 = 1.0 / 6.0;
-def TWO_THIRD: f32 = 2.0 / 3.0;
+let sun = texture { ... };
+let moon = texture { ... };
 
-fn hsl_rgb(h: f32, s: f32, l: f32) glm::v3 = {
-	if (s == 0.0) {
-		return [l, l, l]; // achromatic
-	};
-
-	const q = if (l <= 0.5) l * (1.0 + s) else l+s - l*s;
-	const p = 2.0 * l - q;
-
-	const r = hue_rgb(p, q, h + ONE_THIRD);
-	const g = hue_rgb(p, q, h);
-	const b = hue_rgb(p, q, h - ONE_THIRD);
-	return [r, g, b];
-};
-
-fn hue_rgb(p: f32, q: f32, t: f32) f32 = {
-	if (t < 0.0) t += 1.0;
-	if (t > 1.0) t -= 1.0;
-
-	if (t < ONE_SIXTH) return p + (q - p) * 6.0 * t;
-	if (t < 0.5) return q;
-	if (t < TWO_THIRD) return p + (q - p) * (TWO_THIRD - t) * 6.0;
-	return p;
+fn sky_init() void = {
+	sun = texture_load("assets/terrain/sun.png")!;
+	moon = texture_load("assets/terrain/moon.png")!;
 };
 
 // Calculates the celestial angle from the current ticks.
 export fn celestial_angle(ticks: u64) f32 = {
 	const x = (ticks % 24000): f32 / 24000.0 - 0.25;
 	if (x < 0.0) x += 1.0;
+	if (x > 1.0) x -= 1.0;
 	return x + ((1.0 - (math::cosf64(x * math::PI): f32 + 1.0) / 2.0) - x) / 3.0;
 };
 
@@ -73,4 +55,62 @@ export fn render_sky(cam: *camera, ticks: u64) void = {
 
 	glClearColor(atmo[0], atmo[1], atmo[2], 1.0);
 	glClear(gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT);
+
+	let vp = glm::M4_ZERO;
+	let model = glm::M4_IDENT, mvp = glm::M4_ZERO;
+	camera_matrix(cam, &vp);
+
+	// Sun & moon
+	{
+		glDepthMask(0);
+		glBlendFunc(gl::GL_SRC_ALPHA, gl::GL_ONE);
+		defer glDepthMask(1);
+		defer glBlendFunc(gl::GL_SRC_ALPHA, gl::GL_ONE_MINUS_SRC_ALPHA);
+
+		glm::scale(&model, &glm::v3_new(60.0, 1.0, 60.0));
+		glm::translate(&model, &glm::v3_new(0.0, 100.0, 0.0));
+		glm::rotate(&model, ca * (math::PI * 2.0): f32, &glm::v3_new(1.0, 0.0, 0.0));
+		glm::translate(&model, &cam.pos);
+
+		glm::m4_mul_to(&vp, &model, &mvp);
+		render_plane(&mvp, &sun, ticks, &glm::v4_new_fill(1.0));
+
+		model = glm::M4_IDENT;
+		glm::scale(&model, &glm::v3_new(60.0, 1.0, 60.0));
+		glm::translate(&model, &glm::v3_new(0.0, -100.0, 0.0));
+		glm::rotate(&model, ca * (math::PI * 2.0): f32, &glm::v3_new(1.0, 0.0, 0.0));
+		glm::translate(&model, &cam.pos);
+
+		glm::m4_mul_to(&vp, &model, &mvp);
+		render_plane(&mvp, &moon, ticks, &glm::v4_new_fill(1.0));
+	};
+};
+
+// https://stackoverflow.com/questions/2353211/hsl-to-rgb-color-conversion
+def ONE_THIRD: f32 = 1.0 / 3.0;
+def ONE_SIXTH: f32 = 1.0 / 6.0;
+def TWO_THIRD: f32 = 2.0 / 3.0;
+
+fn hsl_rgb(h: f32, s: f32, l: f32) glm::v3 = {
+	if (s == 0.0) {
+		return [l, l, l]; // achromatic
+	};
+
+	const q = if (l <= 0.5) l * (1.0 + s) else l+s - l*s;
+	const p = 2.0 * l - q;
+
+	const r = hue_rgb(p, q, h + ONE_THIRD);
+	const g = hue_rgb(p, q, h);
+	const b = hue_rgb(p, q, h - ONE_THIRD);
+	return [r, g, b];
+};
+
+fn hue_rgb(p: f32, q: f32, t: f32) f32 = {
+	if (t < 0.0) t += 1.0;
+	if (t > 1.0) t -= 1.0;
+
+	if (t < ONE_SIXTH) return p + (q - p) * 6.0 * t;
+	if (t < 0.5) return q;
+	if (t < TWO_THIRD) return p + (q - p) * (TWO_THIRD - t) * 6.0;
+	return p;
 };

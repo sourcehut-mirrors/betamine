@@ -10,10 +10,11 @@ uniform vec4 color;
 in vec2 uv;
 
 void main() {
-	vec4 texcolor = texture(tex, uv).rgba;
-	if (texcolor.a != 1.0) {
+	vec4 texcolor = texture(tex, uv);
+	if (texcolor.a < 0.1) {
 		discard;
 	}
 	texcolor *= color;
-	gl_FragColor = mix(texcolor, vec4(fog, 1.0), fog_factor());
+	// TODO: re-enable fog (breaks sun & moon)
+	gl_FragColor = mix(texcolor, vec4(fog, 1.0), 0.0);
 }
