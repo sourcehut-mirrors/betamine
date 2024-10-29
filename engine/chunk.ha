@@ -66,11 +66,7 @@ export fn chunk_genmesh(chunk: *world::chunk) chunk_mesh = {
 		const id = chunk.blocks[i];
 		if (id == 0) continue;
 
-		const block = match (block::blocks[id]) {
-		case let b: *block::block =>
-			yield b;
-		case null => continue;
-		};
+		const block = block::blocks[id];
 
 		let faces: face = 0;
 		voxel.id = id;
@@ -120,12 +116,9 @@ fn voxel_neighbors(
 		const id = chunk.blocks[nix];
 		*ptr = id;
 
-		match (block::blocks[id]) {
-		case let b: *block::block => void;
-			if (b.flags & flag::NON_OCCLUDING != 0) {
-				*faces |= 1 << face;
-			};
-		case null => void;
+		const block = block::blocks[id];
+		if (block.flags & flag::NON_OCCLUDING != 0) {
+			*faces |= 1 << face;
 		};
 	};
 };

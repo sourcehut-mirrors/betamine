@@ -1,12 +1,12 @@
 // File generated with scripts/genblocks.py
 
 // Block information database, indexed by block ID.
-export const blocks: [256]nullable *block = [
+export const blocks: [256]*block = [
 {%- for block in block_names %}
 	&block_{{block.lower()}},
 {%- endfor -%}
 {%- for i in range(num_null) %}
-	null,
+	&block_air,
 {%- endfor %}
 ];
 

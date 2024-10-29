@@ -86,12 +86,19 @@ fn model_cube(
 	};
 
 	if (b.flags & flag::TRANSLUCENT != 0) {
-		if (v.neighbors.top == b.id) faces &= ~(1 << face::T);
-		if (v.neighbors.bottom == b.id) faces &= ~(1 << face::B);
-		if (v.neighbors.north == b.id) faces &= ~(1 << face::N);
-		if (v.neighbors.east == b.id) faces &= ~(1 << face::E);
-		if (v.neighbors.south == b.id) faces &= ~(1 << face::S);
-		if (v.neighbors.west == b.id) faces &= ~(1 << face::W);
+		const tt = blocks[v.neighbors.top].flags & flag::TRANSLUCENT;
+		const bt = blocks[v.neighbors.bottom].flags & flag::TRANSLUCENT;
+		const nt = blocks[v.neighbors.north].flags & flag::TRANSLUCENT;
+		const et = blocks[v.neighbors.east].flags & flag::TRANSLUCENT;
+		const st = blocks[v.neighbors.south].flags & flag::TRANSLUCENT;
+		const wt = blocks[v.neighbors.west].flags & flag::TRANSLUCENT;
+
+		if (tt != 0) faces &= ~(1 << face::T);
+		if (bt != 0) faces &= ~(1 << face::B);
+		if (nt != 0) faces &= ~(1 << face::N);
+		if (et != 0) faces &= ~(1 << face::E);
+		if (st != 0) faces &= ~(1 << face::S);
+		if (wt != 0) faces &= ~(1 << face::W);
 	};
 
 	for (let f &.. face_map) {
