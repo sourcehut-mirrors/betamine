@@ -82,7 +82,7 @@ export fn main() void = {
 	gfx::init(WIN_WIDTH, WIN_HEIGHT);
 
 	let camera = gfx::camera_new();
-	camera.pos = [0.0, 72.0 + HEIGHT, 0.0];
+	camera.pos = [81.0, 80.0 + HEIGHT, 103.0];
 	//camera.pos = [0.0, 1.0 + HEIGHT, 0.0];
 	gfx::camera_apply(&camera);
 
@@ -131,7 +131,7 @@ export fn main() void = {
 	let quit = false;
 	let move: movement = 0;
 	let prev_time = 0u32;
-	let frames = 0u64, ticks = 6000u64;
+	let frames = 0u64, ticks = 0u64;
 	let fps = 0u, nframe = 0u;
 	for (!quit; frames += 1) {
 		let mx = 0i32, my = 0i32;
@@ -281,6 +281,8 @@ export fn main() void = {
 
 		// XXX END TEMP
 
+		gfx::render_clouds(&vp, ticks);
+
 		static let buf: [512]u8 = [0...];
 		const pos = fmt::bsprintf(buf, "x: {}\ny: {}\nz: {}",
 			camera.pos[0],
@@ -299,6 +301,11 @@ export fn main() void = {
 		const fps = fmt::bsprintf(buf, "FPS: {}", fps);
 		const (fw, _) = gfx::font_measure(fps);
 		gfx::font_draw(&glm::v2_new((WIN_WIDTH - fw): f32, 0.0), fps);
+
+		const time = fmt::bsprintf(buf, "ticks: {} (time: {})",
+			ticks, ticks % 24000);
+		const (fw, _) = gfx::font_measure(time);
+		gfx::font_draw(&glm::v2_new((WIN_WIDTH - fw): f32, 1.0 * 24.0), time);
 
 		sdl2::SDL_GL_SwapWindow(win);
 	};

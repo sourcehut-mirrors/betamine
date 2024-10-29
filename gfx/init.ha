@@ -28,8 +28,13 @@ export fn init(width: i32, height: i32) void = {
 	glEnable(gl::GL_DEPTH_TEST);
 	glEnable(gl::GL_CULL_FACE);
 
+	// Load shared GLSL includes
+	shaders_init();
+
 	// Initialize subsystems
-	terrain_init();
-	sprites_init();
+	clouds_init();
 	font_init();
+	plane_init();
+	sprites_init();
+	terrain_init();
 };

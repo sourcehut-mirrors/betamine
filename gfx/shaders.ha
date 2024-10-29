@@ -14,13 +14,37 @@ use gl::{
 	glGetShaderiv,
 	glGetUniformLocation,
 	glLinkProgram,
+	glNamedStringARB,
 	glShaderSource,
 	glUseProgram,
 };
 use io;
 use os;
+use path;
 use strings;
 use types::c;
+
+const shader_lib = [
+	"fog.glsl",
+];
+
+fn shaders_init() void = {
+	let buf = path::init()!;
+	for (let lib .. shader_lib) {
+		path::set(&buf, "gfx", "glsl", "lib", lib)!;
+
+		const file = os::open(path::string(&buf))!;
+		defer io::close(file)!;
+		const data = io::drain(file)!;
+		defer free(data);
+
+		path::set(&buf, "/", "lib", lib)!;
+		const name = strings::toutf8(path::string(&buf));
+		glNamedStringARB(gl::GL_SHADER_INCLUDE_ARB,
+			len(name): i32, &name[0]: *i8,
+			len(data): i32, &data[0]: *i8);
+	};
+};
 
 // Loads a shader from the given vertex and fragment GLSL files as paths.
 export fn shader_loadfrom(vert: str, frag: str) (uint | glerror) = {
