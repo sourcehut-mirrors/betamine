@@ -95,8 +95,11 @@ export fn main() void = {
 	const start = time::now(time::clock::MONOTONIC);
 	for (let x = 0; x < 12; x += 1)
 	for (let z = 0; z < 12; z += 1) {
-		const chunk = world::region_getchunk(&region, x, z)
-			as *world::chunk_header;
+		const chunk = match (world::region_getchunk(&region, x, z)) {
+		case let chunk: *world::chunk_header =>
+			yield chunk;
+		case => continue;
+		};
 		assert(chunk.scheme == world::compression::DEFLATE);
 		const data = world::chunk_data(chunk);
 
@@ -262,13 +265,17 @@ export fn main() void = {
 			glm::m4_mul_to(&vp, &model, &mvp);
 			gfx::terrain_bind(&terrain, &mvp, ticks);
 
-			gfx::chunk_begin(&chunks[x][z], false);
-			glDrawArrays(gl::GL_TRIANGLES, 0,
-				mesh.nopaque: i32);
+			if (mesh.nopaque != 0) {
+				gfx::chunk_begin(&chunks[x][z], false);
+				glDrawArrays(gl::GL_TRIANGLES, 0,
+					mesh.nopaque: i32);
+			};
 
-			gfx::chunk_begin(&chunks[x][z], true);
-			glDrawArrays(gl::GL_TRIANGLES, 0,
-				mesh.ntransparent: i32);
+			if (mesh.ntransparent != 0) {
+				gfx::chunk_begin(&chunks[x][z], true);
+				glDrawArrays(gl::GL_TRIANGLES, 0,
+					mesh.ntransparent: i32);
+			};
 		};
 
 		gfx::chunk_end(&chunks[0][0]);
