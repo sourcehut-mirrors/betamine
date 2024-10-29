@@ -5,15 +5,15 @@
 
 uniform sampler2D tex;
 uniform vec3 fog;
+uniform vec4 color;
 
 in vec2 uv;
 
-out vec4 color;
-
 void main() {
-	vec4 color = texture(tex, uv).rgba;
-	if (color.a != 1.0) {
+	vec4 texcolor = texture(tex, uv).rgba;
+	if (texcolor.a != 1.0) {
 		discard;
 	}
-	gl_FragColor = mix(color, vec4(fog, 1.0), fog_factor());
+	texcolor *= color;
+	gl_FragColor = mix(texcolor, vec4(fog, 1.0), fog_factor());
 }

@@ -12,6 +12,7 @@ use gl::{
 	glGetUniformLocation,
 	glUniform1i,
 	glUniform3fv,
+	glUniform4fv,
 	glUniformMatrix4fv,
 	glUseProgram,
 	glVertexAttribPointer,
@@ -30,11 +31,6 @@ const unit_plane_verticies: [_]f32 = [
 	 0.5, 0.0,  0.5, 1.0, 1.0,
 ];
 
-let unit_plane_vbo: uint = 0;
-let plane_shader: uint = 0;
-let plane_mvp: i32 = 0;
-let plane_color: i32 = 0;
-
 type _plane = struct {
 	shader: uint,
 	vbo: uint,
@@ -42,6 +38,7 @@ type _plane = struct {
 		mvp: i32,
 		tex: i32,
 		fog: i32,
+		color: i32,
 	},
 };
 
@@ -55,6 +52,7 @@ fn plane_init() void = {
 		("mvp\0", &plane.uniform.mvp),
 		("tex\0", &plane.uniform.tex),
 		("fog\0", &plane.uniform.fog),
+		("color\0", &plane.uniform.color),
 	);
 
 	glGenBuffers(1, &plane.vbo);
@@ -72,6 +70,7 @@ export fn render_plane(
 	mat: *glm::m4,
 	tex: *texture,
 	ticks: u64,
+	color: *glm::v4,
 ) void = {
 	glUseProgram(plane.shader);
 
@@ -93,8 +92,8 @@ export fn render_plane(
 	const cangle = celestial_angle(ticks);
 	const fog = world_fog_color(cangle);
 	glUniform3fv(plane.uniform.fog, 1, &fog[0]);
-
-	glUniformMatrix4fv(plane_mvp, 1, 0, &mat[0][0]);
+	glUniform4fv(plane.uniform.color, 1, &color[0]);
+	glUniformMatrix4fv(plane.uniform.mvp, 1, 0, &mat[0][0]);
 
 	glActiveTexture(gl::GL_TEXTURE0);
 	texture_bind(tex);

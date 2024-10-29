@@ -281,7 +281,7 @@ export fn main() void = {
 
 		// XXX END TEMP
 
-		gfx::render_clouds(&vp, ticks);
+		gfx::render_clouds(&vp, time, ticks);
 
 		static let buf: [512]u8 = [0...];
 		const pos = fmt::bsprintf(buf, "x: {}\ny: {}\nz: {}",
