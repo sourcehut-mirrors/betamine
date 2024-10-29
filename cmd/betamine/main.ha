@@ -40,6 +40,8 @@ def HEIGHT: f32 = 1.85; // Player height in meters
 
 // Enable flying in any direction
 def FLYING: bool = true;
+// Set the scale at which ticks pass
+def TIMESCALE: uint = 1;
 
 type movement = enum uint {
 	LEFT		= 1 << 0,
@@ -180,7 +182,7 @@ export fn main() void = {
 		};
 
 		if (frames % 3 == 0) {
-			ticks += 1;
+			ticks += TIMESCALE;
 		};
 
 		const time = sdl2::SDL_GetTicks();
