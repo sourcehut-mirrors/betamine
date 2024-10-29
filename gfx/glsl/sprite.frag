@@ -1,4 +1,4 @@
-#version 410 compatibility
+#version 420 compatibility
 
 in vec2 uv;
 

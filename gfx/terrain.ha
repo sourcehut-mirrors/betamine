@@ -15,7 +15,6 @@ type _terrain = struct {
 	uniform: struct {
 		mvp: i32,
 		tex: i32,
-		fog: i32,
 	},
 };
 
@@ -32,7 +31,6 @@ fn terrain_init() void = {
 	shader_uniforms(shader,
 		("mvp\0", &terrain.uniform.mvp),
 		("tex\0", &terrain.uniform.tex),
-		("fog\0", &terrain.uniform.fog),
 	);
 };
 
@@ -49,10 +47,6 @@ export fn terrain_bind(
 	glActiveTexture(gl::GL_TEXTURE0);
 	texture_bind(&terrain.texture);
 	glUniform1i(terrain.uniform.tex, 0);
-
-	const cangle = celestial_angle(ticks);
-	const fog = world_fog_color(cangle);
-	glUniform3fv(terrain.uniform.fog, 1, &fog[0]);
 
 	glcheck()!;
 };

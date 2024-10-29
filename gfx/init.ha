@@ -28,7 +28,8 @@ export fn init(width: i32, height: i32) void = {
 	glEnable(gl::GL_DEPTH_TEST);
 	glEnable(gl::GL_CULL_FACE);
 
-	// Load shared GLSL includes
+	// Load shader meta
+	fog_init();
 	shaders_init();
 
 	// Initialize subsystems

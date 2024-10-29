@@ -1,4 +1,4 @@
-#version 410 compatibility
+#version 420 compatibility
 
 // vec2 position, vec2 uv
 layout(location = 0) in vec4 vertex;

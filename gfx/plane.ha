@@ -37,7 +37,6 @@ type _plane = struct {
 	uniform: struct {
 		mvp: i32,
 		tex: i32,
-		fog: i32,
 		color: i32,
 	},
 };
@@ -51,7 +50,6 @@ fn plane_init() void = {
 	shader_uniforms(plane.shader,
 		("mvp\0", &plane.uniform.mvp),
 		("tex\0", &plane.uniform.tex),
-		("fog\0", &plane.uniform.fog),
 		("color\0", &plane.uniform.color),
 	);
 
@@ -71,9 +69,8 @@ export fn render_plane(
 	tex: *texture,
 	ticks: u64,
 	color: *glm::v4,
-	enable_fog: bool = true,
 ) void = {
-	glUseProgram(plane.shader);
+	shader_bind(plane.shader);
 
 	glEnableVertexAttribArray(0);
 	glBindBuffer(gl::GL_ARRAY_BUFFER, plane.vbo);
@@ -89,15 +86,6 @@ export fn render_plane(
 	defer glDisableVertexAttribArray(0);
 	defer glDisableVertexAttribArray(1);
 
-	// TODO: Move this to UBO
-	if (enable_fog) {
-		const cangle = celestial_angle(ticks);
-		const fog = world_fog_color(cangle);
-		glUniform3fv(plane.uniform.fog, 1, &fog[0]);
-	} else {
-		const white = glm::v3_new_fill(1.0);
-		glUniform3fv(plane.uniform.fog, 1, &white[0]);
-	};
 	glUniform4fv(plane.uniform.color, 1, &color[0]);
 	glUniformMatrix4fv(plane.uniform.mvp, 1, 0, &mat[0][0]);
 

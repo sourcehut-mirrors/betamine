@@ -248,6 +248,11 @@ export fn main() void = {
 			gfx::camera_apply(&camera);
 		};
 
+		const cangle = gfx::celestial_angle(ticks);
+		const fog = gfx::world_fog_color(cangle);
+		gfx::fog_config.color = fog;
+		gfx::fog_apply();
+
 		gfx::camera_matrix(&camera, &vp);
 		gfx::render_sky(&camera, ticks);
 

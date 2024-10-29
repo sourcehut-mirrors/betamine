@@ -12,10 +12,12 @@ use gl::{
 	glGetProgramiv,
 	glGetShaderInfoLog,
 	glGetShaderiv,
+	glGetUniformBlockIndex,
 	glGetUniformLocation,
 	glLinkProgram,
 	glNamedStringARB,
 	glShaderSource,
+	glUniformBlockBinding,
 	glUseProgram,
 };
 use io;
@@ -125,8 +127,16 @@ export fn shader_load(vert: str, frag: str) (uint | glerror) = {
 	return prog_id;
 };
 
+def UBO_BINDING_FOG = 0;
+
 // Binds a shader to the OpenGL context.
 export fn shader_bind(id: uint) void = {
+	// XXX: Ideally we wouldn't call this every time
+	const fog_ubo = glGetUniformBlockIndex(id, c::nulstr("FogParams\0"): *i8);
+	if (fog_ubo != gl::GL_INVALID_INDEX) {
+		glUniformBlockBinding(id, fog_ubo, UBO_BINDING_FOG);
+	};
+
 	glUseProgram(id);
 	glcheck()!;
 };

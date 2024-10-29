@@ -1,4 +1,4 @@
-#version 410 compatibility
+#version 420 compatibility
 
 layout(location = 0) in vec3 vert_pos;
 layout(location = 1) in vec2 vert_uv;

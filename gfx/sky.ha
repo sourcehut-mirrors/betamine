@@ -62,8 +62,10 @@ export fn render_sky(cam: *camera, ticks: u64) void = {
 
 	// Sun & moon
 	{
+		fog_disable();
 		glDepthMask(0);
 		glBlendFunc(gl::GL_SRC_ALPHA, gl::GL_ONE);
+		defer fog_enable();
 		defer glDepthMask(1);
 		defer glBlendFunc(gl::GL_SRC_ALPHA, gl::GL_ONE_MINUS_SRC_ALPHA);
 
