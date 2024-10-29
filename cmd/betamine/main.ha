@@ -84,7 +84,7 @@ export fn main() void = {
 	gfx::init(WIN_WIDTH, WIN_HEIGHT);
 
 	let camera = gfx::camera_new();
-	camera.pos = [81.0, 80.0 + HEIGHT, 103.0];
+	camera.pos = [0.0, 80.0 + HEIGHT, 0.0];
 	//camera.pos = [0.0, 1.0 + HEIGHT, 0.0];
 	gfx::camera_apply(&camera);
 
@@ -261,7 +261,6 @@ export fn main() void = {
 		for (let x = 0u; x < 12; x += 1)
 		for (let z = 0u; z < 12; z += 1) {
 			const mesh = &chunks[x][z];
-
 			let model = glm::M4_IDENT;
 			glm::translate(&model, &glm::v3_new(
 				(x * world::CHUNK_WIDTH): f32,
@@ -270,13 +269,24 @@ export fn main() void = {
 			));
 			glm::m4_mul_to(&vp, &model, &mvp);
 			gfx::terrain_bind(&mvp);
-
 			if (mesh.nopaque != 0) {
 				gfx::chunk_begin(&chunks[x][z], false);
 				glDrawArrays(gl::GL_TRIANGLES, 0,
 					mesh.nopaque: i32);
 			};
+		};
 
+		for (let x = 0u; x < 12; x += 1)
+		for (let z = 0u; z < 12; z += 1) {
+			const mesh = &chunks[x][z];
+			let model = glm::M4_IDENT;
+			glm::translate(&model, &glm::v3_new(
+				(x * world::CHUNK_WIDTH): f32,
+				0.0,
+				(z * world::CHUNK_WIDTH): f32,
+			));
+			glm::m4_mul_to(&vp, &model, &mvp);
+			gfx::terrain_bind(&mvp);
 			if (mesh.ntransparent != 0) {
 				gfx::chunk_begin(&chunks[x][z], true);
 				glDrawArrays(gl::GL_TRIANGLES, 0,
