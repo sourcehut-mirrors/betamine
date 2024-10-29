@@ -48,6 +48,19 @@ fn getindex(x: int, y: int, z: int) int = x * (CW * CH) + z * CH + y;
 	assert(ix_west == ix_base + neighbors[5]);
 };
 
+fn fill_voxel_data(
+	chunk: *world::chunk,
+	vox: *block::voxel_data,
+	ix: int,
+) void = {
+	const hi = ix / 2;
+	const ho = (ix % 2): u8 * 4;
+	vox.id = chunk.blocks[ix];
+	vox.data = chunk.metadata[hi] >> ho & 0xF;
+	vox.sky_light = chunk.sky_light[hi] >> ho & 0xF;
+	vox.block_light = chunk.block_light[hi] >> ho & 0xF;
+};
+
 // Generate meshes for a given [[world::chunk]].
 export fn chunk_genmesh(chunk: *world::chunk) chunk_mesh = {
 	def FW = world::CHUNK_WIDTH: f32;
@@ -67,9 +80,9 @@ export fn chunk_genmesh(chunk: *world::chunk) chunk_mesh = {
 		if (id == 0) continue;
 
 		const block = block::blocks[id];
+		fill_voxel_data(chunk, &voxel, i);
 
 		let faces: face = 0;
-		voxel.id = id;
 		voxel_neighbors(chunk, &voxel, &faces, i, x, y, z);
 
 		let vbo = &mesh.vert_opaque;
