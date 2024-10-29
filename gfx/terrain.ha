@@ -36,10 +36,7 @@ fn terrain_init() void = {
 
 // Binds the terrain shader to the OpenGL context with a provided terrain
 // texture and model-view-projection matrix.
-export fn terrain_bind(
-	mvp: *glm::m4,
-	ticks: u64,
-) void = {
+export fn terrain_bind(mvp: *glm::m4) void = {
 	shader_bind(terrain.shader);
 
 	glUniformMatrix4fv(terrain.uniform.mvp, 1, 0, &mvp[0][0]);

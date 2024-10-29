@@ -75,7 +75,7 @@ export fn render_sky(cam: *camera, ticks: u64) void = {
 		glm::translate(&model, &cam.pos);
 
 		glm::m4_mul_to(&vp, &model, &mvp);
-		render_plane(&mvp, &sun, ticks, &glm::v4_new_fill(1.0));
+		render_plane(&mvp, &sun, &glm::v4_new_fill(1.0));
 
 		model = glm::M4_IDENT;
 		glm::scale(&model, &glm::v3_new(60.0, 1.0, 60.0));
@@ -84,7 +84,7 @@ export fn render_sky(cam: *camera, ticks: u64) void = {
 		glm::translate(&model, &cam.pos);
 
 		glm::m4_mul_to(&vp, &model, &mvp);
-		render_plane(&mvp, &moon, ticks, &glm::v4_new_fill(1.0));
+		render_plane(&mvp, &moon, &glm::v4_new_fill(1.0));
 	};
 };
 

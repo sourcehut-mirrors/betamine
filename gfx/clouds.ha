@@ -16,7 +16,6 @@ def CLOUD_ALPHA = 0.75;
 export fn render_clouds(
 	vp: *glm::m4,
 	time: u64,
-	ticks: u64,
 ) void = {
 	// TODO: This needs some work
 	// 1. Something is wrong with the modulo logic
@@ -36,8 +35,7 @@ export fn render_clouds(
 		0.0,
 	));
 	glm::m4_mul_to(vp, &model, &mvp);
-	render_plane(&mvp, &clouds, ticks,
-		&glm::v4_new(1.0, 1.0, 1.0, CLOUD_ALPHA));
+	render_plane(&mvp, &clouds, &glm::v4_new(1.0, 1.0, 1.0, CLOUD_ALPHA));
 
 	// Again at -drift so it wraps correctly
 	glm::scale(&model, &glm::v3_new_fill(clouds.w: f32 * CLOUD_SCALE));
@@ -47,6 +45,5 @@ export fn render_clouds(
 		0.0,
 	));
 	glm::m4_mul_to(vp, &model, &mvp);
-	render_plane(&mvp, &clouds, ticks,
-		&glm::v4_new(1.0, 1.0, 1.0, CLOUD_ALPHA));
+	render_plane(&mvp, &clouds, &glm::v4_new(1.0, 1.0, 1.0, CLOUD_ALPHA));
 };

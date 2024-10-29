@@ -269,7 +269,7 @@ export fn main() void = {
 				(z * world::CHUNK_WIDTH): f32,
 			));
 			glm::m4_mul_to(&vp, &model, &mvp);
-			gfx::terrain_bind(&mvp, ticks);
+			gfx::terrain_bind(&mvp);
 
 			if (mesh.nopaque != 0) {
 				gfx::chunk_begin(&chunks[x][z], false);
@@ -288,7 +288,7 @@ export fn main() void = {
 
 		// XXX END TEMP
 
-		gfx::render_clouds(&vp, time, ticks);
+		gfx::render_clouds(&vp, time);
 
 		static let buf: [512]u8 = [0...];
 		const pos = fmt::bsprintf(buf, "x: {}\ny: {}\nz: {}",

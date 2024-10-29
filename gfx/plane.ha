@@ -67,7 +67,6 @@ fn plane_init() void = {
 export fn render_plane(
 	mat: *glm::m4,
 	tex: *texture,
-	ticks: u64,
 	color: *glm::v4,
 ) void = {
 	shader_bind(plane.shader);
