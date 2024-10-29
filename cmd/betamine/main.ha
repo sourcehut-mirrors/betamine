@@ -50,7 +50,7 @@ type movement = enum uint {
 	DOWN		= 1 << 5,
 };
 
-let chunks: [8][8]gfx::chunk_mesh = [
+let chunks: [12][12]gfx::chunk_mesh = [
 	[gfx::chunk_mesh { ... }...]...
 ];
 
@@ -93,8 +93,8 @@ export fn main() void = {
 	defer world::region_close(&region);
 
 	const start = time::now(time::clock::MONOTONIC);
-	for (let x = 0; x < 8; x += 1)
-	for (let z = 0; z < 8; z += 1) {
+	for (let x = 0; x < 12; x += 1)
+	for (let z = 0; z < 12; z += 1) {
 		const chunk = world::region_getchunk(&region, x, z)
 			as *world::chunk_header;
 		assert(chunk.scheme == world::compression::DEFLATE);
@@ -129,7 +129,7 @@ export fn main() void = {
 	let quit = false;
 	let move: movement = 0;
 	let prev_time = 0u32;
-	let frames = 0u64, ticks = 0u64;
+	let frames = 0u64, ticks = 6000u64;
 	let fps = 0u, nframe = 0u;
 	for (!quit; frames += 1) {
 		let mx = 0i32, my = 0i32;
@@ -249,8 +249,8 @@ export fn main() void = {
 
 		// XXX TEMP Render test chunk
 
-		for (let x = 0u; x < 8; x += 1)
-		for (let z = 0u; z < 8; z += 1) {
+		for (let x = 0u; x < 12; x += 1)
+		for (let z = 0u; z < 12; z += 1) {
 			const mesh = &chunks[x][z];
 
 			let model = glm::M4_IDENT;
@@ -260,7 +260,7 @@ export fn main() void = {
 				(z * world::CHUNK_WIDTH): f32,
 			));
 			glm::m4_mul_to(&vp, &model, &mvp);
-			gfx::terrain_bind(&terrain, &mvp);
+			gfx::terrain_bind(&terrain, &mvp, ticks);
 
 			gfx::chunk_begin(&chunks[x][z], false);
 			glDrawArrays(gl::GL_TRIANGLES, 0,
