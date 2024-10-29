@@ -41,7 +41,7 @@ export fn shader_loadfrom(vert: str, frag: str) (shader | glerror) = {
 	const frag = strings::fromutf8(data)!;
 	defer free(frag);
 
-	return shader_load(vert, frag)!;
+	return shader_load(vert, frag)?;
 };
 
 // Loads a shader from the given vertex and fragment GLSL.

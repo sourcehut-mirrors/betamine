@@ -24,12 +24,14 @@ export type chunk_mesh = struct {
 export fn chunk_init(mesh: *engine::chunk_mesh) chunk_mesh = {
 	let vbo = [0u, 0u];
 	glGenBuffers(2, &vbo[0]);
-	glBindBuffer(gl::GL_ARRAY_BUFFER, vbo[0]);
-	glBufferData(gl::GL_ARRAY_BUFFER,
-		(size(block::vertex) * len(mesh.vert_opaque)): uintptr,
-		&mesh.vert_opaque[0],
-		gl::GL_STATIC_DRAW);
-	glcheck()!;
+	if (len(mesh.vert_opaque) != 0) {
+		glBindBuffer(gl::GL_ARRAY_BUFFER, vbo[0]);
+		glBufferData(gl::GL_ARRAY_BUFFER,
+			(size(block::vertex) * len(mesh.vert_opaque)): uintptr,
+			&mesh.vert_opaque[0],
+			gl::GL_STATIC_DRAW);
+		glcheck()!;
+	};
 
 	if (len(mesh.vert_translucent) != 0) {
 		glBindBuffer(gl::GL_ARRAY_BUFFER, vbo[1]);
