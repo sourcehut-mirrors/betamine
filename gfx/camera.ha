@@ -30,7 +30,7 @@ export fn camera_new() camera = {
 	let c = camera {
 		fov = DEFAULT_FOV,
 		ratio = w: f32 / h: f32,
-		znear = 0.1,
+		znear = 0.5,
 		zfar = 256.0,
 		...
 	};

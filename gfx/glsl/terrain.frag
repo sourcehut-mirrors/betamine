@@ -4,10 +4,10 @@ in vec2 uv;
 in vec3 color;
 
 uniform sampler2D tex;
-// TODO: Fog distance parameter
 uniform vec3 fog;
 
-const float near = 0.1;
+// TODO: near/far plane should be uniforms
+const float near = 0.5;
 const float far = 256.0;
 
 float linearDepth(float depth) {
