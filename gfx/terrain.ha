@@ -4,7 +4,6 @@ use gl::{
 	glActiveTexture,
 	glUniform1i,
 	glUniformMatrix4fv,
-	glUniform3fv,
 };
 use glm;
 use types::c;

@@ -1,20 +1,19 @@
 use gl;
 use gl::{
-	glBindBuffer,
 	glActiveTexture,
+	glBindBuffer,
+	glBindVertexArray,
 	glBufferData,
 	glDisable,
-	glDisableVertexAttribArray,
 	glDrawArrays,
 	glEnable,
 	glEnableVertexAttribArray,
 	glGenBuffers,
+	glGenVertexArrays,
 	glGetUniformLocation,
 	glUniform1i,
-	glUniform3fv,
 	glUniform4fv,
 	glUniformMatrix4fv,
-	glUseProgram,
 	glVertexAttribPointer,
 };
 use glm;
@@ -33,7 +32,7 @@ const unit_plane_verticies: [_]f32 = [
 
 type _plane = struct {
 	shader: uint,
-	vbo: uint,
+	vao: uint,
 	uniform: struct {
 		mvp: i32,
 		tex: i32,
@@ -53,12 +52,28 @@ fn plane_init() void = {
 		("color\0", &plane.uniform.color),
 	);
 
-	glGenBuffers(1, &plane.vbo);
-	glBindBuffer(gl::GL_ARRAY_BUFFER, plane.vbo);
+	let vbo = 0u;
+	glGenBuffers(1, &vbo);
+	glGenVertexArrays(1, &plane.vao);
+
+	glBindVertexArray(plane.vao);
+	defer glBindVertexArray(0);
+
+	glBindBuffer(gl::GL_ARRAY_BUFFER, vbo);
 	glBufferData(gl::GL_ARRAY_BUFFER,
 		(size(f32) * len(unit_plane_verticies)): uintptr,
 		&unit_plane_verticies[0],
 		gl::GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, gl::GL_FLOAT, 0,
+		(5 * size(f32)): i32,
+		(0 * size(f32)): uintptr: *opaque);
+
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, gl::GL_FLOAT, 0,
+		(5 * size(f32)): i32,
+		(3 * size(f32)): uintptr: *opaque);
 
 	glcheck()!;
 };
@@ -71,19 +86,10 @@ export fn render_plane(
 ) void = {
 	shader_bind(plane.shader);
 
-	glEnableVertexAttribArray(0);
-	glBindBuffer(gl::GL_ARRAY_BUFFER, plane.vbo);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, gl::GL_FLOAT, 0,
-		(5 * size(f32)): i32,
-		(0 * size(f32)): uintptr: *opaque);
-
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, gl::GL_FLOAT, 0,
-		(5 * size(f32)): i32,
-		(3 * size(f32)): uintptr: *opaque);
-	defer glDisableVertexAttribArray(0);
-	defer glDisableVertexAttribArray(1);
+	glDisable(gl::GL_CULL_FACE);
+	defer glEnable(gl::GL_CULL_FACE);
+	glBindVertexArray(plane.vao);
+	defer glBindVertexArray(0);
 
 	glUniform4fv(plane.uniform.color, 1, &color[0]);
 	glUniformMatrix4fv(plane.uniform.mvp, 1, 0, &mat[0][0]);
@@ -91,10 +97,7 @@ export fn render_plane(
 	glActiveTexture(gl::GL_TEXTURE0);
 	texture_bind(tex);
 	glUniform1i(plane.uniform.tex, 0);
-
 	glcheck()!;
 
-	glDisable(gl::GL_CULL_FACE);
 	glDrawArrays(gl::GL_TRIANGLES, 0, 6);
-	glEnable(gl::GL_CULL_FACE);
 };

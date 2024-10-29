@@ -3,6 +3,7 @@ use gl;
 use gl::{
 	glActiveTexture,
 	glBindBuffer,
+	glBindVertexArray,
 	glBufferData,
 	glDisable,
 	glDisableVertexAttribArray,
@@ -10,6 +11,7 @@ use gl::{
 	glEnable,
 	glEnableVertexAttribArray,
 	glGenBuffers,
+	glGenVertexArrays,
 	glUniform1i,
 	glUniform4fv,
 	glUniformMatrix4fv,
@@ -30,7 +32,7 @@ const sprite_vert: [_]f32 = [
 
 type _sprite = struct {
 	shader: uint,
-	vbo: uint,
+	vao: uint,
 	uniform: struct {
 		clip: i32,
 		color: i32,
@@ -52,12 +54,22 @@ fn sprites_init() void = {
 		("mp\0", &sprite.uniform.mp),
 	);
 
-	glGenBuffers(1, &sprite.vbo);
-	glBindBuffer(gl::GL_ARRAY_BUFFER, sprite.vbo);
+	let vbo = 0u;
+	glGenBuffers(1, &vbo);
+	glGenVertexArrays(1, &sprite.vao);
+
+	glBindVertexArray(sprite.vao);
+	defer glBindVertexArray(0);
+
+	glBindBuffer(gl::GL_ARRAY_BUFFER, vbo);
 	glBufferData(gl::GL_ARRAY_BUFFER,
 		(size(f32) * len(sprite_vert)): uintptr,
 		&sprite_vert[0],
 		gl::GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 4, gl::GL_FLOAT, 0, 0, null);
+
 	glcheck()!;
 };
 
@@ -76,8 +88,13 @@ export fn sprite_draw(
 	clip: glm::v4 = [0.0, 0.0, 0.0, 0.0],
 	color: glm::v4 = [1.0, 1.0, 1.0, 1.0],
 ) void = {
+	shader_bind(sprite.shader);
+
 	glDisable(gl::GL_DEPTH_TEST);
 	defer glEnable(gl::GL_DEPTH_TEST);
+
+	glBindVertexArray(sprite.vao);
+	defer glBindVertexArray(0);
 
 	let noclip = true;
 	for (let v .. clip) {
@@ -97,13 +114,6 @@ export fn sprite_draw(
 		clip[3] /= tex.h: f32;
 	};
 
-	shader_bind(sprite.shader);
-
-	glEnableVertexAttribArray(0);
-	glBindBuffer(gl::GL_ARRAY_BUFFER, sprite.vbo);
-	glVertexAttribPointer(0, 4, gl::GL_FLOAT, 0, 0, null);
-	defer glDisableVertexAttribArray(0);
-
 	let mm = glm::M4_IDENT;
 	glm::scale(&mm, &glm::v3_new(
 		tex.w: f32 * clip[2],
@@ -116,8 +126,6 @@ export fn sprite_draw(
 	glUniformMatrix4fv(sprite.uniform.mp, 1, 0, &model_proj[0][0]);
 	glUniform4fv(sprite.uniform.color, 1, &color[0]);
 	glUniform4fv(sprite.uniform.clip, 1, &clip[0]);
-	glcheck()!;
-
 	glActiveTexture(gl::GL_TEXTURE0);
 	texture_bind(tex);
 	glUniform1i(sprite.uniform.image, 0);
