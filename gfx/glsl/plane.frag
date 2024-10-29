@@ -4,11 +4,12 @@
 
 uniform sampler2D tex;
 uniform vec4 color;
+uniform bool texture_enabled;
 
 in vec2 uv;
 
 void main() {
-	vec4 texcolor = texture(tex, uv);
+	vec4 texcolor = texture_enabled ? texture(tex, uv) : vec4(1.0);
 	if (texcolor.a < 0.1) {
 		discard;
 	}

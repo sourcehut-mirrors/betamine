@@ -37,6 +37,7 @@ type _plane = struct {
 		mvp: i32,
 		tex: i32,
 		color: i32,
+		texture_enabled: i32,
 	},
 };
 
@@ -50,6 +51,7 @@ fn plane_init() void = {
 		("mvp\0", &plane.uniform.mvp),
 		("tex\0", &plane.uniform.tex),
 		("color\0", &plane.uniform.color),
+		("texture_enabled\0", &plane.uniform.texture_enabled),
 	);
 
 	let vbo = 0u;
@@ -81,7 +83,7 @@ fn plane_init() void = {
 // Draws a unit plane with the given matrix applied.
 export fn render_plane(
 	mat: *glm::m4,
-	tex: *texture,
+	tex: nullable *texture,
 	color: *glm::v4,
 ) void = {
 	shader_bind(plane.shader);
@@ -94,10 +96,16 @@ export fn render_plane(
 	glUniform4fv(plane.uniform.color, 1, &color[0]);
 	glUniformMatrix4fv(plane.uniform.mvp, 1, 0, &mat[0][0]);
 
-	glActiveTexture(gl::GL_TEXTURE0);
-	texture_bind(tex);
-	glUniform1i(plane.uniform.tex, 0);
-	glcheck()!;
+	match (tex) {
+	case let tex: *texture =>
+		glActiveTexture(gl::GL_TEXTURE0);
+		texture_bind(tex);
+		glUniform1i(plane.uniform.tex, 0);
+		glUniform1i(plane.uniform.texture_enabled, 1);
+		glcheck()!;
+	case null =>
+		glUniform1i(plane.uniform.texture_enabled, 0);
+	};
 
 	glDrawArrays(gl::GL_TRIANGLES, 0, 6);
 };
