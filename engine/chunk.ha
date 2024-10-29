@@ -120,7 +120,7 @@ fn voxel_neighbors(
 
 		// Unconditionally render faces on chunk edges
 		if (axis == edge) {
-			*ptr = block::voxel_data { ... };
+			*ptr = block::voxel_data { block_light = 15, ... };
 			*faces |= 1 << face;
 			continue;
 		};

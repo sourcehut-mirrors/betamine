@@ -1,7 +1,14 @@
 use glm;
 
 fn light(v: *voxel, f: face, c: glm::v3) glm::v3 = {
-	const factor = block_light[15]; // TODO
+	const source = &v.neighbors.faces[f];
+	let light = source.block_light + source.sky_light;
+	if (light > 15) light = 15;
+
+	// TODO: Proper lighting depends on fetching data from neighboring
+	// chunks
+	const factor = block_light[light];
+
 	c[0] *= ambient[f] * factor;
 	c[1] *= ambient[f] * factor;
 	c[2] *= ambient[f] * factor;

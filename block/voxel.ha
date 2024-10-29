@@ -11,12 +11,16 @@ export type voxel_data = struct {
 export type voxel = struct {
 	voxel_data,
 
-	neighbors: struct {
-		top: voxel_data,
-		bottom: voxel_data,
-		north: voxel_data,
-		east: voxel_data,
-		south: voxel_data,
-		west: voxel_data,
+	neighbors: union {
+		struct {
+			top: voxel_data,
+			bottom: voxel_data,
+			north: voxel_data,
+			east: voxel_data,
+			south: voxel_data,
+			west: voxel_data,
+		},
+		// By face
+		faces: [6]voxel_data,
 	},
 };
