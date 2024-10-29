@@ -120,16 +120,15 @@ fn voxel_neighbors(
 
 		// Unconditionally render faces on chunk edges
 		if (axis == edge) {
-			*ptr = 0;
+			*ptr = block::voxel_data { ... };
 			*faces |= 1 << face;
 			continue;
 		};
 
 		const nix = ix + neighbors[i];
-		const id = chunk.blocks[nix];
-		*ptr = id;
+		fill_voxel_data(chunk, ptr, nix);
 
-		const block = block::blocks[id];
+		const block = block::blocks[ptr.id];
 		if (block.flags & flag::NON_OCCLUDING != 0) {
 			*faces |= 1 << face;
 		};

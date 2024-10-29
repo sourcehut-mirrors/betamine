@@ -70,12 +70,12 @@ fn model_cube(
 	};
 
 	if (b.flags & flag::TRANSLUCENT != 0) {
-		const tt = blocks[v.neighbors.top].flags & flag::TRANSLUCENT;
-		const bt = blocks[v.neighbors.bottom].flags & flag::TRANSLUCENT;
-		const nt = blocks[v.neighbors.north].flags & flag::TRANSLUCENT;
-		const et = blocks[v.neighbors.east].flags & flag::TRANSLUCENT;
-		const st = blocks[v.neighbors.south].flags & flag::TRANSLUCENT;
-		const wt = blocks[v.neighbors.west].flags & flag::TRANSLUCENT;
+		const tt = blocks[v.neighbors.top.id].flags & flag::TRANSLUCENT;
+		const bt = blocks[v.neighbors.bottom.id].flags & flag::TRANSLUCENT;
+		const nt = blocks[v.neighbors.north.id].flags & flag::TRANSLUCENT;
+		const et = blocks[v.neighbors.east.id].flags & flag::TRANSLUCENT;
+		const st = blocks[v.neighbors.south.id].flags & flag::TRANSLUCENT;
+		const wt = blocks[v.neighbors.west.id].flags & flag::TRANSLUCENT;
 
 		if (tt != 0) faces &= ~(1 << face::T);
 		if (bt != 0) faces &= ~(1 << face::B);
@@ -218,9 +218,9 @@ fn model_snow(
 	};
 };
 
-fn isfluid(id: u8) bool = {
-	return id == WATER || id == WATER_STATIONARY
-		|| id == LAVA || id == LAVA_STATIONARY;
+fn isfluid(vox: *voxel_data) bool = {
+	return vox.id == WATER || vox.id == WATER_STATIONARY
+		|| vox.id == LAVA || vox.id == LAVA_STATIONARY;
 };
 
 fn model_fluid(
@@ -239,12 +239,12 @@ fn model_fluid(
 		b.tex = (15, 15);
 	};
 
-	if (isfluid(v.neighbors.top)) faces &= ~(1 << face::T);
-	if (isfluid(v.neighbors.bottom)) faces &= ~(1 << face::B);
-	if (isfluid(v.neighbors.north)) faces &= ~(1 << face::N);
-	if (isfluid(v.neighbors.east)) faces &= ~(1 << face::E);
-	if (isfluid(v.neighbors.south)) faces &= ~(1 << face::S);
-	if (isfluid(v.neighbors.west)) faces &= ~(1 << face::W);
+	if (isfluid(&v.neighbors.top)) faces &= ~(1 << face::T);
+	if (isfluid(&v.neighbors.bottom)) faces &= ~(1 << face::B);
+	if (isfluid(&v.neighbors.north)) faces &= ~(1 << face::N);
+	if (isfluid(&v.neighbors.east)) faces &= ~(1 << face::E);
+	if (isfluid(&v.neighbors.south)) faces &= ~(1 << face::S);
+	if (isfluid(&v.neighbors.west)) faces &= ~(1 << face::W);
 
 	model_cube(&b, v, out, pos, faces);
 };

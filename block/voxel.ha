@@ -12,11 +12,11 @@ export type voxel = struct {
 	voxel_data,
 
 	neighbors: struct {
-		top: u8,
-		bottom: u8,
-		north: u8,
-		east: u8,
-		south: u8,
-		west: u8,
+		top: voxel_data,
+		bottom: voxel_data,
+		north: voxel_data,
+		east: voxel_data,
+		south: voxel_data,
+		west: voxel_data,
 	},
 };
