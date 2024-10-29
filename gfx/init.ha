@@ -24,12 +24,12 @@ export fn init(width: i32, height: i32) void = {
 	glBlendFunc(gl::GL_SRC_ALPHA, gl::GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(gl::GL_BLEND);
 
-	glDepthFunc(gl::GL_LEQUAL);
+	glDepthFunc(gl::GL_LESS);
 	glEnable(gl::GL_DEPTH_TEST);
 	glEnable(gl::GL_CULL_FACE);
 
 	// Initialize subsystems
-	plane_init();
+	terrain_init();
 	sprites_init();
 	font_init();
 };

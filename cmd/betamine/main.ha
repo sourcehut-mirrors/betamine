@@ -81,7 +81,6 @@ export fn main() void = {
 	sdl2::SDL_GL_SetSwapInterval(1);
 	gfx::init(WIN_WIDTH, WIN_HEIGHT);
 
-	const terrain = gfx::load_terrain()!;
 	let camera = gfx::camera_new();
 	camera.pos = [0.0, 72.0 + HEIGHT, 0.0];
 	//camera.pos = [0.0, 1.0 + HEIGHT, 0.0];
@@ -263,7 +262,7 @@ export fn main() void = {
 				(z * world::CHUNK_WIDTH): f32,
 			));
 			glm::m4_mul_to(&vp, &model, &mvp);
-			gfx::terrain_bind(&terrain, &mvp, ticks);
+			gfx::terrain_bind(&mvp, ticks);
 
 			if (mesh.nopaque != 0) {
 				gfx::chunk_begin(&chunks[x][z], false);

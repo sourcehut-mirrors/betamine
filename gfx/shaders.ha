@@ -22,13 +22,8 @@ use os;
 use strings;
 use types::c;
 
-// A GPU shader. Usually subclassed by specific implementations.
-export type shader = struct {
-	id: uint,
-};
-
 // Loads a shader from the given vertex and fragment GLSL files as paths.
-export fn shader_loadfrom(vert: str, frag: str) (shader | glerror) = {
+export fn shader_loadfrom(vert: str, frag: str) (uint | glerror) = {
 	const file = os::open(vert)!;
 	defer io::close(file)!;
 	const data = io::drain(file)!;
@@ -45,7 +40,7 @@ export fn shader_loadfrom(vert: str, frag: str) (shader | glerror) = {
 };
 
 // Loads a shader from the given vertex and fragment GLSL.
-export fn shader_load(vert: str, frag: str) (shader | glerror) = {
+export fn shader_load(vert: str, frag: str) (uint | glerror) = {
 	const vert_src = c::fromstr(vert);
 	defer free(vert_src);
 
@@ -103,21 +98,18 @@ export fn shader_load(vert: str, frag: str) (shader | glerror) = {
 
 	glcheck()?;
 
-	return shader {
-		id = prog_id,
-	};
+	return prog_id;
 };
 
 // Binds a shader to the OpenGL context.
-export fn shader_bind(shader: *shader) void = {
-	glUseProgram(shader.id);
+export fn shader_bind(id: uint) void = {
+	glUseProgram(id);
 	glcheck()!;
 };
 
 // Populates a set of uniform locations associated with this shader. The strings
 // must be nul terminated.
-export fn shader_uniforms(shader: *shader, un: (str, *i32)...) void = {
-	const id = shader.id;
+export fn shader_uniforms(id: uint, un: (str, *i32)...) void = {
 	for (let u .. un) {
 		*u.1 = glGetUniformLocation(id, c::nulstr(u.0): *i8);
 	};

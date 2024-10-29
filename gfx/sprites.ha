@@ -16,8 +16,6 @@ use gl::{
 	glVertexAttribPointer,
 };
 use types::c;
-// XXX TEMP
-use fmt;
 
 const sprite_vert: [_]f32 = [
         // pos    // tex
@@ -31,7 +29,7 @@ const sprite_vert: [_]f32 = [
 ];
 
 type _sprite = struct {
-	shader,
+	shader: uint,
 	vbo: uint,
 	uniform: struct {
 		clip: i32,
@@ -44,9 +42,10 @@ type _sprite = struct {
 let sprite = _sprite { ... };
 
 fn sprites_init() void = {
-	const shader = shader_loadfrom("gfx/glsl/sprite.vert", "gfx/glsl/sprite.frag")!;
-	sprite.id = shader.id;
-	shader_uniforms(&sprite,
+	const shader = shader_loadfrom(
+		"gfx/glsl/sprite.vert", "gfx/glsl/sprite.frag")!;
+	sprite.shader = shader;
+	shader_uniforms(shader,
 		("clip\0", &sprite.uniform.clip),
 		("sprite_color\0", &sprite.uniform.color),
 		("image\0", &sprite.uniform.image),
@@ -98,7 +97,7 @@ export fn sprite_draw(
 		clip[3] /= tex.h: f32;
 	};
 
-	shader_bind(&sprite);
+	shader_bind(sprite.shader);
 
 	glEnableVertexAttribArray(0);
 	glBindBuffer(gl::GL_ARRAY_BUFFER, sprite.vbo);
