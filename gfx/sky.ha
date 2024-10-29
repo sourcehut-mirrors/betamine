@@ -56,8 +56,8 @@ export fn world_fog_color(cangle: f32) glm::v3 = {
 	let y = math::cosf64(cangle * math::PI * 2.0): f32 * 2.0 + 0.5;
 	if (y < 0.0) y = 0.0;
 	if (y > 1.0) y = 1.0;
-	const r = 0.7529412 * y * 0.94 + 0.06;
-	const g = 0.8470588 * y * 0.94 + 0.06;
+	const r = 0.4929412 * y * 0.94 + 0.06;
+	const g = 0.6370588 * y * 0.94 + 0.06;
 	const b = 1.0 * y * 0.91 + 0.09;
 	return [r, g, b];
 };
@@ -73,7 +73,4 @@ export fn render_sky(cam: *camera, ticks: u64) void = {
 
 	glClearColor(atmo[0], atmo[1], atmo[2], 1.0);
 	glClear(gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT);
-
-	// TODO: Fog
-	// http://www.ozone3d.net/tutorials/glsl_fog/index.php
 };
