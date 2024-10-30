@@ -669,6 +669,7 @@ const block_slab_double = block {
 const block_slab_single = block {
 	id = SLAB_SINGLE,
 	model = &model_slab,
+	flags = flag::NON_OCCLUDING,
 	display_name = "stoneSlab",
 	tex = (6, 0),
 	hardness = 2.00,

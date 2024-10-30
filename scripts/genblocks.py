@@ -51,7 +51,7 @@ non_occluding = [
     "SPAWNER",
     "GLASS",
     "TRAPDOOR",
-    "SLAB",
+    "SLAB_SINGLE",
 ]
 
 transparent_blocks = [
