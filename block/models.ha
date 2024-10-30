@@ -29,7 +29,22 @@ export type modelfunc = fn(
 
 fn light(v: *voxel, f: face, c: *glm::v3) glm::v3 = {
 	const source = &v.neighbors.faces[f];
-	let light = source.block_light + source.sky_light;
+
+	let blocklight = source.block_light;
+	if (blocks[source.id].flags & flag::NON_OCCLUDING != 0) {
+		// Use brightest neighbor instead
+		// XXX: I think this should be the brightest neighbor of the
+		// _non-occluding block_, not this one
+		for (let i = 0u; i < len(v.neighbors.faces); i += 1) {
+			if (i == face::B) continue;
+			const n = &v.neighbors.faces[i];
+			if (n.block_light > blocklight) {
+				blocklight = n.block_light;
+			};
+		};
+	};
+
+	let light = blocklight + source.sky_light;
 	if (light > 15) light = 15;
 	const factor = block_light[light];
 
@@ -549,6 +564,23 @@ fn model_trapdoor(
 			const uy = tex.1: f32 / 16.0;
 
 			if (open) {
+				switch (mask) {
+				case face::T, face::B =>
+					if (eastwest) {
+						vuv1 *= SCALE;
+					} else {
+						vuv0 *= SCALE;
+					};
+				case face::W, face::E =>
+					if (eastwest) {
+						vuv0 *= SCALE;
+					};
+				case face::N, face::S =>
+					if (!eastwest) {
+						vuv0 *= SCALE;
+					};
+				};
+
 				switch (v.data & 3) {
 				case 0x00 => // Affixed to north
 					vx.pos[0] += pos[0];
@@ -569,14 +601,6 @@ fn model_trapdoor(
 					vx.pos[1] += pos[1];
 					vx.pos[2] += pos[2];
 				case => abort();
-				};
-
-				if (fmask & ~scale_faces != 0) {
-					if (eastwest) {
-						vuv1 *= SCALE;
-					} else {
-						vuv0 *= SCALE;
-					};
 				};
 			} else {
 				if (fmask & ~scale_faces != 0) {
