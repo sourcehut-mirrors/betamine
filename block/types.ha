@@ -10,7 +10,7 @@ export type block = struct {
 	model: *modelfunc,
 	// Row & column of texture from terrain.png (only used for simple cube
 	// models)
-	tex: (uint, uint),
+	tex: (int, int),
 	// Block hardness.
 	hardness: f64,
 };

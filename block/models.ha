@@ -65,11 +65,13 @@ fn model_face(
 	out: *[]vertex,
 	model: *vertex,
 	which: face,
+	rotuv: bool = false,
 ) void = {
+	const uv_off = if (rotuv) 6u else 0u;
 	const (mask, mesh, uv) = face_map[which];
 	for (let i = 0u; i < 6; i += 1) {
 		const vert_pos = &mesh[i];
-		const vert_uv = &uv[i];
+		const vert_uv = &uv[uv_off + i];
 		append(out, vertex {
 			pos = [
 				vert_pos[0] + model.pos[0],
@@ -125,7 +127,8 @@ fn model_cube(
 			continue;
 		};
 
-		const tex = b.tex;
+		let tex = b.tex;
+		let rotuv = false;
 		switch (b.id) {
 		case BOOKSHELF =>
 			if (mask == face::T) {
@@ -158,7 +161,7 @@ fn model_cube(
 			case 3 => yield face::E;
 			case =>   yield face::T;
 			};
-			const front = if (b.id == PUMPKIN) 7u else 8u;
+			const front = if (b.id == PUMPKIN) 7 else 8;
 			if (mask == face::T || mask == face::B) {
 				tex = (6, 6);
 			} else if (dir == mask) {
@@ -167,7 +170,7 @@ fn model_cube(
 				tex = (6, 7);
 			};
 		case FURNACE, FURNACE_LIT, DISPENSER =>
-			const front: (uint, uint) = switch (b.id) {
+			const front = switch (b.id) {
 			case FURNACE =>		yield (12, 2);
 			case FURNACE_LIT =>	yield (13, 3);
 			case DISPENSER =>	yield (14, 2);
@@ -189,6 +192,14 @@ fn model_cube(
 			} else {
 				tex = (10, 1);
 			};
+		case PISTON =>
+			const orient = v.data & 0b111;
+			tex = piston_uv[orient][mask];
+			rotuv = piston_rotuv[orient][mask];
+		case PISTON_STICKY =>
+			const orient = v.data & 0b111;
+			tex = spiston_uv[orient][mask];
+			rotuv = piston_rotuv[orient][mask];
 		case => void;
 		};
 
@@ -201,7 +212,7 @@ fn model_cube(
 			],
 			norm = glm::V3_ZERO,
 		};
-		model_face(v, out, &model, mask);
+		model_face(v, out, &model, mask, rotuv);
 	};
 };
 

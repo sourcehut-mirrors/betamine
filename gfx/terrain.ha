@@ -2,6 +2,7 @@ use fs;
 use gl;
 use gl::{
 	glActiveTexture,
+	glTexParameteri,
 	glUniform1i,
 	glUniformMatrix4fv,
 };
@@ -21,6 +22,14 @@ let terrain = _terrain { ... };
 
 fn terrain_init() void = {
 	const texture = texture_load("assets/terrain.png")!;
+	texture_bind(&texture);
+	glTexParameteri(gl::GL_TEXTURE_2D,
+		gl::GL_TEXTURE_WRAP_S,
+		gl::GL_MIRRORED_REPEAT: i32);
+	glTexParameteri(gl::GL_TEXTURE_2D,
+		gl::GL_TEXTURE_WRAP_T,
+		gl::GL_MIRRORED_REPEAT: i32);
+
 	const shader = shader_loadfrom(
 		"gfx/glsl/terrain.vert",
 		"gfx/glsl/terrain.frag")!;

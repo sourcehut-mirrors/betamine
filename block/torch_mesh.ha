@@ -54,8 +54,17 @@ const torch_mesh = _cube_mesh {
 	],
 };
 
+type _torch_uv = struct {
+	top: [6]glm::v2,
+	bottom: [6]glm::v2,
+	north: [6]glm::v2,
+	east: [6]glm::v2,
+	south: [6]glm::v2,
+	west: [6]glm::v2,
+};
+
 // Torch vertex UV mesh separated into six quads.
-const torch_uv = _cube_uv {
+const torch_uv = _torch_uv {
 	top = [
 		[9.0 / 256.0,	88.0 / 256.0],
 		[9.0 / 256.0,	86.0 / 256.0],

@@ -39,6 +39,8 @@ custom_models = {
     "WATER_STATIONARY": "fluid",
     "LAVA": "fluid",
     "LAVA_STATIONARY": "fluid",
+    "SLAB_SINGLE": "slab",
+    "TORCH": "torch",
 }
 
 non_occluding = [
@@ -48,6 +50,8 @@ non_occluding = [
     "TORCH",
     "SPAWNER",
     "GLASS",
+    "TRAPDOOR",
+    "SLAB",
 ]
 
 transparent_blocks = [

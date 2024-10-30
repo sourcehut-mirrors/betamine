@@ -28,3 +28,42 @@ const wool_color: [_]glm::v3 = [
 	[161.0 / 255.0,	 39.0 / 255.0,	 34.0 / 255.0],
 	[ 20.0 / 255.0,	 21.0 / 255.0,	 25.0 / 255.0],
 ];
+
+def SP_TOP: (int, int) = (10, 6);	// Sticky top
+def PS_TOP: (int, int) = (11, 6);	// Normal top
+def PS_BOT: (int, int) = (13, 6);	// Bottom
+def PS_SID: (int, int) = (12, 6);	// Side
+def PS_SDR: (int, int) = (12, -7);	// Side, reversed
+
+// UVs for various piston orientations
+const piston_uv = [
+	// top     bottom  north   south   west    east
+	[  PS_BOT, PS_TOP, PS_SDR, PS_SDR, PS_SDR, PS_SDR  ], // 0x00: Down
+	[  PS_TOP, PS_BOT, PS_SID, PS_SID, PS_SID, PS_SID  ], // 0x01: Up
+	[  PS_SID, PS_SID, PS_TOP, PS_BOT, PS_SID, PS_SID  ], // 0x00: North
+	[  PS_SDR, PS_SDR, PS_BOT, PS_TOP, PS_SDR, PS_SDR  ], // 0x02: South
+	[  PS_SID, PS_SID, PS_SDR, PS_SDR, PS_TOP, PS_BOT  ], // 0x03: West
+	[  PS_SDR, PS_SDR, PS_SID, PS_SID, PS_BOT, PS_TOP  ], // 0x04: East
+];
+
+// UVs for various sticky piston orientations
+const spiston_uv = [
+	// top     bottom  north   south   west    east
+	[  PS_BOT, SP_TOP, PS_SDR, PS_SDR, PS_SDR, PS_SDR  ], // 0x00: Down
+	[  SP_TOP, PS_BOT, PS_SID, PS_SID, PS_SID, PS_SID  ], // 0x01: Up
+	[  PS_SID, PS_SID, SP_TOP, PS_BOT, PS_SID, PS_SID  ], // 0x00: North
+	[  PS_SDR, PS_SDR, PS_BOT, SP_TOP, PS_SDR, PS_SDR  ], // 0x02: South
+	[  PS_SID, PS_SID, PS_SDR, PS_SDR, SP_TOP, PS_BOT  ], // 0x03: West
+	[  PS_SDR, PS_SDR, PS_SID, PS_SID, PS_BOT, SP_TOP  ], // 0x04: East
+];
+
+// Whether or not a given piston orientation requires rotating the UV's 90°
+const piston_rotuv = [
+	// top    bottom north  south  west   east
+	[  false, false, false, false, false, false  ], // 0x00: Down
+	[  false, false, false, false, false, false  ], // 0x01: Up
+	[  false, false, false, false, true,  true   ], // 0x00: North
+	[  false, false, false, false, true,  true   ], // 0x02: South
+	[  true,  true,  true,  true,  false, false  ], // 0x03: West
+	[  true,  true,  true,  true,  false, false  ], // 0x04: East
+];
