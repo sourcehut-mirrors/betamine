@@ -32,16 +32,8 @@ fn light(v: *voxel, f: face, c: *glm::v3) glm::v3 = {
 
 	let blocklight = source.block_light;
 	if (blocks[source.id].flags & flag::NON_OCCLUDING != 0) {
-		// Use brightest neighbor instead
-		// XXX: I think this should be the brightest neighbor of the
-		// _non-occluding block_, not this one
-		for (let i = 0u; i < len(v.neighbors.faces); i += 1) {
-			if (i == face::B) continue;
-			const n = &v.neighbors.faces[i];
-			if (n.block_light > blocklight) {
-				blocklight = n.block_light;
-			};
-		};
+		// TODO: Use brightest neighbor instead
+		blocklight = 15;
 	};
 
 	let light = blocklight + source.sky_light;
@@ -610,6 +602,117 @@ fn model_trapdoor(
 				vx.pos[0] += pos[0];
 				vx.pos[1]  = vx.pos[1] * SCALE + pos[1];
 				vx.pos[2] += pos[2];
+			};
+
+			vx.uv[0] = vuv0 + ux;
+			vx.uv[1] = vuv1 + uy;
+		};
+
+		append(out, verticies...);
+	};
+};
+
+fn model_door(
+	b: *block,
+	v: *voxel,
+	out: *[]vertex,
+	pos: *glm::v3,
+	faces: face,
+) void = {
+	def SCALE = 3.0 / 16.0;
+
+	// TODO: Finish this
+	const open = v.data & 0x4 != 0;
+	const top = v.data & 0x8 != 0;
+
+	let dir = v.data & 0b11;
+	if (open) {
+		dir = (dir + 1) % 4;
+	};
+
+	const eastwest = dir & 0b101 != 0;	// X axis
+	static const scale_closed = [
+		(1 << face::N) | (1 << face::S), // 0x00
+		(1 << face::W) | (1 << face::E), // 0x01
+		(1 << face::N) | (1 << face::S), // 0x02
+		(1 << face::W) | (1 << face::E), // 0x03
+	];
+	const scale_faces = scale_closed[dir & 0b11];
+
+	let tex = b.tex;
+	switch (b.id) {
+	case DOOR =>
+		if (top)	tex = (1, 5)
+		else		tex = (1, 6);
+	case DOOR_IRON =>
+		if (top)	tex = (2, 5)
+		else		tex = (2, 6);
+	case => abort();
+	};
+	if (open) {
+		tex.0 = -(tex.0 + 1);
+	};
+
+	for (let f &.. face_map) {
+		const (mask, _, _) = *f;
+
+		let verticies: [6]vertex = [
+			vertex { ... }...
+		];
+
+		const model = vertex {
+			pos = glm::V3_ZERO,
+			color = glm::V3_ONE,
+			uv = [0.0, 0.0],
+			norm = glm::V3_ZERO,
+		};
+		model_face(v, &verticies[..0], &model, mask);
+
+		const fmask = 1 << mask;
+
+		for (let vx &.. verticies) {
+			const vuv0 = vx.uv[0];
+			const vuv1 = vx.uv[1];
+			const ux = tex.0: f32 / 16.0;
+			const uy = tex.1: f32 / 16.0;
+
+			switch (mask) {
+			case face::T, face::B =>
+				if (eastwest) {
+					vuv1 *= SCALE;
+				} else {
+					vuv0 *= SCALE;
+				};
+			case face::W, face::E =>
+				if (eastwest) {
+					vuv0 *= SCALE;
+				};
+			case face::N, face::S =>
+				if (!eastwest) {
+					vuv0 *= SCALE;
+				};
+			};
+
+			switch (dir) {
+			case 0x00 => // Situated west when closed
+				vx.pos[0]  = vx.pos[0] * SCALE + pos[0];
+				vx.pos[1] += pos[1];
+				vx.pos[2] += pos[2];
+			case 0x01 => // Situated north when closed
+				vx.pos[0] += pos[0];
+				vx.pos[1] += pos[1];
+				vx.pos[2]  = vx.pos[2] * SCALE + pos[2];
+			case 0x02 => // Situated east when closed
+				vx.pos[0]  = vx.pos[0] * SCALE + pos[0];
+				vx.pos[1] += pos[1];
+				vx.pos[2] += pos[2];
+				vx.pos[0] += 13.0 / 16.0;
+			case 0x03 => // Situated south when closed
+				vx.pos[0] += pos[0];
+				vx.pos[1] += pos[1];
+				vx.pos[2]  = vx.pos[2] * SCALE + pos[2];
+				vx.pos[2] += 13.0 / 16.0;
+			case => abort();
 			};
 
 			vx.uv[0] = vuv0 + ux;

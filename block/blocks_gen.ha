@@ -853,7 +853,8 @@ const block_signpost = block {
 
 const block_door = block {
 	id = DOOR,
-	model = &model_cube,
+	model = &model_door,
+	flags = flag::NON_OCCLUDING,
 	display_name = "Wooden Door",
 	tex = (1, 6),
 	hardness = 3.00,
@@ -900,6 +901,7 @@ const block_sign_wall = block {
 const block_lever = block {
 	id = LEVER,
 	model = &model_cube,
+	flags = flag::NON_OCCLUDING,
 	display_name = "Lever",
 	tex = (0, 6),
 	hardness = 0.50,
@@ -909,6 +911,7 @@ const block_lever = block {
 const block_plate_stone = block {
 	id = PLATE_STONE,
 	model = &model_cube,
+	flags = flag::NON_OCCLUDING,
 	display_name = "Pressure Plate",
 	hardness = 0.50,
 	...
@@ -916,7 +919,8 @@ const block_plate_stone = block {
 
 const block_door_iron = block {
 	id = DOOR_IRON,
-	model = &model_cube,
+	model = &model_door,
+	flags = flag::NON_OCCLUDING,
 	display_name = "Iron Door",
 	tex = (1, 6),
 	hardness = 5.00,
@@ -926,6 +930,7 @@ const block_door_iron = block {
 const block_plate_wood = block {
 	id = PLATE_WOOD,
 	model = &model_cube,
+	flags = flag::NON_OCCLUDING,
 	display_name = "Pressure Plate",
 	hardness = 0.50,
 	...

@@ -42,6 +42,8 @@ custom_models = {
     "SLAB_SINGLE": "slab",
     "TORCH": "torch",
     "TRAPDOOR": "trapdoor",
+    "DOOR": "door",
+    "DOOR_IRON": "door",
 }
 
 non_occluding = [
@@ -53,6 +55,11 @@ non_occluding = [
     "GLASS",
     "TRAPDOOR",
     "SLAB_SINGLE",
+    "DOOR",
+    "DOOR_IRON",
+    "LEVER",
+    "PLATE_STONE",
+    "PLATE_WOOD",
 ]
 
 transparent_blocks = [
