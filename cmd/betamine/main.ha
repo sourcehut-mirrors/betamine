@@ -42,6 +42,8 @@ def HEIGHT: f32 = 1.85; // Player height in meters
 def FLYING: bool = true;
 // Set the scale at which ticks pass
 def TIMESCALE: uint = 1;
+// Enable vertical sync
+def VSYNC = 0;
 
 type movement = enum uint {
 	LEFT		= 1 << 0,
@@ -80,7 +82,7 @@ export fn main() void = {
 	sdl2::SDL_SetRelativeMouseMode(true);
 
 	const ctx = sdl2::SDL_GL_CreateContext(win);
-	sdl2::SDL_GL_SetSwapInterval(1);
+	sdl2::SDL_GL_SetSwapInterval(VSYNC);
 	gfx::init(WIN_WIDTH, WIN_HEIGHT);
 
 	let camera = gfx::camera_new();
