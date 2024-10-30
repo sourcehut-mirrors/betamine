@@ -16,9 +16,9 @@ export type voxel = struct {
 			top: voxel_data,
 			bottom: voxel_data,
 			north: voxel_data,
-			east: voxel_data,
 			south: voxel_data,
 			west: voxel_data,
+			east: voxel_data,
 		},
 		// By face
 		faces: [6]voxel_data,

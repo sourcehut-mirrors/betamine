@@ -668,7 +668,7 @@ const block_slab_double = block {
 
 const block_slab_single = block {
 	id = SLAB_SINGLE,
-	model = &model_cube,
+	model = &model_slab,
 	display_name = "stoneSlab",
 	tex = (6, 0),
 	hardness = 2.00,
@@ -722,7 +722,7 @@ const block_obsidian = block {
 
 const block_torch = block {
 	id = TORCH,
-	model = &model_cube,
+	model = &model_torch,
 	flags = flag::NON_OCCLUDING,
 	display_name = "Torch",
 	tex = (0, 5),
@@ -1144,6 +1144,7 @@ const block_locked_chest = block {
 const block_trapdoor = block {
 	id = TRAPDOOR,
 	model = &model_cube,
+	flags = flag::NON_OCCLUDING,
 	display_name = "Trapdoor",
 	tex = (4, 5),
 	hardness = 3.00,
