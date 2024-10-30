@@ -38,19 +38,24 @@ export fn chunk_init(mesh: *engine::chunk_mesh) chunk_mesh = {
 			gl::GL_STATIC_DRAW);
 
 		glVertexAttribPointer(0, 3, gl::GL_FLOAT, 0,
-			(8 * size(f32)): i32,
+			(11 * size(f32)): i32,
 			(0 * size(f32)): uintptr: *opaque);
 		glEnableVertexAttribArray(0);
 
-		glVertexAttribPointer(1, 2, gl::GL_FLOAT, 0,
-			(8 * size(f32)): i32,
+		glVertexAttribPointer(1, 3, gl::GL_FLOAT, 0,
+			(11 * size(f32)): i32,
 			(3 * size(f32)): uintptr: *opaque);
 		glEnableVertexAttribArray(1);
 
 		glVertexAttribPointer(2, 3, gl::GL_FLOAT, 0,
-			(8 * size(f32)): i32,
-			(5 * size(f32)): uintptr: *opaque);
+			(11 * size(f32)): i32,
+			(6 * size(f32)): uintptr: *opaque);
 		glEnableVertexAttribArray(2);
+
+		glVertexAttribPointer(3, 2, gl::GL_FLOAT, 0,
+			(11 * size(f32)): i32,
+			(9 * size(f32)): uintptr: *opaque);
+		glEnableVertexAttribArray(3);
 
 		glcheck()!;
 	};
@@ -67,19 +72,24 @@ export fn chunk_init(mesh: *engine::chunk_mesh) chunk_mesh = {
 		glcheck()!;
 
 		glVertexAttribPointer(0, 3, gl::GL_FLOAT, 0,
-			(8 * size(f32)): i32,
+			(11 * size(f32)): i32,
 			(0 * size(f32)): uintptr: *opaque);
 		glEnableVertexAttribArray(0);
 
-		glVertexAttribPointer(1, 2, gl::GL_FLOAT, 0,
-			(8 * size(f32)): i32,
+		glVertexAttribPointer(1, 3, gl::GL_FLOAT, 0,
+			(11 * size(f32)): i32,
 			(3 * size(f32)): uintptr: *opaque);
 		glEnableVertexAttribArray(1);
 
 		glVertexAttribPointer(2, 3, gl::GL_FLOAT, 0,
-			(8 * size(f32)): i32,
-			(5 * size(f32)): uintptr: *opaque);
+			(11 * size(f32)): i32,
+			(6 * size(f32)): uintptr: *opaque);
 		glEnableVertexAttribArray(2);
+
+		glVertexAttribPointer(3, 2, gl::GL_FLOAT, 0,
+			(11 * size(f32)): i32,
+			(9 * size(f32)): uintptr: *opaque);
+		glEnableVertexAttribArray(3);
 
 		glcheck()!;
 	};

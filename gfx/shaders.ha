@@ -28,6 +28,7 @@ use types::c;
 const shader_lib = [
 	"fog.glsl",
 	"global.glsl",
+	"lighting.glsl",
 ];
 
 fn shaders_init() void = {

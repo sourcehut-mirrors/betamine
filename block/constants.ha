@@ -3,16 +3,6 @@ use glm;
 // TODO: Source this color from the biome
 def VEGITATION: glm::v3 = [0.57, 0.74, 0.35];
 
-// Minecraft renders a constant ambient lighting factor based on the face
-const ambient: [_]f32 = [
-	1.0, // Top
-	0.6, // North
-	0.8, // East
-	0.6, // South
-	0.8, // West
-	0.5, // Bottom
-];
-
 const block_light: [_]f32 = [
 	0.050, 0.067, 0.085, 0.106, // [ 0..3 ]
 	0.129, 0.156, 0.186, 0.221, // [ 4..7 ]

@@ -61,6 +61,15 @@ const cube_mesh = _cube_mesh {
 	],
 };
 
+const cube_norm: [6]glm::v3 = [
+	[ 0.0,  1.0,  0.0],	// Top
+	[ 0.0, -1.0,  0.0],	// Bottom
+	[ 0.0,  0.0, -1.0],	// North
+	[ 1.0,  0.0,  0.0],	// East
+	[ 0.0,  0.0,  1.0],	// South
+	[-1.0,  0.0,  0.0],	// West
+];
+
 type _cube_uv = struct {
 	top: [6]glm::v2,
 	bottom: [6]glm::v2,

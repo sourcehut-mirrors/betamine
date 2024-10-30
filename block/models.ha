@@ -1,25 +1,11 @@
 use glm;
 
-fn light(v: *voxel, f: face, c: glm::v3) glm::v3 = {
-	const source = &v.neighbors.faces[f];
-	let light = source.block_light + source.sky_light;
-	if (light > 15) light = 15;
-
-	// TODO: Proper lighting depends on fetching data from neighboring
-	// chunks
-	const factor = block_light[light];
-
-	c[0] *= ambient[f] * factor;
-	c[1] *= ambient[f] * factor;
-	c[2] *= ambient[f] * factor;
-	return c;
-};
-
 // Vertex of a block model.
 export type vertex = struct @packed {
 	pos: glm::v3,
-	uv: glm::v2,
+	norm: glm::v3,
 	color: glm::v3,
+	uv: glm::v2,
 };
 
 // Faces of a cube.
@@ -40,6 +26,17 @@ export type modelfunc = fn(
 	pos: *glm::v3,
 	f: face,
 ) void;
+
+fn light(v: *voxel, f: face, c: glm::v3) glm::v3 = {
+	const source = &v.neighbors.faces[f];
+	let light = source.block_light + source.sky_light;
+	if (light > 15) light = 15;
+	const factor = block_light[light];
+	c[0] *= factor;
+	c[1] *= factor;
+	c[2] *= factor;
+	return c;
+};
 
 // Placeholder function for blocks which do not have a model (just air, really).
 fn model_none(
@@ -109,6 +106,7 @@ fn model_cube(
 					vert_pos[1] + pos[1],
 					vert_pos[2] + pos[2],
 				],
+				norm = cube_norm[mask],
 				uv = [
 					vert_uv[0] * (1.0 / 16.0) + ux,
 					vert_uv[1] * (1.0 / 16.0) + uy,
@@ -178,6 +176,7 @@ fn model_grass(
 					vert_pos[1] + pos[1],
 					vert_pos[2] + pos[2],
 				],
+				norm = cube_norm[mask],
 				uv = [
 					vert_uv[0] * (1.0 / 16.0) + ux,
 					vert_uv[1] * (1.0 / 16.0) + uy,
@@ -215,10 +214,8 @@ fn model_snow(
 					(1.0 / 8.0) * vert_pos[1] + pos[1],
 					vert_pos[2] + pos[2],
 				],
-				uv = [
-					_vux + ux,
-					_vuy + uy,
-				],
+				norm = cube_norm[mask],
+				uv = [_vux + ux, _vuy + uy],
 				color = light(v, mask, glm::V3_ONE),
 			});
 		};
