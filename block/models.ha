@@ -324,14 +324,14 @@ fn model_snow(
 			const uy = b.tex.1: f32 / 16.0;
 
 			if (mask != face::T && mask != face::B) {
-				vuv1 *= 1.0 / 8.0;
+				vuv1 *= 2.0 / 16.0;
 			};
 
 			vx.uv[0] = vuv0 + ux;
 			vx.uv[1] = vuv1 + uy;
 
 			vx.pos[0] += pos[0];
-			vx.pos[1] = vx.pos[1] * (1.0 / 8.0) + pos[1];
+			vx.pos[1] = vx.pos[1] * (2.0 / 16.0) + pos[1];
 			vx.pos[2] += pos[2];
 		};
 
@@ -377,7 +377,7 @@ fn model_slab(
 	pos: *glm::v3,
 	faces: face,
 ) void = {
-	def SCALE = 4.0 / 8.0;
+	def SCALE = 8.0 / 16.0;
 
 	for (let f &.. face_map) {
 		const (mask, _, _) = *f;
@@ -498,5 +498,100 @@ fn model_torch(
 				color = glm::V3_ONE,
 			});
 		};
+	};
+};
+
+fn model_trapdoor(
+	b: *block,
+	v: *voxel,
+	out: *[]vertex,
+	pos: *glm::v3,
+	faces: face,
+) void = {
+	def SCALE = 3.0 / 16.0;
+
+	const open = v.data & 0x4 != 0;
+	const eastwest = v.data & 0b11 < 2;	// X axis
+	let scale_faces = (1 << face::T) | (1 << face::B);
+
+	static const scale_open = [
+		(1 << face::N) | (1 << face::S), // 0x00
+		(1 << face::N) | (1 << face::S), // 0x01
+		(1 << face::W) | (1 << face::E), // 0x02
+		(1 << face::W) | (1 << face::E), // 0x03
+	];
+	if (open) {
+		scale_faces = scale_open[v.data & 0b11];
+	};
+
+	for (let f &.. face_map) {
+		const (mask, _, _) = *f;
+
+		let verticies: [6]vertex = [
+			vertex { ... }...
+		];
+
+		const model = vertex {
+			pos = glm::V3_ZERO,
+			color = glm::V3_ONE,
+			uv = [0.0, 0.0],
+			norm = glm::V3_ZERO,
+		};
+		model_face(v, &verticies[..0], &model, mask);
+
+		const fmask = 1 << mask;
+
+		const tex = b.tex;
+		for (let vx &.. verticies) {
+			const vuv0 = vx.uv[0];
+			const vuv1 = vx.uv[1];
+			const ux = tex.0: f32 / 16.0;
+			const uy = tex.1: f32 / 16.0;
+
+			if (open) {
+				switch (v.data & 3) {
+				case 0x00 => // Affixed to north
+					vx.pos[0] += pos[0];
+					vx.pos[1] += pos[1];
+					vx.pos[2]  = vx.pos[2] * SCALE + pos[2];
+					vx.pos[2] += 13.0 / 16.0;
+				case 0x01 => // Affixed to south
+					vx.pos[0] += pos[0];
+					vx.pos[1] += pos[1];
+					vx.pos[2]  = vx.pos[2] * SCALE + pos[2];
+				case 0x02 => // Affixed to west
+					vx.pos[0]  = vx.pos[0] * SCALE + pos[0];
+					vx.pos[1] += pos[1];
+					vx.pos[2] += pos[2];
+					vx.pos[0] += 13.0 / 16.0;
+				case 0x03 => // Affixed to east
+					vx.pos[0]  = vx.pos[0] * SCALE + pos[0];
+					vx.pos[1] += pos[1];
+					vx.pos[2] += pos[2];
+				case => abort();
+				};
+
+				if (fmask & ~scale_faces != 0) {
+					if (eastwest) {
+						vuv1 *= SCALE;
+					} else {
+						vuv0 *= SCALE;
+					};
+				};
+			} else {
+				if (fmask & ~scale_faces != 0) {
+					vuv1 *= SCALE;
+				};
+
+				vx.pos[0] += pos[0];
+				vx.pos[1]  = vx.pos[1] * SCALE + pos[1];
+				vx.pos[2] += pos[2];
+			};
+
+			vx.uv[0] = vuv0 + ux;
+			vx.uv[1] = vuv1 + uy;
+		};
+
+		append(out, verticies...);
 	};
 };

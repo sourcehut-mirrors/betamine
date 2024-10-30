@@ -41,6 +41,7 @@ custom_models = {
     "LAVA_STATIONARY": "fluid",
     "SLAB_SINGLE": "slab",
     "TORCH": "torch",
+    "TRAPDOOR": "trapdoor",
 }
 
 non_occluding = [

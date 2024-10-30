@@ -1144,7 +1144,7 @@ const block_locked_chest = block {
 
 const block_trapdoor = block {
 	id = TRAPDOOR,
-	model = &model_cube,
+	model = &model_trapdoor,
 	flags = flag::NON_OCCLUDING,
 	display_name = "Trapdoor",
 	tex = (4, 5),
