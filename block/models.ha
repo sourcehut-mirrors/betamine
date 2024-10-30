@@ -130,6 +130,26 @@ fn model_cube(
 		let tex = b.tex;
 		let rotuv = false;
 		switch (b.id) {
+		case LEAVES =>
+			switch (v.data) {
+			case 0x01 =>	// Spruce
+				tex = (4, 8);
+			case 0x02 =>	// Birch
+				tex = (4, 3);
+			case =>
+				tex = (4, 3);
+			};
+		case WOOD =>
+			if (mask == face::T || mask == face::B) {
+				tex = (5, 1);
+			} else switch (v.data) {
+			case 0x01 =>	// Spruce
+				tex = (4, 7);
+			case 0x02 =>	// Birch
+				tex = (5, 7);
+			case =>		// Default
+				tex = (4, 1);
+			};
 		case BOOKSHELF =>
 			if (mask == face::T) {
 				tex = (4, 0);
