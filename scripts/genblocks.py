@@ -10,10 +10,11 @@ env = Environment(
 
 # Blocks whose mesh is a single quad
 onequad_models = [
-    "RAIL_POWERED",
-    "RAIL_DETECTOR",
     "LADDER",
     "RAIL",
+    "RAIL_DETECTOR",
+    "RAIL_POWERED",
+    "REDSTONE",
 ]
 
 # Blocks whose mesh is two quads in an "X" configuration
@@ -27,7 +28,6 @@ twoquad_models = [
     "MUSHROOM_BROWN",
     "MUSHROOM_RED",
     "FIRE",
-    "REDSTONE",
     "SEEDS",
     "SUGARCANE",
 ]
@@ -41,6 +41,8 @@ custom_models = {
     "LAVA_STATIONARY": "fluid",
     "SLAB_SINGLE": "slab",
     "TORCH": "torch",
+    "REDSTONE_TORCH_DIM": "torch",
+    "REDSTONE_TORCH_LIT": "torch",
     "TRAPDOOR": "trapdoor",
     "DOOR": "door",
     "DOOR_IRON": "door",
@@ -51,6 +53,8 @@ non_occluding = [
     "SNOW",
     "CAKE",
     "TORCH",
+    "REDSTONE_TORCH_DIM",
+    "REDSTONE_TORCH_LIT",
     "SPAWNER",
     "GLASS",
     "TRAPDOOR",
