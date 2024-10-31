@@ -956,7 +956,7 @@ const block_redstone_ore_lit = block {
 
 const block_redstone_torch_dim = block {
 	id = REDSTONE_TORCH_DIM,
-	model = &model_cube,
+	model = &model_torch,
 	display_name = "Redstone Torch",
 	tex = (3, 7),
 	hardness = 0.00,
@@ -965,7 +965,7 @@ const block_redstone_torch_dim = block {
 
 const block_redstone_torch_lit = block {
 	id = REDSTONE_TORCH_LIT,
-	model = &model_cube,
+	model = &model_torch,
 	display_name = "Redstone Torch",
 	tex = (3, 6),
 	hardness = 0.00,

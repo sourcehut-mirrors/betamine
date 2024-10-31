@@ -29,14 +29,14 @@ export type modelfunc = fn(
 
 fn light(v: *voxel, f: face, c: *glm::v3) glm::v3 = {
 	const source = &v.neighbors.faces[f];
-
 	let blocklight = source.block_light;
+	let skylight = source.sky_light;
 	if (blocks[source.id].flags & flag::NON_OCCLUDING != 0) {
 		// TODO: Use brightest neighbor instead
 		blocklight = 15;
 	};
 
-	let light = blocklight + source.sky_light;
+	let light = blocklight + skylight;
 	if (light > 15) light = 15;
 	const factor = block_light[light];
 
@@ -264,7 +264,49 @@ fn model_twoquad(
 	pos: *glm::v3,
 	faces: face,
 ) void = {
-	return; // TODO
+	let tex = b.tex;
+
+	let color = glm::V3_ONE;
+	switch (b.id) {
+	case TALL_GRASS =>
+		color = FOILAGE;
+	case SEEDS =>
+		tex.0 += v.data: int;
+	case SAPLING =>
+		switch (v.data & 0b11) {
+		case 1 => // Spruce
+			tex = (15, 3);
+		case 2 => // Birch
+			tex = (15, 4);
+		case => void;
+		};
+	case => void;
+	};
+
+	const uv_x = tex.0: f32 / 16.0;
+	const uv_y = tex.1: f32 / 16.0;
+
+	for (let i = 0u; i < 4; i += 1) {
+		let norm = twoquad_norm[i];
+		norm = glm::V3_ZERO;
+		for (let j = 0u; j < 6; j += 1) {
+			const vert_pos = twoquad_mesh[i * 6 + j];
+			const vert_uv = twoquad_uv[i * 6 + j];
+			append(out, vertex {
+				pos = [
+					vert_pos[0] + pos[0],
+					vert_pos[1] + pos[1],
+					vert_pos[2] + pos[2],
+				],
+				norm = norm,
+				uv = [
+					vert_uv[0] * (1.0 / 16.0) + uv_x,
+					vert_uv[1] * (1.0 / 16.0) + uv_y,
+				],
+				color = color,
+			});
+		};
+	};
 };
 
 fn model_grass(
@@ -457,6 +499,7 @@ fn model_torch(
 	pos: *glm::v3,
 	faces: face,
 ) void = {
+	// TODO: Change UVs for redstone torches
 	for (let f &.. torch_face_map) {
 		const (mask, mesh, uv) = *f;
 		for (let i = 0u; i < 6; i += 1) {
