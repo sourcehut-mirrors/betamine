@@ -28,4 +28,16 @@ export fn main() void = {
 			chunk.coords.0, chunk.coords.1,
 			chunk.last_update)!;
 	};
+
+	fmt::println()!;
+
+	const at: world::coords3D = (-14, 78, 64);
+
+	at.1 = 0;
+	for (at.1 < 128; at.1 += 1) {
+		let voxel = world::voxel { ... };
+		world::get(&w, &voxel, at, mode::LOAD)!;
+		fmt::printfln("block at <{},{},{}>: {}",
+			at.0, at.1, at.2, voxel.id)!;
+	};
 };

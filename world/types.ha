@@ -25,9 +25,9 @@ fn coords2D_cmp(a: const *opaque, b: const *opaque) int = {
 	} else if (a.0 > b.0) {
 		return 1;
 	} else if (a.1 < b.1) {
-		return 1;
-	} else if (a.1 > b.1) {
 		return -1;
+	} else if (a.1 > b.1) {
+		return 1;
 	} else {
 		return 0;
 	};
@@ -50,7 +50,7 @@ export fn world_to_chunk(world: coords3D, out: nullable *coords3D) coords2D = {
 
 	return (
 		world.0 / CHUNK_WIDTH - (if (world.0 < 0) 1 else 0),
-		world.1 / CHUNK_WIDTH - (if (world.1 < 0) 1 else 0),
+		world.2 / CHUNK_WIDTH - (if (world.2 < 0) 1 else 0),
 	);
 };
 
@@ -61,7 +61,7 @@ export fn chunk_to_region(chunk: coords2D, out: nullable *coords2D) coords2D = {
 	case let c: *coords2D =>
 		*c = (
 			if (chunk.0 >= 0) chunk.0 % REGION_WIDTH
-			else REGION_WIDTH + chunk.1 % REGION_WIDTH,
+			else REGION_WIDTH + chunk.0 % REGION_WIDTH,
 			if (chunk.1 >= 0) chunk.1 % REGION_WIDTH
 			else REGION_WIDTH + chunk.1 % REGION_WIDTH,
 		);

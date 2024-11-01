@@ -16,7 +16,9 @@ use strings;
 export type mode = enum uint {
 	// Return empty voxels/chunks (full of air blocks)
 	EMPTY = 0,
-	// Load additional chunks from disk if necessary
+	// Load additional chunks from disk if necessary. If the chunks are not
+	// available on disk and GENERATE is also set, new chunks are generated;
+	// otherwise empty chunks/voxels are returned.
 	LOAD = 1 << 0,
 	// Generate new chunks if necessary
 	GENERATE = 1 << 1,
@@ -66,12 +68,20 @@ export fn get(
 	c: coords3D,
 	mode: mode = mode::EMPTY,
 ) (void | error) = {
-	const (x, y, z) = c;
-	if (y < 0 || y >= 128) {
+	if (c.1 < 0 || c.1 >= 128) {
 		return range;
 	};
 
-	abort(); // TODO
+	const cc = world_to_chunk(c, &c);
+	const chunk = get_chunk(w, cc, mode)?;
+
+	const ix = c.0 * (CHUNK_WIDTH * CHUNK_HEIGHT) + c.2 * CHUNK_HEIGHT + c.1;
+	const hi = ix / 2;
+	const ho = (ix % 2): u8 * 4;
+	out.id = chunk.blocks[ix];
+	out.data = chunk.metadata[hi] >> ho & 0xF;
+	out.sky_light = chunk.sky_light[hi] >> ho & 0xF;
+	out.block_light = chunk.block_light[hi] >> ho & 0xF;
 };
 
 // Fetches a [[chunk]] from the world.
