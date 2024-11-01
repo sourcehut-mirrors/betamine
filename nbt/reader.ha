@@ -51,7 +51,7 @@ export fn next(rd: *reader) (value | io::EOF | io::error) = {
 	let rdbuf: [8]u8 = [0...];
 	let val = value { ... };
 
-	for (state.tag == nbt_tag::LIST) {
+	for (state.tag == nbt_tag::LIST; state = &rd.stack[0]) {
 		val.tag = state.etype;
 		if (state.length != 0) {
 			state.length -= 1;

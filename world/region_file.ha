@@ -90,8 +90,10 @@ export fn chunk_data(chdr: *chunk_header) const []u8 = {
 // Returns the chunk header associated with the given coordinates, if any,
 // specified in chunk coordinates relative to this region.
 export fn region_getchunk(r: *region, c: coords2D) nullable *chunk_header = {
-	assert(c.0 < REGION_WIDTH && c.1 < REGION_WIDTH);
-	const ix = c.1 * REGION_WIDTH + c.0;
+	const (x, z) = c;
+	assert(x < REGION_WIDTH && z < REGION_WIDTH);
+	assert(x >= 0 && z >= 0);
+	const ix = z * REGION_WIDTH + x;
 
 	let offs = endian::ntohu32(r.data.offs[ix]);
 	if (offs == 0) {
