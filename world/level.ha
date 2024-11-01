@@ -20,7 +20,7 @@ export type level = struct {
 	disk_size: i64,
 };
 
-// Decode a [[level]] from NBT.
+// Decode a [[level]] from an [[nbt::reader]].
 export fn level_decode(rd: *nbt::reader) (level | io::error) = {
 	let tag = nbt::next(rd)? as nbt::value;
 	assert(tag.tag == nbt::nbt_tag::COMPOUND);
@@ -45,11 +45,11 @@ export fn level_decode(rd: *nbt::reader) (level | io::error) = {
 		case "RandomSeed" =>
 			level.seed = tag._i64;
 		case "SpawnX" =>
-			level.spawn.x = tag._i32;
+			level.spawn.0 = tag._i32;
 		case "SpawnY" =>
-			level.spawn.y = tag._i32;
+			level.spawn.1 = tag._i32;
 		case "SpawnZ" =>
-			level.spawn.z = tag._i32;
+			level.spawn.2 = tag._i32;
 		case "Player" =>
 			nbt::skip(rd, tag)?; // TODO
 		case "raining" =>

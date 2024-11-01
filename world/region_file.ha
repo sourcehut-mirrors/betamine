@@ -5,13 +5,18 @@ use io;
 use math;
 use os;
 
+// Width of a region in chunks.
+export def REGION_WIDTH = 32;
+
 export def PAGE_SIZE = 4096;
 
 // 32x32 chunk region of the world, mapped to a file on disk.
 export type region = struct {
+	coords: coords2D,
 	file: io::file,
 	length: size,
 	data: *region_file,
+	refs: int,
 };
 
 // Memory-mapped region file data structure.
@@ -19,6 +24,47 @@ export type region_file = struct {
 	offs: [1024]u32,
 	mtime: [1024]u32,
 	pages: [*][PAGE_SIZE]u8,
+};
+
+// Opens a [[region]] file from disk.
+export fn region_open(
+	coords: coords2D,
+	path: str,
+	flag: fs::flag = fs::flag::RDONLY,
+) (*region | error) = {
+	const file = os::open(path, flag)?;
+	const length = io::seek(file, 0, io::whence::END)!: size;
+	io::seek(file, 0, io::whence::SET)!;
+
+	const prot =
+		if (flag & fs::flag::RDWR != 0) io::prot::READ | io::prot::WRITE
+		else io::prot::READ;
+
+	const addr = io::mmap(null, length, prot,
+		io::mflag::PRIVATE, file, 0)?;
+
+	return alloc(region {
+		coords = coords,
+		file = file,
+		length = length,
+		data = addr: *region_file,
+		refs = 1,
+	});
+};
+
+// Increments the reference count for a [[region]].
+export fn region_ref(r: *region) void = {
+	r.refs += 1;
+};
+
+// Decrements the reference count for a [[region]].
+export fn region_unref(r: *region) void = {
+	r.refs -= 1;
+	if (r.refs == 0) {
+		io::munmap(r.data, r.length)!;
+		io::close(r.file)!;
+		free(r);
+	};
 };
 
 // Chunk data compression scheme. In practice only DEFLATE is used.
@@ -41,39 +87,10 @@ export fn chunk_data(chdr: *chunk_header) const []u8 = {
 	return chdr.data[..length];
 };
 
-// Opens a [[region]] file from disk.
-export fn region_open(
-	path: str,
-	flag: fs::flag = fs::flag::RDONLY,
-) (region | io::error | fs::error | errors::error) = {
-	const file = os::open(path, flag)?;
-	const length = io::seek(file, 0, io::whence::END)!: size;
-	io::seek(file, 0, io::whence::SET)!;
-
-	const prot =
-		if (flag & fs::flag::RDWR != 0) io::prot::READ | io::prot::WRITE
-		else io::prot::READ;
-
-	const addr = io::mmap(null, length, prot,
-		io::mflag::PRIVATE, file, 0)?;
-
-	return region {
-		file = file,
-		length = length,
-		data = addr: *region_file,
-	};
-};
-
-// Closes a [[region]].
-export fn region_close(r: *region) void = {
-	io::munmap(r.data, r.length)!;
-	io::close(r.file)!;
-};
-
 // Returns the chunk header associated with the given coordinates, if any,
-// specified in global chunk coordinates.
-export fn region_getchunk(r: *region, x: int, z: int) nullable *chunk_header = {
-	const ix = math::absi(x % 32) + math::absi(z % 32) * 32;
+// specified in chunk coordinates relative to this region.
+export fn region_getchunk(r: *region, c: coords2D) nullable *chunk_header = {
+	const ix = c.1 * REGION_WIDTH + c.0;
 
 	let offs = endian::ntohu32(r.data.offs[ix]);
 	if (offs == 0) {

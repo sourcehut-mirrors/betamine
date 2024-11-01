@@ -2,15 +2,16 @@ use io;
 use nbt;
 
 // Width and depth of a world chunk in blocks.
-export def CHUNK_WIDTH: uint = 16;
+export def CHUNK_WIDTH = 16;
 
 // Height of a world chunk in blocks.
-export def CHUNK_HEIGHT: uint = 128;
+export def CHUNK_HEIGHT = 128;
 
 export def CHUNK_BLOCKS = CHUNK_WIDTH * CHUNK_WIDTH * CHUNK_HEIGHT;
 
 // A 16x16x128 chunk of the game world.
 export type chunk = struct {
+	coords: coords2D,
 	// TODO: Store entities and tile entities
 	blocks: [CHUNK_BLOCKS]u8,
 	metadata: [CHUNK_BLOCKS / 2]u8,
@@ -20,6 +21,8 @@ export type chunk = struct {
 	last_update: i64,
 	populated: bool,
 };
+
+const empty_chunk = chunk { ... };
 
 // Populates a chunk from an [[nbt::reader]].
 export fn chunk_fromnbt(chunk: *chunk, rd: *nbt::reader) (void | io::error) = {

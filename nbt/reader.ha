@@ -34,6 +34,13 @@ export fn read(in: io::handle) reader = {
 	return rd;
 };
 
+// Opens the root compound tag of an NBT file.
+export fn openroot(rd: *reader) (value | io::error) = {
+	const val = next(rd)? as value;
+	assert(val.tag == nbt_tag::COMPOUND && val.name == "");
+	return val;
+};
+
 // Reads the next tag from an NBT [[reader]]. The return value is borrowed from
 // the NBT decoder. Following a tag of type BYTE_ARRAY or STRING, the caller is
 // expected to [[io::read]] bytes equal to the length provided by

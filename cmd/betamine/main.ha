@@ -7,6 +7,7 @@ use sdl2::mixer;
 
 def WIN_WIDTH = 1280;
 def WIN_HEIGHT = 720;
+def FULLSCREEN = false;
 def VSYNC = 0;
 
 export fn main() void = {
@@ -25,10 +26,15 @@ export fn main() void = {
 		1024)!;
 	defer mixer::Mix_CloseAudio();
 
+	let winflags = SDL_WindowFlags::OPENGL | SDL_WindowFlags::INPUT_GRABBED;
+	if (FULLSCREEN) {
+		winflags |= SDL_WindowFlags::FULLSCREEN;
+	};
+
 	const win = sdl2::SDL_CreateWindow("betamine",
 		sdl2::SDL_WINDOWPOS_UNDEFINED, sdl2::SDL_WINDOWPOS_UNDEFINED,
 		WIN_WIDTH, WIN_HEIGHT,
-		SDL_WindowFlags::OPENGL | SDL_WindowFlags::INPUT_GRABBED)!;
+		winflags)!;
 	defer sdl2::SDL_DestroyWindow(win);
 	sdl2::SDL_SetRelativeMouseMode(true);
 
