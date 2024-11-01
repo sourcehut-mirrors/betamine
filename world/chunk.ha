@@ -9,6 +9,15 @@ export def CHUNK_HEIGHT = 128;
 
 export def CHUNK_BLOCKS = CHUNK_WIDTH * CHUNK_WIDTH * CHUNK_HEIGHT;
 
+// Chunk flags
+export type chunk_flag = enum uint {
+	NONE = 0,
+	// Has the terrain generator been here yet?
+	POPULATED = 1 << 0,
+	// Pending updates to flush to disk
+	DIRTY = 1 << 1,
+};
+
 // A 16x16x128 chunk of the game world.
 export type chunk = struct {
 	coords: coords2D,
@@ -19,7 +28,7 @@ export type chunk = struct {
 	sky_light: [CHUNK_BLOCKS / 2]u8,
 	heightmap: [CHUNK_WIDTH * CHUNK_WIDTH]u8,
 	last_update: i64,
-	populated: bool,
+	flags: chunk_flag,
 };
 
 const empty_chunk = chunk { ... };
@@ -59,7 +68,9 @@ export fn chunk_fromnbt(chunk: *chunk, rd: *nbt::reader) (void | io::error) = {
 			chunk.last_update = tag._i64;
 		case "TerrainPopulated" =>
 			assert(tag.tag == nbt::nbt_tag::BYTE);
-			chunk.populated = tag._i8 != 0;
+			if (tag._i8 != 0) {
+				chunk.flags |= chunk_flag::POPULATED;
+			};
 		case =>
 			nbt::skip(rd, tag)?;
 		};
