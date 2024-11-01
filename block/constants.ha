@@ -2,7 +2,7 @@ use glm;
 
 // TODO: Source this color from the biome
 def VEGITATION: glm::v3 = [0.57, 0.74, 0.35];
-def FOILAGE: glm::v3 = [0.39, 0.66, 0.28];
+def FOILAGE: glm::v3 = [0.57, 0.74, 0.35];
 
 const block_light: [_]f32 = [
 	0.050, 0.067, 0.085, 0.106, // [ 0..3 ]
