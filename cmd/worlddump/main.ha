@@ -1,13 +1,5 @@
-use compress::gzip;
-use compress::zlib;
 use fmt;
-use io;
-use memio;
-use nbt;
-use nbt::{nbt_tag};
 use os;
-use path;
-use types;
 use world;
 use world::{mode};
 
@@ -21,23 +13,33 @@ export fn main() void = {
 
 	fmt::println()!;
 
+	fmt::println("world::get(..., mode::LOAD)")!;
+	let at: world::coords3D = (0, 0, 0);
+	for (at.1 < 8; at.1 += 1) {
+		let voxel = world::voxel { ... };
+		world::get(&w, &voxel, at, mode::LOAD)!;
+		fmt::printfln("block at <{},{},{}>: {}",
+			at.0, at.1, at.2, voxel.id)!;
+	};
+
+	fmt::println("world::get(..., mode::EMPTY)")!;
+	let at: world::coords3D = (100, 0, 100);
+	let voxel = world::voxel { ... };
+	world::get(&w, &voxel, at, mode::EMPTY)!;
+	fmt::printfln("block at <{},{},{}>: {}",
+		at.0, at.1, at.2, voxel.id)!;
+	world::get(&w, &voxel, at, mode::LOAD)!;
+	fmt::printfln("block at <{},{},{}>: {}",
+		at.0, at.1, at.2, voxel.id)!;
+
+	fmt::println()!;
+
+	fmt::println("world::get_chunk")!;
 	for (let x = -1; x <= 1; x += 1)
 	for (let z = -1; z <= 1; z += 1) {
 		const chunk = world::get_chunk(&w, (x, z), mode::LOAD)!;
 		fmt::printfln("<{}, {}>: last update: {}",
 			chunk.coords.0, chunk.coords.1,
 			chunk.last_update)!;
-	};
-
-	fmt::println()!;
-
-	const at: world::coords3D = (-14, 78, 64);
-
-	at.1 = 0;
-	for (at.1 < 128; at.1 += 1) {
-		let voxel = world::voxel { ... };
-		world::get(&w, &voxel, at, mode::LOAD)!;
-		fmt::printfln("block at <{},{},{}>: {}",
-			at.0, at.1, at.2, voxel.id)!;
 	};
 };
