@@ -149,7 +149,7 @@ export fn next(rd: *reader) (value | io::EOF | io::error) = {
 
 // Skips the current value (recursively, if compound or list) from an NBT
 // [[reader]], advancing to the next position.
-export fn skip(rd: *reader, tag: value) (void | io::EOF | io::error) = {
+export fn skip(rd: *reader, tag: value) (void | io::error) = {
 	switch (tag.tag) {
 	case nbt_tag::LIST =>
 		for (let l = tag.length; l > 0; l -= 1) {
