@@ -14,7 +14,7 @@ export type coords2D = (int, int);
 
 // Returns true if two pairs of [[coords2D]] are equal.
 export fn coords2D_equal(a: coords2D, b: coords2D) bool = {
-	return a.0 == b.0 && a.0 == b.0;
+	return a.0 == b.0 && a.1 == b.1;
 };
 
 fn coords2D_cmp(a: const *opaque, b: const *opaque) int = {

@@ -38,7 +38,7 @@ export fn main() void = {
 	for (let x = -1; x <= 1; x += 1)
 	for (let z = -1; z <= 1; z += 1) {
 		const chunk = world::get_chunk(&w, (x, z), mode::LOAD)!;
-		fmt::printfln("<{}, {}>: last update: {}",
+		fmt::printfln("<{: }, {: }>: last update: {}",
 			chunk.coords.0, chunk.coords.1,
 			chunk.last_update)!;
 	};
