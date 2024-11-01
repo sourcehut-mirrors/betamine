@@ -61,6 +61,20 @@ export fn open(path: str) (world | fs::error | io::error) = {
 	};
 };
 
+// Frees resources associated with this world.
+export fn finish(w: *world) void = {
+	for (let c .. w.chunks) {
+		assert(c.flags & chunk_flag::DIRTY == 0);
+		free(c);
+	};
+	free(w.chunks);
+
+	for (let r .. w.regions) {
+		region_close(r);
+	};
+	free(w.regions);
+};
+
 // Fetches a [[voxel]] from the world.
 export fn get(
 	w: *world,

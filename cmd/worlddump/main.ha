@@ -5,6 +5,8 @@ use world::{mode};
 
 export fn main() void = {
 	const w = world::open(os::args[1])!;
+	defer world::finish(&w);
+
 	const level = &w.level;
 	fmt::printfln("Level name: {}", level.name)!;
 	fmt::printfln("Seed: {}", level.seed)!;

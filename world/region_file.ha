@@ -61,10 +61,15 @@ export fn region_ref(r: *region) void = {
 export fn region_unref(r: *region) void = {
 	r.refs -= 1;
 	if (r.refs == 0) {
-		io::munmap(r.data, r.length)!;
-		io::close(r.file)!;
-		free(r);
+		region_close(r);
 	};
+};
+
+// Frees state associated with a [[region]] regardless of its reference count.
+export fn region_close(r: *region) void = {
+	io::munmap(r.data, r.length)!;
+	io::close(r.file)!;
+	free(r);
 };
 
 // Chunk data compression scheme. In practice only DEFLATE is used.
