@@ -15,7 +15,8 @@ use world::{CHUNK_WIDTH, CHUNK_HEIGHT, mode};
 def RENDER_DISTANCE = 4;
 
 // Maximum amount of time spent on tesselation in a single update
-def MAX_TESS_TIME = 10 * time::MILLISECOND;
+// (No more than half a frame at 60 FPS)
+def MAX_TESS_TIME = 8 * time::MILLISECOND;
 
 // The chunk manager manages loaded chunks from the world, schedules
 // tesselation and manages meshes, and handles loading and unloading when
@@ -147,7 +148,7 @@ fn chunkmgr_schedule(mgr: *chunk_manager, state: *state) void = {
 		const mesh = &mgr.meshes[i];
 		const coords = mesh.chunk.coords;
 		if (coords.0 >= min.0 && coords.1 >= min.1
-			&& coords.0 < max.0 && coords.1 < max.1) {
+			&& coords.0 <= max.0 && coords.1 <= max.1) {
 			continue;
 		};
 		log::printfln("[chunkmgr] unload <{},{}>", coords.0, coords.1);
