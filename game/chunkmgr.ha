@@ -68,19 +68,21 @@ fn chunkmgr_update(mod: *module, state: *state) void = {
 
 fn chunkmgr_draw(layer: *layer, state: *state) void = {
 	const mgr = layer: *chunk_manager;
+	state.nchunk = len(mgr.meshes);
+	state.nvertex = 0;
 
 	let vp = glm::M4_ZERO;
 	gfx::camera_matrix(&state.camera, &vp);
 
 	for (let chunk &.. mgr.meshes) {
-		chunkmgr_drawchunk(chunk, &vp, false);
+		chunkmgr_drawchunk(chunk, &vp, false, state);
 	};
 	for (let chunk &.. mgr.meshes) {
-		chunkmgr_drawchunk(chunk, &vp, true);
+		chunkmgr_drawchunk(chunk, &vp, true, state);
 	};
 };
 
-fn chunkmgr_drawchunk(c: *chunk, vp: *glm::m4, trans: bool) void = {
+fn chunkmgr_drawchunk(c: *chunk, vp: *glm::m4, trans: bool, state: *state) void = {
 	const mesh = &c.mesh;
 	const (x, z) = c.chunk.coords;
 
@@ -102,6 +104,7 @@ fn chunkmgr_drawchunk(c: *chunk, vp: *glm::m4, trans: bool) void = {
 	if (npoly > 0) {
 		gfx::chunk_begin(mesh, trans);
 		glDrawArrays(gl::GL_TRIANGLES, 0, npoly: i32);
+		state.nvertex += npoly * 3;
 	};
 };
 

@@ -27,6 +27,11 @@ export type state = struct {
 	// Number of game ticks ellapsed
 	ticks: u64,
 
+	// Debug info
+
+	// Show debug overlay?
+	debug: bool,
+
 	// Total number of frames rendered
 	frames: uint,
 	// Monotonic timestamp of current frame, ms
@@ -34,8 +39,9 @@ export type state = struct {
 	// Monotonic timestamp of previous frame, ms
 	prev_frame_time: u32,
 
-	// Show debug overlay?
-	debug: bool,
+	// Number of verticies
+	nvertex: size,
+	nchunk: size,
 };
 
 // Update callback.
