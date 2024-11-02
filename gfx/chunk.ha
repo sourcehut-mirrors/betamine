@@ -5,6 +5,8 @@ use gl::{
 	glBindBuffer,
 	glBindVertexArray,
 	glBufferData,
+	glDeleteBuffers,
+	glDeleteVertexArrays,
 	glEnableVertexAttribArray,
 	glGenBuffers,
 	glGenVertexArrays,
@@ -15,8 +17,10 @@ use world;
 // Chunk mesh.
 export type chunk_mesh = struct {
 	opaque_vao: uint,
+	opaque_vbo: uint,
 	nopaque: size,
 	transparent_vao: uint,
+	transparent_vbo: uint,
 	ntransparent: size,
 };
 
@@ -96,8 +100,10 @@ export fn chunk_init(mesh: *engine::chunk_mesh) chunk_mesh = {
 
 	return chunk_mesh {
 		opaque_vao = vao[0],
+		opaque_vbo = vbo[0],
 		nopaque = len(mesh.vert_opaque),
 		transparent_vao = vao[1],
+		transparent_vbo = vbo[1],
 		ntransparent = len(mesh.vert_translucent),
 	};
 };
@@ -114,4 +120,12 @@ export fn chunk_begin(mesh: *chunk_mesh, transparent: bool) void = {
 // Cleans up the chunk VBO.
 export fn chunk_end(mesh: *chunk_mesh) void = {
 	glBindVertexArray(0);
+};
+
+// Free resources associated with a [[chunk_mesh]].
+export fn chunk_finish(mesh: *chunk_mesh) void = {
+	let vbo = [mesh.opaque_vbo, mesh.transparent_vbo];
+	let vao = [mesh.opaque_vao, mesh.transparent_vao];
+	glDeleteBuffers(2, &vbo[0]);
+	glDeleteVertexArrays(2, &vao[0]);
 };
