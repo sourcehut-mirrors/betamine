@@ -4,6 +4,7 @@ use errors;
 use fmt;
 use fs;
 use io;
+use log;
 use memio;
 use nbt;
 use os;
@@ -162,7 +163,13 @@ export fn get_chunk(
 		refs = 1,
 		...
 	});
-	chunk_fromnbt(chunk, &rd)!;
+	match (chunk_fromnbt(chunk, &rd)) {
+	case let err: io::error =>
+		log::printfln("[world]: WARNING: Error loading chunk <{},{}>: {}",
+			c.0, c.1, io::strerror(err));
+	case void => void;
+	};
+
 	chunk.coords = c;
 	insert(w.chunks[cix], chunk);
 	return chunk;
