@@ -12,7 +12,7 @@ use world;
 use world::{CHUNK_WIDTH, CHUNK_HEIGHT, mode};
 
 // TODO: Make this a configurable option
-def RENDER_DISTANCE = 3;
+def RENDER_DISTANCE = 4;
 
 // Maximum amount of time spent on tesselation in a single update
 def MAX_TESS_TIME = 10 * time::MILLISECOND;
@@ -25,7 +25,7 @@ export type chunk_manager = struct {
 	player_cc: world::coords2D,
 	world: *world::world,
 	meshes: []chunk,
-	tess_queue: []const *world::chunk,
+	queue: []const *world::chunk,
 };
 
 // A loaded chunk in the game engine.
@@ -62,7 +62,7 @@ fn chunkmgr_update(mod: *module, state: *state) void = {
 		chunkmgr_schedule(mgr, state);
 	};
 
-	if (len(mgr.tess_queue) != 0) {
+	if (len(mgr.queue) != 0) {
 		chunkmgr_procqueue(mgr);
 	};
 };
@@ -133,8 +133,14 @@ fn chunkmgr_schedule(mgr: *chunk_manager, state: *state) void = {
 			continue;
 		};
 
+		const queued = sort::search(mgr.queue, size(*chunk),
+			&chunk, &world::coords2D_cmp) is size;
+		if (queued) {
+			continue;
+		};
+
 		log::printfln("[chunkmgr] schedule tesselation at <{},{}>", x, z);
-		append(mgr.tess_queue, chunk);
+		append(mgr.queue, chunk);
 	};
 
 	for (let i = 0z; i < len(mgr.meshes); i += 1) {
@@ -158,24 +164,24 @@ fn chunkmgr_procqueue(mgr: *chunk_manager) void = {
 
 	const start = time::now(clock::MONOTONIC);
 	const deadline = time::add(start, MAX_TESS_TIME);
-	for (len(mgr.tess_queue) > 0) {
+	for (len(mgr.queue) > 0) {
 		const now = time::now(clock::MONOTONIC);
 		if (time::compare(deadline, now) < 0) {
-			log::printfln("[chunkmgr] tesselation deadline elapsed; {} remaining", len(mgr.tess_queue));
+			log::printfln("[chunkmgr] tesselation deadline elapsed; {} remaining", len(mgr.queue));
 			break;
 		};
 
-		const next = mgr.tess_queue[len(mgr.tess_queue)-1];
-		static delete(mgr.tess_queue[len(mgr.tess_queue)-1]);
+		const next = mgr.queue[0];
+		static delete(mgr.queue[0]);
 
 		tmesh.vert_opaque = tmesh.vert_opaque[..0];
 		tmesh.vert_translucent = tmesh.vert_translucent[..0];
 
 		engine::chunk_genmesh(&tmesh, next);
 		const mesh = gfx::chunk_init(&tmesh);
-		const i = chunkmgr_bisect(mgr, next.coords);
 
 		const coords = next.coords;
+		const i = chunkmgr_bisect(mgr, coords);
 		insert(mgr.meshes[i], chunk {
 			chunk = next,
 			mesh = mesh,
