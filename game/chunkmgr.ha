@@ -141,7 +141,7 @@ fn chunkmgr_schedule(mgr: *chunk_manager, state: *state) void = {
 
 		gfx::chunk_finish(&mesh.mesh);
 		world::put_chunk(mgr.world, mesh.chunk);
-		delete(mgr.meshes[i]);
+		static delete(mgr.meshes[i]);
 		i -= 1;
 	};
 };
@@ -158,8 +158,8 @@ fn chunkmgr_procqueue(mgr: *chunk_manager) void = {
 			break;
 		};
 
-		const next = mgr.tess_queue[0];
-		delete(mgr.tess_queue[0]);
+		const next = mgr.tess_queue[len(mgr.tess_queue)-1];
+		static delete(mgr.tess_queue[len(mgr.tess_queue)-1]);
 
 		tmesh.vert_opaque = tmesh.vert_opaque[..0];
 		tmesh.vert_translucent = tmesh.vert_translucent[..0];
