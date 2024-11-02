@@ -36,7 +36,10 @@ export fn coords2D_cmp(a: const *opaque, b: const *opaque) int = {
 
 // Returns the chunk coordinates in which the given block coordinates reside,
 // optionally also returning the coordinates normalized to the chunk dimensions.
-export fn world_to_chunk(world: coords3D, out: nullable *coords3D) coords2D = {
+export fn world_to_chunk(
+	world: coords3D,
+	out: nullable *coords3D = null,
+) coords2D = {
 	match (out) {
 	case let c: *coords3D =>
 		*c = (
@@ -57,7 +60,10 @@ export fn world_to_chunk(world: coords3D, out: nullable *coords3D) coords2D = {
 
 // Returns the region coordinates in which the given chunk resides, optionally
 // also returning the coordinates normalized to the region dimensions.
-export fn chunk_to_region(chunk: coords2D, out: nullable *coords2D) coords2D = {
+export fn chunk_to_region(
+	chunk: coords2D,
+	out: nullable *coords2D = null,
+) coords2D = {
 	match (out) {
 	case let c: *coords2D =>
 		*c = (

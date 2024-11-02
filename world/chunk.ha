@@ -21,6 +21,7 @@ export type chunk_flag = enum uint {
 // A 16x16x128 chunk of the game world.
 export type chunk = struct {
 	coords: coords2D,
+	refs: int,
 	// TODO: Store entities and tile entities
 	blocks: [CHUNK_BLOCKS]u8,
 	metadata: [CHUNK_BLOCKS / 2]u8,

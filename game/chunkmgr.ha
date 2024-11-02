@@ -139,8 +139,8 @@ fn chunkmgr_schedule(mgr: *chunk_manager, state: *state) void = {
 		};
 		log::printfln("[chunkmgr] unload <{},{}>", coords.0, coords.1);
 
-		// TODO: Unref this chunk in the world object
 		gfx::chunk_finish(&mesh.mesh);
+		world::put_chunk(mgr.world, mesh.chunk);
 		delete(mgr.meshes[i]);
 		i -= 1;
 	};

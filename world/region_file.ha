@@ -58,11 +58,13 @@ export fn region_ref(r: *region) void = {
 };
 
 // Decrements the reference count for a [[region]].
-export fn region_unref(r: *region) void = {
+export fn region_unref(r: *region) int = {
 	r.refs -= 1;
-	if (r.refs == 0) {
-		region_close(r);
+	if (r.refs > 0) {
+		return r.refs;
 	};
+	region_close(r);
+	return 0;
 };
 
 // Frees state associated with a [[region]] regardless of its reference count.

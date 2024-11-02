@@ -98,7 +98,8 @@ export fn get(
 	out.block_light = chunk.block_light[hi] >> ho & 0xF;
 };
 
-// Fetches a [[chunk]] from the world.
+// Fetches a [[chunk]] from the world. Increments the chunk's reference count;
+// see [[put_chunk]] to free this reference.
 export fn get_chunk(
 	w: *world,
 	c: coords2D,
@@ -108,6 +109,7 @@ export fn get_chunk(
 	const cix = sort::lbisect(w.chunks, size(*chunk),
 		&model, &coords2D_cmp);
 	if (cix < len(w.chunks) && coords2D_equal(w.chunks[cix].coords, c)) {
+		w.chunks[cix].refs += 1;
 		return w.chunks[cix];
 	};
 
@@ -142,6 +144,7 @@ export fn get_chunk(
 
 	const header = match (region_getchunk(region, rcc)) {
 	case let hdr: *chunk_header =>
+		region_ref(region);
 		yield hdr;
 	case null =>
 		if (mode & mode::GENERATE == 0) {
@@ -155,11 +158,40 @@ export fn get_chunk(
 	const data = memio::fixed(data);
 	const zrd = zlib::decompress(&data)!;
 	const rd = nbt::read(&zrd);
-	let chunk = alloc(chunk { ... });
+	let chunk = alloc(chunk {
+		refs = 1,
+		...
+	});
 	chunk_fromnbt(chunk, &rd)!;
 	chunk.coords = c;
 	insert(w.chunks[cix], chunk);
 	return chunk;
+};
+
+// Decrements the reference count of a [[chunk]], freeing it if necessary.
+export fn put_chunk(w: *world, ch: *chunk) void = {
+	ch.refs -= 1;
+	if (ch.refs > 0) {
+		return;
+	};
+
+	let model = &ch.coords;
+	const cix = sort::lbisect(w.chunks, size(*chunk),
+		&model, &coords2D_cmp);
+	assert(cix < len(w.chunks) && coords2D_equal(w.chunks[cix].coords, ch.coords));
+	delete(w.chunks[cix]);
+	defer free(ch);
+
+	const rc = chunk_to_region(ch.coords);
+	model = &rc;
+	const rix = sort::lbisect(w.regions, size(*region), &model, &coords2D_cmp);
+	assert(rix < len(w.regions) && coords2D_equal(rc, w.regions[rix].coords));
+	const region = w.regions[rix];
+
+	const rrefs = region_unref(region);
+	if (rrefs == 0) {
+		delete(w.regions[rix]);
+	};
 };
 
 // Map a region file into the [[world]]. The coordinates should be in the region
