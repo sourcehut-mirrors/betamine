@@ -2,6 +2,7 @@ use engine;
 use fmt;
 use gfx;
 use glm;
+use world;
 
 // Debug layer
 export type debug_layer = struct {
@@ -51,7 +52,17 @@ fn debug_draw(layer: *layer, state: *state) void = {
 	const look = fmt::bsprintf(buf, "  look: {}\n   yaw: {}\npitch: {}",
 		engine::cardtostr(dir),
 		state.camera.pitch, state.camera.yaw);
-	gfx::font_draw(&glm::v2_new(256.0, 1.0 * 24.0), look);
+	gfx::font_draw(&glm::v2_new(300.0, 2.0 * 24.0), look);
+
+	const ccoords = world::world_to_chunk((
+		state.camera.pos[0]: int,
+		state.camera.pos[1]: int,
+		state.camera.pos[2]: int,
+	));
+	const rcoords = world::chunk_to_region(ccoords);
+	const world_pos = fmt::bsprintf(buf, "C: <{},{}> R: <{},{}>",
+		ccoords.0, ccoords.1, rcoords.0, rcoords.1);
+	gfx::font_draw(&glm::v2_new(0.0, 4.0 * 24.0), world_pos);
 
 	const fps = fmt::bsprintf(buf, "FPS: {}", mod.fps);
 	const (fw, _) = gfx::font_measure(fps);
