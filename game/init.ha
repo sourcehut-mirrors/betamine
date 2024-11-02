@@ -1,6 +1,8 @@
 use engine;
 use gfx;
+use os;
 use sdl2;
+use world;
 
 // Initializes the game engine.
 export fn init(win: *sdl2::SDL_Window) *state = {
@@ -17,11 +19,15 @@ export fn init(win: *sdl2::SDL_Window) *state = {
 	});
 
 	// XXX TEMP
+	state.world = world::open(os::args[1])!;
+
+	// TODO: Spawn at player's previous location (or world spawn point)
 	state.camera = gfx::camera_new();
 	state.camera.pos = [0.0, 80.0 + engine::PLAYER_HEIGHT, 0.0];
 
 	// Initialize modules
 	input_init(state);
+	chunk_manager_init(state);
 	debug_init(state);
 
 	return state;

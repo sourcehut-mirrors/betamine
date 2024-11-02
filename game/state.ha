@@ -1,5 +1,6 @@
 use gfx;
 use sdl2;
+use world;
 
 // Game state type.
 export type state = struct {
@@ -19,6 +20,9 @@ export type state = struct {
 
 	// Player state
 	camera: gfx::camera,
+
+	// Game state
+	world: world::world,
 
 	// Number of game ticks ellapsed
 	ticks: u64,

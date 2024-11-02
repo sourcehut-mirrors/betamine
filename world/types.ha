@@ -17,7 +17,8 @@ export fn coords2D_equal(a: coords2D, b: coords2D) bool = {
 	return a.0 == b.0 && a.1 == b.1;
 };
 
-fn coords2D_cmp(a: const *opaque, b: const *opaque) int = {
+// [[sort::cmp]] function for lists sorted by a [[coords2D]].
+export fn coords2D_cmp(a: const *opaque, b: const *opaque) int = {
 	let a = a: const **coords2D;
 	let b = b: const **coords2D;
 	if (a.0 < b.0) {

@@ -33,6 +33,11 @@ export type chunk = struct {
 
 const empty_chunk = chunk { ... };
 
+// Returns true if this is the empty chunk (i.e. from [[mode::EMPTY]]).
+export fn chunk_isempty(c: *chunk) bool = {
+	return c == &empty_chunk;
+};
+
 // Populates a chunk from an [[nbt::reader]].
 export fn chunk_fromnbt(chunk: *chunk, rd: *nbt::reader) (void | io::error) = {
 	let tag = nbt::next(rd)? as nbt::value;
