@@ -4,7 +4,7 @@ use glm;
 let clouds = gfx::texture { ... };
 
 def DRIFT_FACTOR = 1000;
-def CLOUD_Y = 112.0;
+def CLOUD_Y = 112.1;
 def CLOUD_SCALE = 8.0;
 def CLOUD_ALPHA = 0.75;
 
