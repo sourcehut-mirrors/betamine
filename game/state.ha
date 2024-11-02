@@ -1,4 +1,5 @@
 use gfx;
+use glm;
 use sdl2;
 use world;
 
@@ -20,6 +21,8 @@ export type state = struct {
 
 	// Player state
 	camera: gfx::camera,
+	vp: glm::m4,
+	frustrum: [6]glm::v4,
 
 	// Game state
 	world: world::world,
@@ -39,9 +42,10 @@ export type state = struct {
 	// Monotonic timestamp of previous frame, ms
 	prev_frame_time: u32,
 
-	// Number of verticies
+	// Render stats
 	nvertex: size,
 	nchunk: size,
+	chunks_rendered: size,
 };
 
 // Update callback.

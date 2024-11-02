@@ -73,8 +73,8 @@ fn debug_draw(layer: *layer, state: *state) void = {
 	const (fw, _) = gfx::font_measure(time);
 	gfx::font_draw(&glm::v2_new((state.width - fw): f32, 1.0 * 24.0), time);
 
-	const gfx = fmt::bsprintf(buf, "C: {} V: {} V/C: {}",
-		state.nchunk, state.nvertex,
+	const gfx = fmt::bsprintf(buf, "C: ({}/{}) V: {} V/C: {}",
+		state.chunks_rendered, state.nchunk, state.nvertex,
 		state.nvertex / state.nchunk);
 	const (fw, _) = gfx::font_measure(gfx);
 	gfx::font_draw(&glm::v2_new((state.width - fw): f32, 2.0 * 24.0), gfx);

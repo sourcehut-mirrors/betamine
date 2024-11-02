@@ -9,7 +9,7 @@ use time;
 use time::{clock};
 use types;
 use world;
-use world::{mode};
+use world::{CHUNK_WIDTH, CHUNK_HEIGHT, mode};
 
 // TODO: Make this a configurable option
 def RENDER_DISTANCE = 3;
@@ -32,6 +32,7 @@ export type chunk_manager = struct {
 export type chunk = struct {
 	chunk: const *world::chunk,
 	mesh: gfx::chunk_mesh,
+	aabb: [2]glm::v3,
 };
 
 // Initializes a chunk manager for the given [[world]].
@@ -69,20 +70,22 @@ fn chunkmgr_update(mod: *module, state: *state) void = {
 fn chunkmgr_draw(layer: *layer, state: *state) void = {
 	const mgr = layer: *chunk_manager;
 	state.nchunk = len(mgr.meshes);
+	state.chunks_rendered = 0;
 	state.nvertex = 0;
 
-	let vp = glm::M4_ZERO;
-	gfx::camera_matrix(&state.camera, &vp);
-
 	for (let chunk &.. mgr.meshes) {
-		chunkmgr_drawchunk(chunk, &vp, false, state);
+		chunkmgr_drawchunk(state, chunk, false);
 	};
 	for (let chunk &.. mgr.meshes) {
-		chunkmgr_drawchunk(chunk, &vp, true, state);
+		chunkmgr_drawchunk(state, chunk, true);
 	};
 };
 
-fn chunkmgr_drawchunk(c: *chunk, vp: *glm::m4, trans: bool, state: *state) void = {
+fn chunkmgr_drawchunk(state: *state, c: *chunk, trans: bool) void = {
+	if (!glm::aabb_frustrum(&c.aabb, &state.frustrum)) {
+		return;
+	};
+
 	const mesh = &c.mesh;
 	const (x, z) = c.chunk.coords;
 
@@ -93,7 +96,7 @@ fn chunkmgr_drawchunk(c: *chunk, vp: *glm::m4, trans: bool, state: *state) void 
 		0.0,
 		(z * world::CHUNK_WIDTH): f32,
 	));
-	glm::m4_mul_to(vp, &model, &mvp);
+	glm::m4_mul_to(&state.vp, &model, &mvp);
 
 	gfx::terrain_bind(&mvp);
 
@@ -105,6 +108,10 @@ fn chunkmgr_drawchunk(c: *chunk, vp: *glm::m4, trans: bool, state: *state) void 
 		gfx::chunk_begin(mesh, trans);
 		glDrawArrays(gl::GL_TRIANGLES, 0, npoly: i32);
 		state.nvertex += npoly * 3;
+	};
+
+	if (!trans) {
+		state.chunks_rendered += 1;
 	};
 };
 
@@ -167,9 +174,23 @@ fn chunkmgr_procqueue(mgr: *chunk_manager) void = {
 		engine::chunk_genmesh(&tmesh, next);
 		const mesh = gfx::chunk_init(&tmesh);
 		const i = chunkmgr_bisect(mgr, next.coords);
+
+		const coords = next.coords;
 		insert(mgr.meshes[i], chunk {
 			chunk = next,
 			mesh = mesh,
+			aabb = [
+				[
+					(coords.0 * CHUNK_WIDTH): f32,
+					0.0,
+					(coords.1 * CHUNK_WIDTH): f32,
+				],
+				[
+					(coords.0 * CHUNK_WIDTH + CHUNK_WIDTH): f32,
+					CHUNK_HEIGHT: f32,
+					(coords.1 * CHUNK_WIDTH + CHUNK_WIDTH): f32,
+				],
+			],
 		});
 
 		const tend = time::now(clock::MONOTONIC);

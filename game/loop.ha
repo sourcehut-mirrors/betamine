@@ -1,4 +1,5 @@
 use gfx;
+use glm;
 use sdl2;
 
 // Set the scale at which ticks pass
@@ -24,6 +25,9 @@ export fn run(state: *state) void = {
 		for (let mod .. state.modules) {
 			mod.update(mod, state);
 		};
+
+		gfx::camera_matrix(&state.camera, &state.vp);
+		glm::frustrum_planes(&state.vp, &state.frustrum);
 
 		// TODO: Move to module
 		gfx::render_sky(&state.camera, state.ticks);

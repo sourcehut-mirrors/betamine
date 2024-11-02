@@ -19,9 +19,6 @@ export fn clouds_init(state: *state) void = {
 };
 
 fn clouds_draw(layer: *layer, state: *state) void = {
-	let vp = glm::M4_ZERO;
-	gfx::camera_matrix(&state.camera, &vp);
-
 	let time = state.ticks % (clouds.w: u64 * 8 * DRIFT_FACTOR);
 	const drift = time: f32 / DRIFT_FACTOR: f32;
 
@@ -34,7 +31,7 @@ fn clouds_draw(layer: *layer, state: *state) void = {
 		CLOUD_Y,
 		0.0,
 	));
-	glm::m4_mul_to(&vp, &model, &mvp);
+	glm::m4_mul_to(&state.vp, &model, &mvp);
 	gfx::render_plane(&mvp, &clouds, &glm::v4_new(1.0, 1.0, 1.0, CLOUD_ALPHA));
 
 	// Again at -drift so it wraps correctly
@@ -44,6 +41,6 @@ fn clouds_draw(layer: *layer, state: *state) void = {
 		CLOUD_Y,
 		0.0,
 	));
-	glm::m4_mul_to(&vp, &model, &mvp);
+	glm::m4_mul_to(&state.vp, &model, &mvp);
 	gfx::render_plane(&mvp, &clouds, &glm::v4_new(1.0, 1.0, 1.0, CLOUD_ALPHA));
 };
