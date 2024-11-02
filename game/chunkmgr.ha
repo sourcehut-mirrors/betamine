@@ -113,8 +113,8 @@ fn chunkmgr_schedule(mgr: *chunk_manager, state: *state) void = {
 	let coords = mgr.player_cc;
 	const min: world::coords2D = (coords.0 - RD, coords.1 - RD);
 	const max: world::coords2D = (coords.0 + RD, coords.1 + RD);
-	for (let x = min.0; x < max.0; x += 1)
-	for (let z = min.1; z < max.1; z += 1) {
+	for (let x = min.0; x <= max.0; x += 1)
+	for (let z = min.1; z <= max.1; z += 1) {
 		const i = chunkmgr_bisect(mgr, (x, z));
 		if (i < len(mgr.meshes) && world::coords2D_equal((x, z),
 				mgr.meshes[i].chunk.coords)) {
@@ -147,6 +147,8 @@ fn chunkmgr_schedule(mgr: *chunk_manager, state: *state) void = {
 };
 
 fn chunkmgr_procqueue(mgr: *chunk_manager) void = {
+	static let tmesh = engine::chunk_mesh { ... };
+
 	const start = time::now(clock::MONOTONIC);
 	const deadline = time::add(start, MAX_TESS_TIME);
 	for (len(mgr.tess_queue) > 0) {
@@ -159,16 +161,21 @@ fn chunkmgr_procqueue(mgr: *chunk_manager) void = {
 		const next = mgr.tess_queue[0];
 		delete(mgr.tess_queue[0]);
 
-		// TODO: Reuse engine::chunk_mesh object
-		log::printfln("[chunkmgr] tesselate <{},{}>",
-			next.coords.0, next.coords.1);
-		const geometry = engine::chunk_genmesh(next);
-		const mesh = gfx::chunk_init(&geometry);
+		tmesh.vert_opaque = tmesh.vert_opaque[..0];
+		tmesh.vert_translucent = tmesh.vert_translucent[..0];
+
+		engine::chunk_genmesh(&tmesh, next);
+		const mesh = gfx::chunk_init(&tmesh);
 		const i = chunkmgr_bisect(mgr, next.coords);
 		insert(mgr.meshes[i], chunk {
 			chunk = next,
 			mesh = mesh,
 		});
+
+		const tend = time::now(clock::MONOTONIC);
+		log::printfln("[chunkmgr] tesselate <{},{}> {}ms",
+			next.coords.0, next.coords.1,
+			time::diff(now, tend) / time::MILLISECOND);
 	};
 };
 

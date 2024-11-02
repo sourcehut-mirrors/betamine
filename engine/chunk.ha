@@ -62,11 +62,12 @@ fn fill_voxel_data(
 };
 
 // Generate meshes for a given [[world::chunk]].
-export fn chunk_genmesh(chunk: *world::chunk) chunk_mesh = {
+export fn chunk_genmesh(mesh: *chunk_mesh, chunk: *world::chunk) void = {
+	assert(len(mesh.vert_opaque) == 0);
+	assert(len(mesh.vert_translucent) == 0);
+
 	def FW = world::CHUNK_WIDTH: f32;
 	def FH = world::CHUNK_HEIGHT: f32;
-
-	let mesh = chunk_mesh { ... };
 
 	let voxel = block::voxel { ... };
 
@@ -93,8 +94,6 @@ export fn chunk_genmesh(chunk: *world::chunk) chunk_mesh = {
 		const pos: glm::v3 = [x: f32, y: f32, z: f32];
 		block.model(block, &voxel, vbo, &pos, faces);
 	};
-
-	return mesh;
 };
 
 fn voxel_neighbors(
