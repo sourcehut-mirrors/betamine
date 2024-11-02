@@ -41,6 +41,8 @@ export type state = struct {
 // Update callback.
 export type updatefunc = fn(mod: *module, state: *state) void;
 
+fn no_update(mod: *module, state: *state) void = void;
+
 // Game module which runs an update on every frame.
 export type module = struct {
 	update: *updatefunc,

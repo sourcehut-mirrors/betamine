@@ -28,6 +28,8 @@ export fn init(win: *sdl2::SDL_Window) *state = {
 	// Initialize modules
 	input_init(state);
 	chunk_manager_init(state);
+	clouds_init(state);
+
 	debug_init(state);
 
 	return state;

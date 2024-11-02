@@ -7,6 +7,7 @@ use log;
 use sort;
 use time;
 use time::{clock};
+use types;
 use world;
 use world::{mode};
 
@@ -39,6 +40,7 @@ export fn chunk_manager_init(state: *state) void = {
 		update = &chunkmgr_update,
 		draw = &chunkmgr_draw,
 		world = &state.world,
+		player_cc = (types::INT_MIN, types::INT_MIN),
 		...
 	});
 	append(state.modules, chunkmgr);
