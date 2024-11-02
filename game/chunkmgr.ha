@@ -12,7 +12,7 @@ use world;
 use world::{CHUNK_WIDTH, CHUNK_HEIGHT, mode};
 
 // TODO: Make this a configurable option
-def RENDER_DISTANCE = 4;
+def RENDER_DISTANCE = 12;
 
 // Maximum amount of time spent on tesselation in a single update
 // (No more than half a frame at 60 FPS)
@@ -178,7 +178,7 @@ fn chunkmgr_procqueue(mgr: *chunk_manager) void = {
 		tmesh.vert_opaque = tmesh.vert_opaque[..0];
 		tmesh.vert_translucent = tmesh.vert_translucent[..0];
 
-		engine::chunk_genmesh(&tmesh, next);
+		engine::chunk_genmesh(mgr.world, next, &tmesh);
 		const mesh = gfx::chunk_init(&tmesh);
 
 		const coords = next.coords;
