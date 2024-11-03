@@ -31,7 +31,7 @@ fn light(v: *voxel, f: face, c: *glm::v3) glm::v3 = {
 	const source = &v.neighbors.faces[f];
 	let blocklight = source.block_light;
 	let skylight = source.sky_light;
-	if (blocks[source.id].flags & flag::NON_OCCLUDING != 0) {
+	if (source.id != 0 && blocks[source.id].flags & flag::NON_OCCLUDING != 0) {
 		// TODO: Use brightest neighbor instead
 		blocklight = 15;
 	};
