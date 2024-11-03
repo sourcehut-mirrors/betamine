@@ -2,8 +2,6 @@ use block;
 use block::{flag, face};
 use glm;
 use world;
-// XXX TEMP
-use fmt;
 
 // A chunk mesh.
 export type chunk_mesh = struct {
@@ -11,6 +9,8 @@ export type chunk_mesh = struct {
 	vert_opaque: []block::vertex,
 	// List of translucent verticies
 	vert_translucent: []block::vertex,
+	// Maximum Y coordinate, for optimizing the AABB
+	max_y: int,
 };
 
 def CW = world::CHUNK_WIDTH: int;
@@ -24,6 +24,7 @@ export fn chunk_genmesh(
 ) void = {
 	assert(len(out.vert_opaque) == 0);
 	assert(len(out.vert_translucent) == 0);
+	out.max_y = 0;
 
 	def FW = world::CHUNK_WIDTH: f32;
 	def FH = world::CHUNK_HEIGHT: f32;
@@ -45,6 +46,9 @@ export fn chunk_genmesh(
 
 		const id = chunk.blocks[i];
 		if (id == 0) continue;
+		if (y > out.max_y) {
+			out.max_y = y;
+		};
 
 		const block = block::blocks[id];
 		fill_voxel_data(chunk, &voxel, i);
