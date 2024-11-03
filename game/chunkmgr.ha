@@ -166,7 +166,7 @@ fn chunkmgr_schedule(mgr: *chunk_manager, state: *state) void = {
 };
 
 fn chunkmgr_unload(mgr: *chunk_manager, state: *state) void = {
-	for (let i = 0z; i < len(mgr.meshes); i += 1) {
+	for (let i = 0z; i < len(mgr.meshes) && i < 32; i += 1) {
 		const mesh = &mgr.meshes[i];
 		const coords = mesh.chunk.coords;
 		if (state.frame_time < mesh.unload) {
