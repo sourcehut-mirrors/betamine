@@ -18,6 +18,9 @@ def RENDER_DISTANCE = 12;
 // (No more than half a frame at 60 FPS)
 def MAX_TESS_TIME = 8 * time::MILLISECOND;
 
+// Delay to debounce unloading chunk meshes.
+def UNLOAD_DELAY = 30 * 1000;
+
 // The chunk manager manages loaded chunks from the world, schedules
 // tesselation and manages meshes, and handles loading and unloading when
 // necessary.
@@ -34,6 +37,7 @@ export type chunk = struct {
 	chunk: const *world::chunk,
 	mesh: gfx::chunk_mesh,
 	aabb: [2]glm::v3,
+	unload: u32,
 };
 
 // Initializes a chunk manager for the given [[world]].
@@ -66,6 +70,8 @@ fn chunkmgr_update(mod: *module, state: *state) void = {
 	if (len(mgr.queue) != 0) {
 		chunkmgr_procqueue(mgr);
 	};
+
+	chunkmgr_unload(mgr, state);
 };
 
 fn chunkmgr_draw(layer: *layer, state: *state) void = {
@@ -83,6 +89,9 @@ fn chunkmgr_draw(layer: *layer, state: *state) void = {
 };
 
 fn chunkmgr_drawchunk(state: *state, c: *chunk, trans: bool) void = {
+	if (c.unload != types::U32_MAX) {
+		return;
+	};
 	if (!glm::aabb_frustrum(&c.aabb, &state.frustrum)) {
 		return;
 	};
@@ -126,6 +135,7 @@ fn chunkmgr_schedule(mgr: *chunk_manager, state: *state) void = {
 		const i = chunkmgr_bisect(mgr, (x, z));
 		if (i < len(mgr.meshes) && world::coords2D_equal((x, z),
 				mgr.meshes[i].chunk.coords)) {
+			mgr.meshes[i].unload = types::U32_MAX;
 			continue;
 		};
 
@@ -145,14 +155,25 @@ fn chunkmgr_schedule(mgr: *chunk_manager, state: *state) void = {
 	};
 
 	for (let i = 0z; i < len(mgr.meshes); i += 1) {
-		const mesh = &mgr.meshes[i];
+		let mesh = &mgr.meshes[i];
 		const coords = mesh.chunk.coords;
 		if (coords.0 >= min.0 && coords.1 >= min.1
 			&& coords.0 <= max.0 && coords.1 <= max.1) {
 			continue;
 		};
-		log::printfln("[chunkmgr] unload <{},{}>", coords.0, coords.1);
+		mesh.unload = state.frame_time + UNLOAD_DELAY;
+	};
+};
 
+fn chunkmgr_unload(mgr: *chunk_manager, state: *state) void = {
+	for (let i = 0z; i < len(mgr.meshes); i += 1) {
+		const mesh = &mgr.meshes[i];
+		const coords = mesh.chunk.coords;
+		if (state.frame_time < mesh.unload) {
+			return;
+		};
+
+		log::printfln("[chunkmgr] unload <{},{}>", coords.0, coords.1);
 		gfx::chunk_finish(&mesh.mesh);
 		world::put_chunk(mgr.world, mesh.chunk);
 		static delete(mgr.meshes[i]);
@@ -172,8 +193,8 @@ fn chunkmgr_procqueue(mgr: *chunk_manager) void = {
 			break;
 		};
 
-		const next = mgr.queue[0];
-		static delete(mgr.queue[0]);
+		const next = mgr.queue[len(mgr.queue)-1];
+		static delete(mgr.queue[len(mgr.queue)-1]);
 
 		tmesh.vert_opaque = tmesh.vert_opaque[..0];
 		tmesh.vert_translucent = tmesh.vert_translucent[..0];
@@ -198,6 +219,7 @@ fn chunkmgr_procqueue(mgr: *chunk_manager) void = {
 					(coords.1 * CHUNK_WIDTH + CHUNK_WIDTH): f32,
 				],
 			],
+			unload = types::U32_MAX,
 		});
 
 		const tend = time::now(clock::MONOTONIC);
