@@ -51,7 +51,7 @@ export fn level_decode(rd: *nbt::reader) (level | io::error) = {
 		case "SpawnZ" =>
 			level.spawn.2 = tag._i32;
 		case "Player" =>
-			nbt::skip(rd, tag)?; // TODO
+			level.player = player_decode(rd)?;
 		case "raining" =>
 			level.raining = tag._i8 != 0;
 		case "rainTime" =>

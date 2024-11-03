@@ -24,6 +24,25 @@ export type player = struct {
 // Decodes player data from a world's level.dat or players directory.
 fn player_decode(rd: *nbt::reader) (player | io::error) = {
 	let player = player { ... };
-	// TODO
+
+	for (const tag => nbt::next(rd)?) {
+		if (tag.tag == nbt::nbt_tag::END) {
+			break;
+		};
+
+		// TODO: Load the rest of the player stuff
+		switch (tag.name) {
+		case "Pos" =>
+			tag = nbt::next(rd)? as nbt::value;
+			player.pos[0] = tag._f64;
+			tag = nbt::next(rd)? as nbt::value;
+			player.pos[1] = tag._f64;
+			tag = nbt::next(rd)? as nbt::value;
+			player.pos[2] = tag._f64;
+		case =>
+			nbt::skip(rd, tag)?;
+		};
+	};
+
 	return player;
 };

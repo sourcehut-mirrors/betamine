@@ -22,12 +22,11 @@ export fn init(win: *sdl2::SDL_Window) *state = {
 	state.world = world::open(os::args[1])!;
 	const level = &state.world.level;
 
-	// TODO: Spawn at player's previous location (or world spawn point)
 	state.camera = gfx::camera_new();
 	state.camera.pos = [
-		level.spawn.0: f32,
-		level.spawn.1: f32 + engine::PLAYER_HEIGHT,
-		level.spawn.2: f32,
+		level.player.pos[0]: f32,
+		level.player.pos[1]: f32 + engine::PLAYER_HEIGHT,
+		level.player.pos[2]: f32,
 	];
 
 	// Initialize modules
