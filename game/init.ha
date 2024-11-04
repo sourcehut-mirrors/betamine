@@ -1,5 +1,6 @@
 use engine;
 use gfx;
+use math;
 use os;
 use sdl2;
 use world;
@@ -21,13 +22,16 @@ export fn init(win: *sdl2::SDL_Window) *state = {
 	// XXX TEMP
 	state.world = world::open(os::args[1])!;
 	const level = &state.world.level;
+	const player = &level.player;
 
 	state.camera = gfx::camera_new();
 	state.camera.pos = [
-		level.player.pos[0]: f32,
-		level.player.pos[1]: f32 + engine::PLAYER_HEIGHT,
-		level.player.pos[2]: f32,
+		player.pos[0]: f32,
+		player.pos[1]: f32,
+		player.pos[2]: f32,
 	];
+	state.camera.pitch = deg2rad(player.rotation.0);
+	state.camera.yaw = deg2rad(player.rotation.1);
 
 	// Initialize modules
 	input_init(state);
@@ -43,4 +47,8 @@ export fn init(win: *sdl2::SDL_Window) *state = {
 export fn destroy(state: *state) void = {
 	// TODO: Other stuff
 	free(state);
+};
+
+fn deg2rad(deg: f32) f32 = {
+	return (deg: f64 / 360.0 * math::PI * 2.0): f32;
 };

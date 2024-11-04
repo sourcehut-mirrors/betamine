@@ -39,6 +39,12 @@ fn player_decode(rd: *nbt::reader) (player | io::error) = {
 			player.pos[1] = tag._f64;
 			tag = nbt::next(rd)? as nbt::value;
 			player.pos[2] = tag._f64;
+		case "Rotation" =>
+			tag = nbt::next(rd)? as nbt::value;
+			const yaw = tag._f32;
+			tag = nbt::next(rd)? as nbt::value;
+			const pitch = tag._f32;
+			player.rotation = (yaw, pitch);
 		case =>
 			nbt::skip(rd, tag)?;
 		};
