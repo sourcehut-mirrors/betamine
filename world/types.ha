@@ -44,10 +44,10 @@ export fn world_to_chunk(
 	case let c: *coords3D =>
 		*c = (
 			if (world.0 >= 0) world.0 % CHUNK_WIDTH
-			else CHUNK_WIDTH + world.0 % CHUNK_WIDTH,
+			else (CHUNK_WIDTH - 1) + world.0 % CHUNK_WIDTH,
 			world.1,
 			if (world.2 >= 0) world.2 % CHUNK_WIDTH
-			else CHUNK_WIDTH + world.2 % CHUNK_WIDTH,
+			else (CHUNK_WIDTH - 1) + world.2 % CHUNK_WIDTH,
 		);
 	case null => void;
 	};
@@ -68,9 +68,9 @@ export fn chunk_to_region(
 	case let c: *coords2D =>
 		*c = (
 			if (chunk.0 >= 0) chunk.0 % REGION_WIDTH
-			else REGION_WIDTH + chunk.0 % REGION_WIDTH,
+			else (REGION_WIDTH - 1) + chunk.0 % REGION_WIDTH,
 			if (chunk.1 >= 0) chunk.1 % REGION_WIDTH
-			else REGION_WIDTH + chunk.1 % REGION_WIDTH,
+			else (REGION_WIDTH - 1) + chunk.1 % REGION_WIDTH,
 		);
 	case null => void;
 	};
