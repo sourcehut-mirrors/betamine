@@ -1,4 +1,5 @@
 use glm;
+use math;
 
 // Vertex of a block model.
 export type vertex = struct @packed {
@@ -779,9 +780,23 @@ fn model_stairs(
 		uv = &stairs_uv_stone;
 	};
 
+	const angles: [_]f32 = [
+		(math::PI * 1.5): f32,
+		(math::PI * 0.5): f32,
+		(math::PI * 1.0): f32,
+		(math::PI * 0.0): f32,
+	];
+
+	const half: glm::v3 = [0.5, 0.0, 0.5];
+	const up: glm::v3 = [0.0, 1.0, 0.0];
+
 	for (let poly .. stairs_indicies)
 	for (let (vi, ti, ni) .. poly) {
-		const vert_pos = stairs_vertex[vi - 1];
+		let vert_pos = stairs_vertex[vi - 1];
+		vert_pos = glm::v3_sub(&vert_pos, &half);
+		glm::v3_rotate(&vert_pos, angles[v.data], &up);
+		vert_pos = glm::v3_add(&vert_pos, &half);
+
 		const vert_uv = uv[ti - 1];
 		const vert_norm = stairs_normal[ni - 1];
 		append(out, vertex {
