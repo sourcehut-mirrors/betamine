@@ -68,6 +68,7 @@ non_occluding = [
     "PLATE_WOOD",
     "STAIRS_WOODEN",
     "STAIRS_STONE",
+    "BED",
 ]
 
 transparent_blocks = [

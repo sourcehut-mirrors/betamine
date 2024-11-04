@@ -499,6 +499,7 @@ const block_note = block {
 const block_bed = block {
 	id = BED,
 	model = &model_cube,
+	flags = flag::NON_OCCLUDING,
 	display_name = "Bed",
 	tex = (6, 8),
 	hardness = 0.20,
