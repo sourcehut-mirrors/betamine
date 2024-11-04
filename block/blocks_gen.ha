@@ -1016,7 +1016,8 @@ const block_snow_block = block {
 
 const block_cactus = block {
 	id = CACTUS,
-	model = &model_cube,
+	model = &model_cactus,
+	flags = flag::NON_OCCLUDING,
 	display_name = "Cactus",
 	tex = (6, 4),
 	hardness = 0.40,

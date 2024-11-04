@@ -829,3 +829,39 @@ fn model_stairs(
 		});
 	};
 };
+
+fn model_cactus(
+	b: *block,
+	v: *voxel,
+	out: *[]vertex,
+	pos: *glm::v3,
+	faces: face,
+) void = {
+	const color = glm::V3_ONE;
+	const angles: [_]f32 = [
+		(math::PI * 1.5): f32,
+		(math::PI * 0.5): f32,
+		(math::PI * 1.0): f32,
+		(math::PI * 0.0): f32,
+	];
+
+	for (let poly .. cactus_indicies)
+	for (let (vi, ti, ni) .. poly) {
+		const vert_pos = cactus_vertex[vi - 1];
+		const vert_uv = cactus_uv[ti - 1];
+		const vert_norm = cactus_normal[ni - 1];
+		append(out, vertex {
+			pos = [
+				pos[0] + vert_pos[0],
+				pos[1] + vert_pos[1],
+				pos[2] + vert_pos[2],
+			],
+			norm = vert_norm,
+			uv = [
+				vert_uv[0],
+				1.0 - vert_uv[1],
+			],
+			color = color,
+		});
+	};
+};

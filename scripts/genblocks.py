@@ -48,6 +48,7 @@ custom_models = {
     "DOOR_IRON": "door",
     "STAIRS_STONE": "stairs",
     "STAIRS_WOODEN": "stairs",
+    "CACTUS": "cactus",
 }
 
 non_occluding = [
@@ -69,6 +70,7 @@ non_occluding = [
     "STAIRS_WOODEN",
     "STAIRS_STONE",
     "BED",
+    "CACTUS",
 ]
 
 transparent_blocks = [
