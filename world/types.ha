@@ -68,9 +68,9 @@ export fn chunk_to_region(
 	case let c: *coords2D =>
 		*c = (
 			if (chunk.0 >= 0) chunk.0 % REGION_WIDTH
-			else (REGION_WIDTH - 1) + chunk.0 % REGION_WIDTH,
+			else REGION_WIDTH + chunk.0 % REGION_WIDTH,
 			if (chunk.1 >= 0) chunk.1 % REGION_WIDTH
-			else (REGION_WIDTH - 1) + chunk.1 % REGION_WIDTH,
+			else REGION_WIDTH + chunk.1 % REGION_WIDTH,
 		);
 	case null => void;
 	};
