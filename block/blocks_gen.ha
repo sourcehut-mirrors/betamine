@@ -753,7 +753,8 @@ const block_spawner = block {
 
 const block_stairs_wooden = block {
 	id = STAIRS_WOODEN,
-	model = &model_cube,
+	model = &model_stairs,
+	flags = flag::NON_OCCLUDING,
 	display_name = "Wooden Stairs",
 	hardness = 0.00,
 	...
@@ -883,7 +884,8 @@ const block_rail = block {
 
 const block_stairs_stone = block {
 	id = STAIRS_STONE,
-	model = &model_cube,
+	model = &model_stairs,
+	flags = flag::NON_OCCLUDING,
 	display_name = "Stone Stairs",
 	hardness = 0.00,
 	...

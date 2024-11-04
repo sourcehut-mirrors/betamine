@@ -765,3 +765,37 @@ fn model_door(
 		append(out, verticies...);
 	};
 };
+
+fn model_stairs(
+	b: *block,
+	v: *voxel,
+	out: *[]vertex,
+	pos: *glm::v3,
+	faces: face,
+) void = {
+	const color = glm::V3_ONE;
+	let uv = &stairs_uv_wood;
+	if (b.id == STAIRS_STONE) {
+		uv = &stairs_uv_stone;
+	};
+
+	for (let poly .. stairs_indicies)
+	for (let (vi, ti, ni) .. poly) {
+		const vert_pos = stairs_vertex[vi - 1];
+		const vert_uv = uv[ti - 1];
+		const vert_norm = stairs_normal[ni - 1];
+		append(out, vertex {
+			pos = [
+				pos[0] + vert_pos[0],
+				pos[1] + vert_pos[1],
+				pos[2] + vert_pos[2],
+			],
+			norm = vert_norm,
+			uv = [
+				vert_uv[0],
+				1.0 - vert_uv[1],
+			],
+			color = color,
+		});
+	};
+};
