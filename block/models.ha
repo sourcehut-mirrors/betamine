@@ -128,6 +128,21 @@ fn model_cube(
 		if (st != 0) faces &= ~(1 << face::S);
 		if (wt != 0) faces &= ~(1 << face::W);
 	};
+	if (b.id == GLASS) {
+		const tg = v.neighbors.top.id == GLASS;
+		const bg = v.neighbors.bottom.id == GLASS;
+		const ng = v.neighbors.north.id == GLASS;
+		const eg = v.neighbors.east.id == GLASS;
+		const sg = v.neighbors.south.id == GLASS;
+		const wg = v.neighbors.west.id == GLASS;
+
+		if (tg) faces &= ~(1 << face::T);
+		if (bg) faces &= ~(1 << face::B);
+		if (ng) faces &= ~(1 << face::N);
+		if (eg) faces &= ~(1 << face::E);
+		if (sg) faces &= ~(1 << face::S);
+		if (wg) faces &= ~(1 << face::W);
+	};
 
 	for (let f &.. face_map) {
 		const (mask, _, _) = *f;
