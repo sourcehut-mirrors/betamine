@@ -46,6 +46,10 @@ export fn openroot(rd: *reader) (value | io::error) = {
 // expected to [[io::read]] bytes equal to the length provided by
 // [[value]].length (and no more) before calling [[next]] again.
 export fn next(rd: *reader) (value | io::EOF | io::error) = {
+	if (len(rd.stack) == 0) {
+		return io::EOF;
+	};
+
 	let state = &rd.stack[0];
 
 	let rdbuf: [8]u8 = [0...];
