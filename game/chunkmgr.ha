@@ -64,7 +64,11 @@ fn chunkmgr_update(mod: *module, state: *state) void = {
 	let coords = world::world_to_chunk(player, null);
 	if (!world::coords2D_equal(mgr.player_cc, coords)) {
 		mgr.player_cc = coords;
+		const start = time::now(clock::MONOTONIC);
 		chunkmgr_schedule(mgr, state);
+		const end = time::now(clock::MONOTONIC);
+		log::printfln("[chunkmgr] scheduler took {}ms",
+			time::diff(start, end) / time::MILLISECOND);
 	};
 
 	if (len(mgr.queue) != 0) {
