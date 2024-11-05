@@ -528,7 +528,8 @@ const block_rail_detector = block {
 
 const block_piston_sticky = block {
 	id = PISTON_STICKY,
-	model = &model_cube,
+	model = &model_piston,
+	flags = flag::NON_OCCLUDING,
 	display_name = "Sticky Piston",
 	tex = (10, 6),
 	hardness = 0.00,
@@ -567,7 +568,8 @@ const block_dry_bush = block {
 
 const block_piston = block {
 	id = PISTON,
-	model = &model_cube,
+	model = &model_piston,
+	flags = flag::NON_OCCLUDING,
 	display_name = "Piston",
 	tex = (11, 6),
 	hardness = 0.00,
@@ -576,7 +578,8 @@ const block_piston = block {
 
 const block_piston_head = block {
 	id = PISTON_HEAD,
-	model = &model_cube,
+	model = &model_piston_head,
+	flags = flag::NON_OCCLUDING,
 	display_name = "",
 	tex = (11, 6),
 	hardness = 0.00,

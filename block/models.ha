@@ -236,6 +236,8 @@ fn model_cube(
 				tex = (10, 1);
 			};
 		case PISTON =>
+			// Note: pistons are only rendered with this code path
+			// if they're closed.
 			const orient = v.data & 0b111;
 			tex = piston_uv[orient][mask];
 			rotuv = piston_rotuv[orient][mask];
@@ -838,13 +840,6 @@ fn model_cactus(
 	faces: face,
 ) void = {
 	const color = glm::V3_ONE;
-	const angles: [_]f32 = [
-		(math::PI * 1.5): f32,
-		(math::PI * 0.5): f32,
-		(math::PI * 1.0): f32,
-		(math::PI * 0.0): f32,
-	];
-
 	for (let poly .. cactus_indicies)
 	for (let (vi, ti, ni) .. poly) {
 		const vert_pos = cactus_vertex[vi - 1];
@@ -862,6 +857,116 @@ fn model_cactus(
 				1.0 - vert_uv[1],
 			],
 			color = color,
+		});
+	};
+};
+
+fn model_piston(
+	b: *block,
+	v: *voxel,
+	out: *[]vertex,
+	pos: *glm::v3,
+	faces: face,
+) void = {
+	const sticky = v.id == PISTON_STICKY;
+	const orient = v.data & 0b111;
+	const open = v.data & 0x8 != 0;
+	if (!open) {
+		model_cube(b, v, out, pos, faces);
+		return;
+	};
+
+	def AXIS_X: glm::v3 = [1.0, 0.0, 0.0];
+	def AXIS_Y: glm::v3 = [0.0, 1.0, 0.0];
+	const rotations = [
+		(AXIS_X, math::PI * 1.5),
+		(AXIS_X, math::PI * 0.5),
+
+		(AXIS_Y, math::PI * 0.0),
+		(AXIS_Y, math::PI * 1.0),
+		(AXIS_Y, math::PI * 0.5),
+		(AXIS_Y, math::PI * 1.5),
+	];
+
+	const (axis, angle) = rotations[v.data & 0b111];
+
+	const half: glm::v3 = [0.5, 0.5, 0.5];
+	for (let poly .. piston_open_indicies)
+	for (let (vi, ti, ni) .. poly) {
+		let vert_pos = piston_open_vertex[vi - 1];
+		vert_pos = glm::v3_sub(&vert_pos, &half);
+		glm::v3_rotate(&vert_pos, angle: f32, &axis);
+		vert_pos = glm::v3_add(&vert_pos, &half);
+
+		const vert_uv = piston_open_uv[ti - 1];
+		const vert_norm = piston_open_normal[ni - 1];
+		append(out, vertex {
+			pos = [
+				pos[0] + vert_pos[0],
+				pos[1] + vert_pos[1],
+				pos[2] + vert_pos[2],
+			],
+			norm = vert_norm,
+			uv = [
+				vert_uv[0],
+				1.0 - vert_uv[1],
+			],
+			color = glm::V3_ONE,
+		});
+	};
+};
+
+fn model_piston_head(
+	b: *block,
+	v: *voxel,
+	out: *[]vertex,
+	pos: *glm::v3,
+	faces: face,
+) void = {
+	def AXIS_X: glm::v3 = [1.0, 0.0, 0.0];
+	def AXIS_Y: glm::v3 = [0.0, 1.0, 0.0];
+	const rotations = [
+		(AXIS_X, math::PI * 1.5),
+		(AXIS_X, math::PI * 0.5),
+
+		(AXIS_Y, math::PI * 0.0),
+		(AXIS_Y, math::PI * 1.0),
+		(AXIS_Y, math::PI * 0.5),
+		(AXIS_Y, math::PI * 1.5),
+	];
+
+	const sticky = v.data & 0x8 != 0;
+	const (axis, angle) = rotations[v.data & 0b111];
+
+	let uv = plunger_uv;
+	let indicies = plunger_indicies;
+	if (sticky) {
+		uv = plunger_sticky_uv;
+		indicies = plunger_sticky_indicies;
+	};
+
+	const half: glm::v3 = [0.5, 0.5, 0.5];
+	for (let poly .. indicies)
+	for (let (vi, ti, ni) .. poly) {
+		let vert_pos = plunger_vertex[vi - 1];
+		vert_pos = glm::v3_sub(&vert_pos, &half);
+		glm::v3_rotate(&vert_pos, angle: f32, &axis);
+		vert_pos = glm::v3_add(&vert_pos, &half);
+
+		const vert_uv = uv[ti - 1];
+		const vert_norm = plunger_normal[ni - 1];
+		append(out, vertex {
+			pos = [
+				pos[0] + vert_pos[0],
+				pos[1] + vert_pos[1],
+				pos[2] + vert_pos[2],
+			],
+			norm = vert_norm,
+			uv = [
+				vert_uv[0],
+				1.0 - vert_uv[1],
+			],
+			color = glm::V3_ONE,
 		});
 	};
 };

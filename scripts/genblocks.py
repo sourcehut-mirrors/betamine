@@ -49,6 +49,9 @@ custom_models = {
     "STAIRS_STONE": "stairs",
     "STAIRS_WOODEN": "stairs",
     "CACTUS": "cactus",
+    "PISTON": "piston",
+    "PISTON_STICKY": "piston",
+    "PISTON_HEAD": "piston_head",
 }
 
 non_occluding = [
@@ -71,6 +74,10 @@ non_occluding = [
     "STAIRS_STONE",
     "BED",
     "CACTUS",
+    "PISTON_HEAD",
+    # Note: technically these are occluding when retracted
+    "PISTON",
+    "PISTON_STICKY",
 ]
 
 transparent_blocks = [
