@@ -170,7 +170,7 @@ fn chunkmgr_unload(mgr: *chunk_manager, state: *state) void = {
 		const mesh = &mgr.meshes[i];
 		const coords = mesh.chunk.coords;
 		if (state.frame_time < mesh.unload) {
-			return;
+			continue;
 		};
 
 		log::printfln("[chunkmgr] unload <{},{}>", coords.0, coords.1);
