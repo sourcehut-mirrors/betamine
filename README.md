@@ -15,3 +15,6 @@ where _path_ is the path to a world in `~/.minecraft/saves` which was created
 by Minecraft beta 1.7.3.
 
 ![Screenshot of betamine](https://redacted.moe/f/a0c2f3ff.png)
+
+You will need some assets -- run `./script/fetch-mojang-assets` to download the
+official assets from Mojang's servers.
