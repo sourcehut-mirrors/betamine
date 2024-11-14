@@ -26,7 +26,7 @@ export def SPAWN_MOB: u8 = 0x18;
 export def SPAWN_PAINTING: u8 = 0x19;
 
 export def ENTITY_VELOCITY: u8 = 0x1C;
-export def DESTROY_ENTITY: u8 = 0x1D;
+export def ENTITY_DESTROY: u8 = 0x1D;
 export def ENTITY: u8 = 0x1E;
 export def ENTITY_MOVE: u8 = 0x1F;
 export def ENTITY_LOOK: u8 = 0x20;
@@ -34,10 +34,10 @@ export def ENTITY_MOVE_LOOK: u8 = 0x21;
 export def ENTITY_TELEPORT: u8 = 0x22;
 
 export def ENTITY_STATUS: u8 = 0x26;
-export def ATTACH_ENTITY: u8 = 0x27;
+export def ENTITY_ATTACH: u8 = 0x27;
 export def ENTITY_METADATA: u8 = 0x28;
 
-export def CHUNK_PREAMBLE: u8 = 0x32;
+export def CHUNK_ALLOCATE: u8 = 0x32;
 export def CHUNK_DATA: u8 = 0x33;
 export def BULK_BLOCK_CHANGE: u8 = 0x34;
 export def BLOCK_CHANGE: u8 = 0x35;
@@ -49,13 +49,13 @@ export def SOUND_EFFECT: u8 = 0x3D;
 export def ENVIRONMENT_STATE: u8 = 0x46;
 export def THUNDERBOLT: u8 = 0x47;
 
-export def OPEN_WINDOW: u8 = 0x64;
-export def CLOSE_WINDOW: u8 = 0x65;
+export def WINDOW_OPEN: u8 = 0x64;
+export def WINDOW_CLOSE: u8 = 0x65;
 export def WINDOW_CLICK: u8 = 0x66;
-export def SET_SLOT: u8 = 0x67;
+export def WINDOW_SET_SLOT: u8 = 0x67;
 export def WINDOW_ITEMS: u8 = 0x68;
-export def UPDATE_PROGRESS: u8 = 0x69;
-export def TRANSACTION: u8 = 0x6a;
+export def WINDOW_PROGRESS: u8 = 0x69;
+export def WINDOW_TRANSACTION: u8 = 0x6a;
 
 export def UPDATE_SIGN: u8 = 0x82;
 export def MAP_DATA: u8 = 0x83;
