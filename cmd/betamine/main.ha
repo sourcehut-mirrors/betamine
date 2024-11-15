@@ -1,6 +1,8 @@
 use fmt;
 use game;
+use getopt;
 use net::mc;
+use os;
 use sdl2;
 use sdl2::{SDL_RendererFlags, SDL_WindowFlags, SDL_EventType, SDL_Scancode};
 use sdl2::image;
@@ -12,6 +14,19 @@ def FULLSCREEN = false;
 def VSYNC = 0;
 
 export fn main() void = {
+	const usage: []getopt::help = [
+		"betamine client",
+		('u', "username", "set client username"),
+		"hostname[:port]",
+	];
+	const cmd = getopt::parse(os::args, usage...);
+	defer getopt::finish(&cmd);
+
+	if (len(cmd.args) == 0) {
+		getopt::printusage(os::stderr, os::args[0], usage)!;
+		os::exit(1);
+	};
+
 	sdl2::SDL_Init(sdl2::SDL_INIT_VIDEO | sdl2::SDL_INIT_AUDIO)!;
 	defer sdl2::SDL_Quit();
 
