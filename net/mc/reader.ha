@@ -73,7 +73,7 @@ fn read(rd: *reader, n: size) ([]u8 | io::error) = {
 
 	const need = rd.off + n - rd.avail;
 	if (rd.off + need > len(rd.buf)) {
-		append(rd.buf, [0...], need - len(rd.buf));
+		append(rd.buf, [0...], rd.off + need - len(rd.buf));
 	};
 
 	for (rd.avail < rd.off + n) {
