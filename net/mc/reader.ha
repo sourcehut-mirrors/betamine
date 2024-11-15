@@ -2,20 +2,21 @@ use endian;
 use errors;
 use fs;
 use io;
+use log;
 use os;
 use strings;
 
 def INIT_BUFSZ = 4096;
 
 // Packet reader mode of operation
-export type reader_mode = enum {
+export type conn_mode = enum {
 	CLIENT,
 	SERVER,
 };
 
 export type reader = struct {
 	sock: io::file,
-	mode: reader_mode,
+	mode: conn_mode,
 	buf: []u8,
 	off: size,
 	avail: size,
@@ -24,7 +25,7 @@ export type reader = struct {
 // Initializes a new Minecraft packet reader.
 export fn newreader(
 	sock: io::file,
-	mode: reader_mode = reader_mode::CLIENT,
+	mode: conn_mode = conn_mode::CLIENT,
 ) reader = {
 	const fl = os::getfl(sock)!;
 	os::setfl(sock, fl | fs::flag::NONBLOCK)!;
@@ -42,10 +43,9 @@ export fn reader_finish(rd: *reader) void = {
 	free(rd.buf);
 };
 
-// Reads the next packet from the connection, or returns void if none are ready.
-// Note that the packet's contents may be borrowed from the packet reader and
-// may be overwritten on the next call to [[read_packet]]. The packet's value is
-// undefined if the return value is void.
+// Reads the next packet from the connection, or returns [[errors::again]] if
+// none are ready. Note that the packet's contents may be borrowed from the
+// packet reader and may be overwritten on the next call to [[read_packet]].
 export fn read_packet(rd: *reader, out: *packet) (void | io::error) = {
 	match (_read_packet(rd, out)) {
 	case let err: io::error =>
@@ -60,7 +60,13 @@ export fn read_packet(rd: *reader, out: *packet) (void | io::error) = {
 
 fn _read_packet(rd: *reader, out: *packet) (void | io::error) = {
 	out.id = read_i8(rd)?: u8;
-	packet_readers[out.id](rd, &out._payload)?;
+
+	const decoder = packet_readers[out.id];
+	if (decoder == &read_invalid) {
+		log::printfln("Invalid packet with ID {:x}", out.id);
+	};
+
+	decoder(rd, &out._payload)?;
 };
 
 fn read(rd: *reader, n: size) ([]u8 | io::error) = {
@@ -81,7 +87,7 @@ fn read(rd: *reader, n: size) ([]u8 | io::error) = {
 		case let z: size =>
 			rd.avail += z;
 		case io::EOF =>
-			return errors::invalid;
+			return errors::netunreachable;
 		case let err: io::error =>
 			return err;
 		};
@@ -144,6 +150,9 @@ fn read_bool(rd: *reader) (bool | io::error) = {
 // Return value is borrowed from reader
 fn read_string8(rd: *reader) (str | io::error) = {
 	const length = read_i16(rd)?: size;
+	if (length == 0) {
+		return "";
+	};
 	const buf = read(rd, length)?;
 	// XXX: This is strictly speaking Java's dumb "modified UTF-8" format
 	match (strings::fromutf8(buf)) {
@@ -157,6 +166,9 @@ fn read_string8(rd: *reader) (str | io::error) = {
 // Return value is borrowed from reader
 fn read_string16(rd: *reader) ([]u16 | io::error) = {
 	const length = read_i16(rd)?: size;
+	if (length == 0) {
+		return [];
+	};
 	const buf = read(rd, length * 2)?;
 	const buf = &buf[0]: *[*]u16;
 	return buf[..length];

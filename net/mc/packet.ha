@@ -1,3 +1,8 @@
+export def EMPTY_PACKET = packet {
+	_payload = 0,
+	...
+};
+
 // A Minecraft protocol packet.
 export type packet = struct {
 	id: u8,

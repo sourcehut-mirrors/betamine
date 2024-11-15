@@ -1,5 +1,6 @@
 use errors;
 use io;
+use log;
 
 type read_packet_fn = fn(rd: *reader, payload: *opaque) (void | io::error);
 
@@ -14,12 +15,12 @@ fn read_keep_alive(rd: *reader, payload: *opaque) (void | io::error) = {
 fn read_login_request(rd: *reader, payload: *opaque) (void | io::error) = {
 	let p = payload: *login_request;
 	switch (rd.mode) {
-	case reader_mode::CLIENT =>
+	case conn_mode::CLIENT =>
 		p.entity_id = read_int(rd)?;
 		p.username = read_string16(rd)?;
 		p.seed = read_i64(rd)?;
 		p.dimension = read_i8(rd)?;
-	case reader_mode::SERVER =>
+	case conn_mode::SERVER =>
 		p.version = read_int(rd)?;
 		p.username = read_string16(rd)?;
 		p.seed = read_i64(rd)?;
@@ -30,9 +31,9 @@ fn read_login_request(rd: *reader, payload: *opaque) (void | io::error) = {
 fn read_handshake(rd: *reader, payload: *opaque) (void | io::error) = {
 	let p = payload: *handshake;
 	switch (rd.mode) {
-	case reader_mode::CLIENT =>
+	case conn_mode::CLIENT =>
 		p.connection_hash = read_string16(rd)?;
-	case reader_mode::SERVER =>
+	case conn_mode::SERVER =>
 		p.username = read_string16(rd)?;
 	};
 };
@@ -103,7 +104,7 @@ fn read_player_look(rd: *reader, payload: *opaque) (void | io::error) = {
 fn read_player_pos_look(rd: *reader, payload: *opaque) (void | io::error) = {
 	let p = payload: *player_pos_look;
 	switch (rd.mode) {
-	case reader_mode::CLIENT =>
+	case conn_mode::CLIENT =>
 		p.x = read_f64(rd)?;
 		p.stance = read_f64(rd)?;
 		p.y = read_f64(rd)?;
@@ -111,7 +112,7 @@ fn read_player_pos_look(rd: *reader, payload: *opaque) (void | io::error) = {
 		p.yaw = read_f32(rd)?;
 		p.pitch = read_f32(rd)?;
 		p.ground = read_bool(rd)?;
-	case reader_mode::SERVER =>
+	case conn_mode::SERVER =>
 		p.x = read_f64(rd)?;
 		p.y = read_f64(rd)?;
 		p.stance = read_f64(rd)?;
