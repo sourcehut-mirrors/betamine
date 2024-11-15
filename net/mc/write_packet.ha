@@ -2,6 +2,12 @@ use encoding::ucs2;
 use endian;
 use io;
 
+// Writes a [[KEEP_ALIVE]] packet to the connection.
+export fn write_keep_alive(c: *conn) (void | io::error) = {
+	write_begin(c, KEEP_ALIVE);
+	write_end(c)?;
+};
+
 // Write a [[handshake]] packet to the connection.
 export fn write_handshake(
 	c: *conn,
