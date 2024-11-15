@@ -29,11 +29,24 @@ export fn log_packet(
 		const msg = ucs2::fromucs2(packet.chat_message.message);
 		defer free(msg);
 		log::printfln("   message: {}", msg);
+	case PLAYER_POS =>
+		log::printfln("   x: {}", packet.player_pos.x);
+		log::printfln("   y: {}", packet.player_pos.y);
+		log::printfln("   z: {}", packet.player_pos.z);
+		log::printfln("   stance: {}", packet.player_pos.stance);
+		log::printfln("   ground: {}", packet.player_pos.ground);
+	case ENTITY, ENTITY_MOVE, ENTITY_LOOK, ENTITY_MOVE_LOOK, ENTITY_DESTROY =>
+		log::printfln("   entity ID: {}", packet.entity.entity_id);
 	case CHUNK_ALLOCATE =>
 		log::printfln("   <{},{}>; load: {}",
 			packet.chunk_allocate.x,
 			packet.chunk_allocate.z,
 			packet.chunk_allocate.load);
+	case BULK_BLOCK_CHANGE =>
+		log::printfln("   <{},{}>; {} blocks",
+			packet.bulk_block_change.chunk_x,
+			packet.bulk_block_change.chunk_z,
+			len(packet.bulk_block_change.coords));
 	case => void;
 	};
 };

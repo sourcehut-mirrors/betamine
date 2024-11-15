@@ -273,6 +273,7 @@ fn read_entity_look(rd: *reader, payload: *opaque) (void | io::error) = {
 
 fn read_entity_move_look(rd: *reader, payload: *opaque) (void | io::error) = {
 	let p = payload: *entity_move_look;
+	p.entity_id = read_int(rd)?;
 	p.dx = read_i8(rd)?;
 	p.dy = read_i8(rd)?;
 	p.dz = read_i8(rd)?;
@@ -340,7 +341,7 @@ fn read_bulk_block_change(rd: *reader, payload: *opaque) (void | io::error) = {
 	if (length < 0) return errors::invalid;
 	const length = length: size;
 
-	const coords = read(rd, length / size(i16))?;
+	const coords = read(rd, length * size(i16))?;
 	p.coords = (coords: *[*]i16)[..length];
 	p.block_ids = read(rd, length)?: []i8;
 	p.metadata = read(rd, length)?: []i8;
