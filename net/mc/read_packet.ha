@@ -448,7 +448,7 @@ fn read_window_items(rd: *reader, payload: *opaque) (void | io::error) = {
 	p.nitem = read_i16(rd)?;
 
 	const start = tell(rd);
-	assert(start == 3);
+	assert(start == 4);
 
 	for (let i = 0z; i < p.nitem: size; i += 1) {
 		let slot = slot { ... };

@@ -25,6 +25,15 @@ export fn log_packet(
 		log::printfln("   username: {}", user);
 		log::printfln("   seed: {}", packet.login_request.seed);
 		log::printfln("   dimension: {}", packet.login_request.dimension);
+	case CHAT_MESSAGE =>
+		const msg = ucs2::fromucs2(packet.chat_message.message);
+		defer free(msg);
+		log::printfln("   message: {}", msg);
+	case CHUNK_ALLOCATE =>
+		log::printfln("   <{},{}>; load: {}",
+			packet.chunk_allocate.x,
+			packet.chunk_allocate.z,
+			packet.chunk_allocate.load);
 	case => void;
 	};
 };

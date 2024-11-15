@@ -83,13 +83,13 @@ fn read(rd: *reader, n: size) ([]u8 | io::error) = {
 	};
 
 	for (rd.avail < rd.off + n) {
-		match (io::read(rd.sock, rd.buf[rd.avail..])) {
+		match (io::read(rd.sock, rd.buf[rd.avail..rd.off+n])) {
 		case let z: size =>
 			rd.avail += z;
-		case io::EOF =>
-			return errors::netunreachable;
 		case let err: io::error =>
 			return err;
+		case io::EOF =>
+			return errors::netunreachable;
 		};
 	};
 
@@ -125,14 +125,14 @@ fn read_i16(rd: *reader) (i16 | io::error) = {
 
 fn read_i32(rd: *reader) (i32 | io::error) = {
 	const buf = read(rd, size(i32))?;
-	return endian::begetu16(buf): i32;
+	return endian::begetu32(buf): i32;
 };
 
 fn read_int(rd: *reader) (int | io::error) = read_i32(rd)?: int;
 
 fn read_i64(rd: *reader) (i64 | io::error) = {
 	const buf = read(rd, size(i64))?;
-	return endian::begetu16(buf): i64;
+	return endian::begetu64(buf): i64;
 };
 
 fn read_f32(rd: *reader) (f32 | io::error) = {
