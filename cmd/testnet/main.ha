@@ -2,14 +2,11 @@ use encoding::ucs2;
 use errors;
 use io;
 use log;
-use net::dial;
 use net::mc;
 use os;
 
 export fn main() void = {
-	const conn = dial::dial("tcp", os::args[1], "minecraft")!;
-	const conn = mc::newconn(conn);
-
+	const conn = mc::dial(os::args[1])!;
 	const user = ucs2::toucs2("betamine");
 	defer free(user);
 

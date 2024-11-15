@@ -24,8 +24,7 @@ export type conn = struct {
 	ravail: size,
 };
 
-// Initializes a new Minecraft packet conn.
-export fn newconn(
+fn newconn(
 	sock: io::file,
 	mode: conn_mode = conn_mode::CLIENT,
 ) conn = {
