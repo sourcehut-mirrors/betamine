@@ -2,509 +2,509 @@ use errors;
 use io;
 use log;
 
-type read_packet_fn = fn(rd: *reader, payload: *opaque) (void | io::error);
+type read_packet_fn = fn(c: *conn, payload: *opaque) (void | io::error);
 
-fn read_invalid(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_invalid(c: *conn, payload: *opaque) (void | io::error) = {
 	return errors::invalid;
 };
 
-fn read_keep_alive(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_keep_alive(c: *conn, payload: *opaque) (void | io::error) = {
 	void; // Empty packet
 };
 
-fn read_login_request(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_login_request(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *login_request;
-	switch (rd.mode) {
+	switch (c.mode) {
 	case conn_mode::CLIENT =>
-		p.entity_id = read_int(rd)?;
-		p.username = read_string16(rd)?;
-		p.seed = read_i64(rd)?;
-		p.dimension = read_i8(rd)?;
+		p.entity_id = read_int(c)?;
+		p.username = read_string16(c)?;
+		p.seed = read_i64(c)?;
+		p.dimension = read_i8(c)?;
 	case conn_mode::SERVER =>
-		p.version = read_int(rd)?;
-		p.username = read_string16(rd)?;
-		p.seed = read_i64(rd)?;
-		p.dimension = read_i8(rd)?;
+		p.version = read_int(c)?;
+		p.username = read_string16(c)?;
+		p.seed = read_i64(c)?;
+		p.dimension = read_i8(c)?;
 	};
 };
 
-fn read_handshake(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_handshake(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *handshake;
-	switch (rd.mode) {
+	switch (c.mode) {
 	case conn_mode::CLIENT =>
-		p.connection_hash = read_string16(rd)?;
+		p.connection_hash = read_string16(c)?;
 	case conn_mode::SERVER =>
-		p.username = read_string16(rd)?;
+		p.username = read_string16(c)?;
 	};
 };
 
-fn read_chat_message(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_chat_message(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *chat_message;
-	p.message = read_string16(rd)?;
+	p.message = read_string16(c)?;
 };
 
-fn read_time_update(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_time_update(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *time_update;
-	p.time = read_i64(rd)?;
+	p.time = read_i64(c)?;
 };
 
-fn read_entity_equip(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_entity_equip(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *entity_equip;
-	p.entity_id = read_int(rd)?;
-	p.slot = read_i16(rd)?;
-	p.item_id = read_i16(rd)?;
-	p.metadata = read_i16(rd)?;
+	p.entity_id = read_int(c)?;
+	p.slot = read_i16(c)?;
+	p.item_id = read_i16(c)?;
+	p.metadata = read_i16(c)?;
 };
 
-fn read_spawn_position(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_spawn_position(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *spawn_position;
-	p.x = read_int(rd)?;
-	p.y = read_int(rd)?;
-	p.z = read_int(rd)?;
+	p.x = read_int(c)?;
+	p.y = read_int(c)?;
+	p.z = read_int(c)?;
 };
 
-fn read_use_entity(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_use_entity(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *use_entity;
-	p.user_id = read_int(rd)?;
-	p.targ_id = read_int(rd)?;
-	p.left = read_bool(rd)?;
+	p.user_id = read_int(c)?;
+	p.targ_id = read_int(c)?;
+	p.left = read_bool(c)?;
 };
 
-fn read_update_health(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_update_health(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *update_health;
-	p.health = read_i16(rd)?;
+	p.health = read_i16(c)?;
 };
 
-fn read_respawn(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_respawn(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *respawn;
-	p.dim = read_i8(rd)?;
+	p.dim = read_i8(c)?;
 };
 
-fn read_player(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_player(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *player;
-	p.ground = read_bool(rd)?;
+	p.ground = read_bool(c)?;
 };
 
-fn read_player_pos(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_player_pos(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *player_pos;
-	p.x = read_f64(rd)?;
-	p.y = read_f64(rd)?;
-	p.stance = read_f64(rd)?;
-	p.z = read_f64(rd)?;
-	p.ground = read_bool(rd)?;
+	p.x = read_f64(c)?;
+	p.y = read_f64(c)?;
+	p.stance = read_f64(c)?;
+	p.z = read_f64(c)?;
+	p.ground = read_bool(c)?;
 };
 
-fn read_player_look(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_player_look(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *player_look;
-	p.yaw = read_f32(rd)?;
-	p.pitch = read_f32(rd)?;
-	p.ground = read_bool(rd)?;
+	p.yaw = read_f32(c)?;
+	p.pitch = read_f32(c)?;
+	p.ground = read_bool(c)?;
 };
 
-fn read_player_pos_look(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_player_pos_look(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *player_pos_look;
-	switch (rd.mode) {
+	switch (c.mode) {
 	case conn_mode::CLIENT =>
-		p.x = read_f64(rd)?;
-		p.stance = read_f64(rd)?;
-		p.y = read_f64(rd)?;
-		p.z = read_f64(rd)?;
-		p.yaw = read_f32(rd)?;
-		p.pitch = read_f32(rd)?;
-		p.ground = read_bool(rd)?;
+		p.x = read_f64(c)?;
+		p.stance = read_f64(c)?;
+		p.y = read_f64(c)?;
+		p.z = read_f64(c)?;
+		p.yaw = read_f32(c)?;
+		p.pitch = read_f32(c)?;
+		p.ground = read_bool(c)?;
 	case conn_mode::SERVER =>
-		p.x = read_f64(rd)?;
-		p.y = read_f64(rd)?;
-		p.stance = read_f64(rd)?;
-		p.z = read_f64(rd)?;
-		p.yaw = read_f32(rd)?;
-		p.pitch = read_f32(rd)?;
-		p.ground = read_bool(rd)?;
+		p.x = read_f64(c)?;
+		p.y = read_f64(c)?;
+		p.stance = read_f64(c)?;
+		p.z = read_f64(c)?;
+		p.yaw = read_f32(c)?;
+		p.pitch = read_f32(c)?;
+		p.ground = read_bool(c)?;
 	};
 };
 
-fn read_player_digging(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_player_digging(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *player_digging;
-	p.status = read_i8(rd)?: dig_status;
-	p.x = read_int(rd)?;
-	p.y = read_i8(rd)?;
-	p.z = read_int(rd)?;
-	p.face = read_i8(rd)?: face;
+	p.status = read_i8(c)?: dig_status;
+	p.x = read_int(c)?;
+	p.y = read_i8(c)?;
+	p.z = read_int(c)?;
+	p.face = read_i8(c)?: face;
 };
 
-fn read_player_placeblock(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_player_placeblock(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *player_placeblock;
-	p.x = read_int(rd)?;
-	p.y = read_i8(rd)?;
-	p.z = read_int(rd)?;
-	p.face = read_i8(rd)?: face;
-	p.item_id = read_i16(rd)?;
-	p.amount = read_i8(rd)?;
-	p.metadata = read_i16(rd)?;
+	p.x = read_int(c)?;
+	p.y = read_i8(c)?;
+	p.z = read_int(c)?;
+	p.face = read_i8(c)?: face;
+	p.item_id = read_i16(c)?;
+	p.amount = read_i8(c)?;
+	p.metadata = read_i16(c)?;
 };
 
-fn read_hold_change(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_hold_change(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *held_item_change;
-	p.slot_id = read_i16(rd)?;
+	p.slot_id = read_i16(c)?;
 };
 
-fn read_use_bed(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_use_bed(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *use_bed;
-	p.entity_id = read_int(rd)?;
-	p.zero = read_i8(rd)?;
-	p.x = read_int(rd)?;
-	p.y = read_i8(rd)?;
-	p.z = read_int(rd)?;
+	p.entity_id = read_int(c)?;
+	p.zero = read_i8(c)?;
+	p.x = read_int(c)?;
+	p.y = read_i8(c)?;
+	p.z = read_int(c)?;
 };
 
-fn read_animation(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_animation(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *animation;
-	p.entity_id = read_int(rd)?;
-	p.animation = read_i8(rd)?: animation_type;
+	p.entity_id = read_int(c)?;
+	p.animation = read_i8(c)?: animation_type;
 };
 
-fn read_entity_action(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_entity_action(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *entity_action;
-	p.entity_id = read_int(rd)?;
-	p.action = read_i8(rd)?: action_type;
+	p.entity_id = read_int(c)?;
+	p.action = read_i8(c)?: action_type;
 };
 
-fn read_spawn_player(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_spawn_player(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *spawn_player;
-	p.entity_id = read_int(rd)?;
-	p.name = read_string16(rd)?;
-	p.x = read_int(rd)?;
-	p.y = read_int(rd)?;
-	p.z = read_int(rd)?;
-	p.yaw = read_i8(rd)?;
-	p.pitch = read_i8(rd)?;
-	p.item_id = read_i16(rd)?;
+	p.entity_id = read_int(c)?;
+	p.name = read_string16(c)?;
+	p.x = read_int(c)?;
+	p.y = read_int(c)?;
+	p.z = read_int(c)?;
+	p.yaw = read_i8(c)?;
+	p.pitch = read_i8(c)?;
+	p.item_id = read_i16(c)?;
 };
 
-fn read_spawn_item(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_spawn_item(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *spawn_item;
-	p.entity_id = read_int(rd)?;
-	p.item_id = read_i16(rd)?;
-	p.count = read_i8(rd)?;
-	p.metadata = read_i16(rd)?;
-	p.x = read_int(rd)?;
-	p.y = read_int(rd)?;
-	p.z = read_int(rd)?;
-	p.yaw = read_i8(rd)?;
-	p.pitch = read_i8(rd)?;
-	p.roll = read_i8(rd)?;
+	p.entity_id = read_int(c)?;
+	p.item_id = read_i16(c)?;
+	p.count = read_i8(c)?;
+	p.metadata = read_i16(c)?;
+	p.x = read_int(c)?;
+	p.y = read_int(c)?;
+	p.z = read_int(c)?;
+	p.yaw = read_i8(c)?;
+	p.pitch = read_i8(c)?;
+	p.roll = read_i8(c)?;
 };
 
-fn read_collect_item(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_collect_item(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *collect_item;
-	p.collected_id = read_int(rd)?;
-	p.collector_id = read_int(rd)?;
+	p.collected_id = read_int(c)?;
+	p.collector_id = read_int(c)?;
 };
 
-fn read_spawn_object(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_spawn_object(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *spawn_object;
-	p.entity_id = read_int(rd)?;
-	p.object_type = read_i8(rd)?: object_type;
-	p.x = read_int(rd)?;
-	p.y = read_int(rd)?;
-	p.z = read_int(rd)?;
-	p.data = read_int(rd)?;
+	p.entity_id = read_int(c)?;
+	p.object_type = read_i8(c)?: object_type;
+	p.x = read_int(c)?;
+	p.y = read_int(c)?;
+	p.z = read_int(c)?;
+	p.data = read_int(c)?;
 	if (p.data > 0) {
-		p.vel_x = read_i16(rd)?;
-		p.vel_y = read_i16(rd)?;
-		p.vel_z = read_i16(rd)?;
+		p.vel_x = read_i16(c)?;
+		p.vel_y = read_i16(c)?;
+		p.vel_z = read_i16(c)?;
 	};
 };
 
-fn read_spawn_mob(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_spawn_mob(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *spawn_mob;
-	p.entity_id = read_int(rd)?;
-	p.mob_type = read_i8(rd)?: mob_type;
-	p.x = read_int(rd)?;
-	p.y = read_int(rd)?;
-	p.z = read_int(rd)?;
-	p.yaw = read_i8(rd)?;
-	p.pitch = read_i8(rd)?;
-	read_metadata(rd)?; // TODO
+	p.entity_id = read_int(c)?;
+	p.mob_type = read_i8(c)?: mob_type;
+	p.x = read_int(c)?;
+	p.y = read_int(c)?;
+	p.z = read_int(c)?;
+	p.yaw = read_i8(c)?;
+	p.pitch = read_i8(c)?;
+	read_metadata(c)?; // TODO
 };
 
-fn read_spawn_painting(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_spawn_painting(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *spawn_painting;
-	p.entity_id = read_int(rd)?;
-	p.title = read_string16(rd)?;
-	p.x = read_int(rd)?;
-	p.y = read_int(rd)?;
-	p.z = read_int(rd)?;
-	p.direction = read_int(rd)?;
+	p.entity_id = read_int(c)?;
+	p.title = read_string16(c)?;
+	p.x = read_int(c)?;
+	p.y = read_int(c)?;
+	p.z = read_int(c)?;
+	p.direction = read_int(c)?;
 };
 
-fn read_entity_velocity(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_entity_velocity(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *entity_velocity;
-	p.entity_id = read_int(rd)?;
-	p.vel_x = read_i16(rd)?;
-	p.vel_y = read_i16(rd)?;
-	p.vel_z = read_i16(rd)?;
+	p.entity_id = read_int(c)?;
+	p.vel_x = read_i16(c)?;
+	p.vel_y = read_i16(c)?;
+	p.vel_z = read_i16(c)?;
 };
 
-fn read_entity_destroy(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_entity_destroy(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *entity_destroy;
-	p.entity_id = read_int(rd)?;
+	p.entity_id = read_int(c)?;
 };
 
-fn read_entity(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_entity(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *entity;
-	p.entity_id = read_int(rd)?;
+	p.entity_id = read_int(c)?;
 };
 
-fn read_entity_move(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_entity_move(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *entity_move;
-	p.entity_id = read_int(rd)?;
-	p.dx = read_i8(rd)?;
-	p.dy = read_i8(rd)?;
-	p.dz = read_i8(rd)?;
+	p.entity_id = read_int(c)?;
+	p.dx = read_i8(c)?;
+	p.dy = read_i8(c)?;
+	p.dz = read_i8(c)?;
 };
 
-fn read_entity_look(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_entity_look(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *entity_look;
-	p.entity_id = read_int(rd)?;
-	p.yaw = read_i8(rd)?;
-	p.pitch = read_i8(rd)?;
+	p.entity_id = read_int(c)?;
+	p.yaw = read_i8(c)?;
+	p.pitch = read_i8(c)?;
 };
 
-fn read_entity_move_look(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_entity_move_look(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *entity_move_look;
-	p.entity_id = read_int(rd)?;
-	p.dx = read_i8(rd)?;
-	p.dy = read_i8(rd)?;
-	p.dz = read_i8(rd)?;
-	p.yaw = read_i8(rd)?;
-	p.pitch = read_i8(rd)?;
+	p.entity_id = read_int(c)?;
+	p.dx = read_i8(c)?;
+	p.dy = read_i8(c)?;
+	p.dz = read_i8(c)?;
+	p.yaw = read_i8(c)?;
+	p.pitch = read_i8(c)?;
 };
 
-fn read_entity_teleport(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_entity_teleport(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *entity_teleport;
-	p.entity_id = read_int(rd)?;
-	p.x = read_int(rd)?;
-	p.y = read_int(rd)?;
-	p.z = read_int(rd)?;
-	p.yaw = read_i8(rd)?;
-	p.pitch = read_i8(rd)?;
+	p.entity_id = read_int(c)?;
+	p.x = read_int(c)?;
+	p.y = read_int(c)?;
+	p.z = read_int(c)?;
+	p.yaw = read_i8(c)?;
+	p.pitch = read_i8(c)?;
 };
 
-fn read_entity_status(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_entity_status(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *entity_status;
-	p.entity_id = read_int(rd)?;
-	p.status = read_i8(rd)?: entity_status_type;
+	p.entity_id = read_int(c)?;
+	p.status = read_i8(c)?: entity_status_type;
 };
 
-fn read_entity_attach(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_entity_attach(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *entity_attach;
-	p.entity_id = read_int(rd)?;
-	p.target_id = read_int(rd)?;
+	p.entity_id = read_int(c)?;
+	p.target_id = read_int(c)?;
 };
 
-fn read_entity_metadata(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_entity_metadata(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *entity_metadata;
-	p.entity_id = read_int(rd)?;
-	read_metadata(rd)?; // TODO
+	p.entity_id = read_int(c)?;
+	read_metadata(c)?; // TODO
 };
 
-fn read_chunk_allocate(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_chunk_allocate(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *chunk_allocate;
-	p.x = read_int(rd)?;
-	p.z = read_int(rd)?;
-	p.load = read_bool(rd)?;
+	p.x = read_int(c)?;
+	p.z = read_int(c)?;
+	p.load = read_bool(c)?;
 };
 
-fn read_chunk_data(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_chunk_data(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *chunk_data;
-	p.x = read_int(rd)?;
-	p.y = read_i16(rd)?;
-	p.z = read_int(rd)?;
-	p.size_x = read_i8(rd)?;
-	p.size_y = read_i8(rd)?;
-	p.size_z = read_i8(rd)?;
+	p.x = read_int(c)?;
+	p.y = read_i16(c)?;
+	p.z = read_int(c)?;
+	p.size_x = read_i8(c)?;
+	p.size_y = read_i8(c)?;
+	p.size_z = read_i8(c)?;
 
-	const length = read_int(rd)?;
+	const length = read_int(c)?;
 	if (length < 0) return errors::invalid;
 	const length = length: size;
 
-	p.data = read(rd, length)?;
+	p.data = read(c, length)?;
 };
 
-fn read_bulk_block_change(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_bulk_block_change(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *bulk_block_change;
-	p.chunk_x = read_int(rd)?;
-	p.chunk_z = read_int(rd)?;
+	p.chunk_x = read_int(c)?;
+	p.chunk_z = read_int(c)?;
 
-	const length = read_i16(rd)?;
+	const length = read_i16(c)?;
 	if (length < 0) return errors::invalid;
 	const length = length: size;
 
-	const coords = read(rd, length * size(i16))?;
+	const coords = read(c, length * size(i16))?;
 	p.coords = (coords: *[*]i16)[..length];
-	p.block_ids = read(rd, length)?: []i8;
-	p.metadata = read(rd, length)?: []i8;
+	p.block_ids = read(c, length)?: []i8;
+	p.metadata = read(c, length)?: []i8;
 };
 
-fn read_block_change(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_block_change(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *block_change;
-	p.x = read_int(rd)?;
-	p.y = read_i8(rd)?;
-	p.z = read_int(rd)?;
-	p.block_id = read_i8(rd)?;
-	p.metadata = read_i8(rd)?;
+	p.x = read_int(c)?;
+	p.y = read_i8(c)?;
+	p.z = read_int(c)?;
+	p.block_id = read_i8(c)?;
+	p.metadata = read_i8(c)?;
 };
 
-fn read_block_action(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_block_action(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *block_action;
-	p.x = read_int(rd)?;
-	p.y = read_i16(rd)?;
-	p.z = read_int(rd)?;
-	p.note.instrument = read_i8(rd)?;
-	p.note.pitch = read_i8(rd)?;
+	p.x = read_int(c)?;
+	p.y = read_i16(c)?;
+	p.z = read_int(c)?;
+	p.note.instrument = read_i8(c)?;
+	p.note.pitch = read_i8(c)?;
 };
 
-fn read_explosion(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_explosion(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *explosion;
-	p.x = read_f64(rd)?;
-	p.y = read_f64(rd)?;
-	p.z = read_f64(rd)?;
-	p.radius = read_f32(rd)?;
+	p.x = read_f64(c)?;
+	p.y = read_f64(c)?;
+	p.z = read_f64(c)?;
+	p.radius = read_f32(c)?;
 
-	const length = read_int(rd)?;
+	const length = read_int(c)?;
 	if (length < 0) return errors::invalid;
 	const length = length: size;
 
-	const record_size = size((i8, i8, i8));
-	const data = read(rd, length * record_size)?;
+	const recoc_size = size((i8, i8, i8));
+	const data = read(c, length * recoc_size)?;
 	p.blocks = (data: *[*](i8, i8, i8))[..length];
 };
 
-fn read_sound_effect(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_sound_effect(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *sound_effect;
-	p.effect_id = read_int(rd)?;
-	p.x = read_int(rd)?;
-	p.y = read_i8(rd)?;
-	p.z = read_int(rd)?;
-	p.data = read_int(rd)?;
+	p.effect_id = read_int(c)?;
+	p.x = read_int(c)?;
+	p.y = read_i8(c)?;
+	p.z = read_int(c)?;
+	p.data = read_int(c)?;
 };
 
-fn read_environment_state(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_environment_state(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *environment_state;
-	p.state_change = read_i8(rd)?: environment_state_change;
+	p.state_change = read_i8(c)?: environment_state_change;
 };
 
-fn read_thunderbolt(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_thunderbolt(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *thunderbolt;
-	p.entity_id = read_int(rd)?;
-	read_bool(rd)?; // unused field
-	p.x = read_int(rd)?;
-	p.y = read_int(rd)?;
-	p.z = read_int(rd)?;
+	p.entity_id = read_int(c)?;
+	read_bool(c)?; // unused field
+	p.x = read_int(c)?;
+	p.y = read_int(c)?;
+	p.z = read_int(c)?;
 };
 
-fn read_window_open(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_window_open(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *window_open;
-	p.window_id = read_i8(rd)?;
-	p.kind = read_i8(rd)?: inventory_kind;
-	p.window_title = read_string8(rd)?;
-	p.nslot = read_i8(rd)?;
+	p.window_id = read_i8(c)?;
+	p.kind = read_i8(c)?: inventory_kind;
+	p.window_title = read_string8(c)?;
+	p.nslot = read_i8(c)?;
 };
 
-fn read_window_close(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_window_close(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *window_close;
-	p.window_id = read_i8(rd)?;
+	p.window_id = read_i8(c)?;
 };
 
-fn read_slot(rd: *reader, out: *slot) (void | io::error) = {
-	out.id = read_i16(rd)?;
+fn read_slot(c: *conn, out: *slot) (void | io::error) = {
+	out.id = read_i16(c)?;
 	if (out.id == -1) {
 		return;
 	};
-	out.count = read_i8(rd)?;
-	out.metadata = read_i16(rd)?;
+	out.count = read_i8(c)?;
+	out.metadata = read_i16(c)?;
 };
 
-fn read_window_click(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_window_click(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *window_click;
-	p.window_id = read_i8(rd)?;
-	p.index = read_i16(rd)?;
-	p.right = read_bool(rd)?;
-	p.transaction = read_i16(rd)?;
-	p.shift = read_bool(rd)?;
-	read_slot(rd, &p.item)?;
+	p.window_id = read_i8(c)?;
+	p.index = read_i16(c)?;
+	p.right = read_bool(c)?;
+	p.transaction = read_i16(c)?;
+	p.shift = read_bool(c)?;
+	read_slot(c, &p.item)?;
 };
 
-fn read_window_set_slot(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_window_set_slot(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *window_set_slot;
-	p.window_id = read_i8(rd)?;
-	p.index = read_i16(rd)?;
-	read_slot(rd, &p.item)?;
+	p.window_id = read_i8(c)?;
+	p.index = read_i16(c)?;
+	read_slot(c, &p.item)?;
 };
 
-fn read_window_items(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_window_items(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *window_items;
-	p.window_id = read_i8(rd)?;
-	p.nitem = read_i16(rd)?;
+	p.window_id = read_i8(c)?;
+	p.nitem = read_i16(c)?;
 
-	const start = tell(rd);
+	const start = tell(c);
 	assert(start == 4);
 
 	for (let i = 0z; i < p.nitem: size; i += 1) {
 		let slot = slot { ... };
-		read_slot(rd, &slot)?;
+		read_slot(c, &slot)?;
 	};
 
-	const end = tell(rd);
-	p.items = rd.buf[start..end];
+	const end = tell(c);
+	p.items = c.rbuf[start..end];
 };
 
-fn read_window_progress(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_window_progress(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *window_progress;
-	p.window_id = read_i8(rd)?;
-	p.scalar = read_i16(rd)?;
-	p.value = read_i16(rd)?;
+	p.window_id = read_i8(c)?;
+	p.scalar = read_i16(c)?;
+	p.value = read_i16(c)?;
 };
 
-fn read_window_transaction(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_window_transaction(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *window_transaction;
-	p.window_id = read_i8(rd)?;
-	p.transaction = read_i16(rd)?;
-	p.accepted = read_bool(rd)?;
+	p.window_id = read_i8(c)?;
+	p.transaction = read_i16(c)?;
+	p.accepted = read_bool(c)?;
 };
 
-fn read_update_sign(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_update_sign(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *update_sign;
-	p.x = read_int(rd)?;
-	p.y = read_i8(rd)?;
-	p.z = read_int(rd)?;
+	p.x = read_int(c)?;
+	p.y = read_i8(c)?;
+	p.z = read_int(c)?;
 	for (let s &.. p.text) {
-		*s = read_string16(rd)?;
+		*s = read_string16(c)?;
 	};
 };
 
-fn read_map_data(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_map_data(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *map_data;
-	p.item_id = read_i16(rd)?;
-	p.metadata = read_i16(rd)?;
+	p.item_id = read_i16(c)?;
+	p.metadata = read_i16(c)?;
 
-	const length = read_u8(rd)?;
-	p.data = read(rd, length)?;
+	const length = read_u8(c)?;
+	p.data = read(c, length)?;
 };
 
-fn read_update_stat(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_update_stat(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *update_stat;
-	p.stat_id = read_int(rd)?;
-	p.amount = read_i8(rd)?;
+	p.stat_id = read_int(c)?;
+	p.amount = read_i8(c)?;
 };
 
-fn read_disconnect(rd: *reader, payload: *opaque) (void | io::error) = {
+fn read_disconnect(c: *conn, payload: *opaque) (void | io::error) = {
 	let p = payload: *disconnect;
-	p.reason = read_string16(rd)?;
+	p.reason = read_string16(c)?;
 };
 
-const packet_readers: [0x100]*read_packet_fn = [
+const packet_conns: [0x100]*read_packet_fn = [
 	&read_keep_alive,		// 0x00 KEEP_ALIVE
 	&read_login_request,		// 0x01 LOGIN_REQ
 	&read_handshake,		// 0x02 HANDSHAKE

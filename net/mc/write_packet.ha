@@ -1,40 +1,26 @@
-// TODO: rethink this bit
 use encoding::ucs2;
 use endian;
 use io;
 
-fn write_string16(out: io::handle, data: string16) (void | io::error) = {
-	let buf: [2]u8 = [0...];
-	endian::beputu16(buf, len(data): u16);
-	io::write(out, buf)?;
-
-	const data = (data: *[*]u8)[..len(data)*2];
-	io::write(out, data)?;
-};
-
+// Write a [[handshake]] packet to the connection.
 export fn write_handshake(
-	out: io::handle,
+	c: *conn,
 	packet: *handshake,
 ) (void | io::error) = {
-	io::write(out, [HANDSHAKE])?;
-	write_string16(out, packet.username)?;
+	write_begin(c, HANDSHAKE);
+	write_string16(c, packet.username);
+	write_end(c)?;
 };
 
+// Writes a [[login_request]] packet to the connection.
 export fn write_login_request(
-	out: io::handle,
+	c: *conn,
 	packet: *login_request,
 ) (void | io::error) = {
-	io::write(out, [LOGIN_REQ])?;
-
-	let buf: [8]u8 = [0...];
-	endian::beputu32(buf, packet.version: u32);
-	io::write(out, buf[..4])?;
-
-	write_string16(out, packet.username)?;
-
-	endian::beputu64(buf, packet.seed: u64);
-	io::write(out, buf[..8])?;
-
-	buf[0] = packet.dimension: u8;
-	io::write(out, buf[..1])?;
+	write_begin(c, LOGIN_REQ);
+	write_i32(c, packet.version);
+	write_string16(c, packet.username);
+	write_i64(c, packet.seed);
+	write_i8(c, packet.dimension);
+	write_end(c)?;
 };

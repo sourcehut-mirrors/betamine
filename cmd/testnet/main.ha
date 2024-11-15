@@ -8,7 +8,7 @@ use os;
 
 export fn main() void = {
 	const conn = dial::dial("tcp", os::args[1], "minecraft")!;
-	const mcrd = mc::newreader(conn);
+	const conn = mc::newconn(conn);
 
 	const user = ucs2::toucs2("betamine");
 	defer free(user);
@@ -20,10 +20,10 @@ export fn main() void = {
 		},
 	};
 	mc::log_packet(&packet, false);
-	mc::write_handshake(conn, &packet.handshake)!;
+	mc::write_handshake(&conn, &packet.handshake)!;
 
 	for (true) {
-		match (mc::read_packet(&mcrd, &packet)) {
+		match (mc::read_packet(&conn, &packet)) {
 		case let err: io::error =>
 			if (err is errors::again) {
 				continue;
@@ -43,7 +43,7 @@ export fn main() void = {
 			req.seed = 0;
 			req.dimension = 0;
 			mc::log_packet(&packet, false);
-			mc::write_login_request(conn, req)!;
+			mc::write_login_request(&conn, req)!;
 		case => void;
 		};
 	};
