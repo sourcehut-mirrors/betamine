@@ -10,16 +10,12 @@ export fn main() void = {
 	const user = ucs2::toucs2("betamine");
 	defer free(user);
 
-	let packet = mc::packet {
-		id = mc::HANDSHAKE,
-		handshake = mc::handshake {
-			username = user,
-		},
-	};
-	mc::log_packet(&packet, false);
-	mc::write_handshake(&conn, &packet.handshake)!;
+	mc::write_handshake(&conn, &mc::handshake {
+		username = user,
+	})!;
 
 	for (true) {
+		let packet = mc::EMPTY_PACKET;
 		match (mc::read_packet(&conn, &packet)) {
 		case let err: io::error =>
 			if (err is errors::again) {
@@ -33,14 +29,11 @@ export fn main() void = {
 
 		switch (packet.id) {
 		case mc::HANDSHAKE =>
-			packet.id = mc::LOGIN_REQ;
-			let req = &packet.login_request;
-			req.version = mc::VERSION;
-			req.username = user;
-			req.seed = 0;
-			req.dimension = 0;
-			mc::log_packet(&packet, false);
-			mc::write_login_request(&conn, req)!;
+			mc::write_login_request(&conn, &mc::login_request {
+				version = mc::VERSION,
+				username = user,
+				...
+			})!;
 		case => void;
 		};
 	};
