@@ -17,7 +17,7 @@ export type packet = struct {
 		player_look: player_look,
 		player_pos_look: player_pos_look,
 		player_digging: player_digging,
-		player_place_block: player_place_block,
+		player_placeblock: player_placeblock,
 		held_item_change: held_item_change,
 		use_bed: use_bed,
 		animation: animation,
@@ -184,7 +184,7 @@ export type player_digging = struct {
 };
 
 // Player block placement packet
-export type player_place_block = struct {
+export type player_placeblock = struct {
 	x: int,
 	y: i8,
 	z: int,
@@ -244,9 +244,9 @@ export type entity_action = struct {
 export type spawn_player = struct {
 	entity_id: int,
 	name: string16,
-	x: int,
-	y: int,
-	z: int,
+	x: int, // x * 32.0
+	y: int, // y * 32.0
+	z: int, // z * 32.0
 	yaw: i8,
 	pitch: i8,
 	// Zero indicates no item held
@@ -439,6 +439,7 @@ export type chunk_data = struct {
 	size_x: i8,
 	size_y: i8,
 	size_z: i8,
+	// Compressed with zlib
 	data: []u8,
 };
 
@@ -463,7 +464,7 @@ export type block_change = struct {
 // Block action packet
 export type block_action = struct {
 	x: int,
-	y: i8,
+	y: i16,
 	z: int,
 	union {
 		note: struct {
@@ -571,7 +572,7 @@ export type window_items = struct {
 // Window progress packet
 export type window_progress = struct {
 	window_id: i8,
-	progress_bar: i16,
+	scalar: i16,
 	value: i16,
 };
 

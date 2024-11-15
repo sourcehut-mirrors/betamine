@@ -43,211 +43,463 @@ fn read_chat_message(rd: *reader, payload: *opaque) (void | io::error) = {
 };
 
 fn read_time_update(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *time_update;
+	p.time = read_i64(rd)?;
 };
 
 fn read_entity_equip(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *entity_equip;
+	p.entity_id = read_int(rd)?;
+	p.slot = read_i16(rd)?;
+	p.item_id = read_i16(rd)?;
+	p.metadata = read_i16(rd)?;
 };
 
 fn read_spawn_position(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *spawn_position;
+	p.x = read_int(rd)?;
+	p.y = read_int(rd)?;
+	p.z = read_int(rd)?;
 };
 
 fn read_use_entity(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *use_entity;
+	p.user_id = read_int(rd)?;
+	p.targ_id = read_int(rd)?;
+	p.left = read_bool(rd)?;
 };
 
 fn read_update_health(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *update_health;
+	p.health = read_i16(rd)?;
 };
 
 fn read_respawn(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *respawn;
+	p.dim = read_i8(rd)?;
 };
 
 fn read_player(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *player;
+	p.ground = read_bool(rd)?;
 };
 
 fn read_player_pos(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *player_pos;
+	p.x = read_f64(rd)?;
+	p.y = read_f64(rd)?;
+	p.stance = read_f64(rd)?;
+	p.z = read_f64(rd)?;
+	p.ground = read_bool(rd)?;
 };
 
 fn read_player_look(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *player_look;
+	p.yaw = read_f32(rd)?;
+	p.pitch = read_f32(rd)?;
+	p.ground = read_bool(rd)?;
 };
 
 fn read_player_pos_look(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *player_pos_look;
+	switch (rd.mode) {
+	case reader_mode::CLIENT =>
+		p.x = read_f64(rd)?;
+		p.stance = read_f64(rd)?;
+		p.y = read_f64(rd)?;
+		p.z = read_f64(rd)?;
+		p.yaw = read_f32(rd)?;
+		p.pitch = read_f32(rd)?;
+		p.ground = read_bool(rd)?;
+	case reader_mode::SERVER =>
+		p.x = read_f64(rd)?;
+		p.y = read_f64(rd)?;
+		p.stance = read_f64(rd)?;
+		p.z = read_f64(rd)?;
+		p.yaw = read_f32(rd)?;
+		p.pitch = read_f32(rd)?;
+		p.ground = read_bool(rd)?;
+	};
 };
 
 fn read_player_digging(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *player_digging;
+	p.status = read_i8(rd)?: dig_status;
+	p.x = read_int(rd)?;
+	p.y = read_i8(rd)?;
+	p.z = read_int(rd)?;
+	p.face = read_i8(rd)?: face;
 };
 
 fn read_player_placeblock(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *player_placeblock;
+	p.x = read_int(rd)?;
+	p.y = read_i8(rd)?;
+	p.z = read_int(rd)?;
+	p.face = read_i8(rd)?: face;
+	p.item_id = read_i16(rd)?;
+	p.amount = read_i8(rd)?;
+	p.metadata = read_i16(rd)?;
 };
 
 fn read_hold_change(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *held_item_change;
+	p.slot_id = read_i16(rd)?;
 };
 
 fn read_use_bed(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *use_bed;
+	p.entity_id = read_int(rd)?;
+	p.zero = read_i8(rd)?;
+	p.x = read_int(rd)?;
+	p.y = read_i8(rd)?;
+	p.z = read_int(rd)?;
 };
 
 fn read_animation(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *animation;
+	p.entity_id = read_int(rd)?;
+	p.animation = read_i8(rd)?: animation_type;
 };
 
 fn read_entity_action(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *entity_action;
+	p.entity_id = read_int(rd)?;
+	p.action = read_i8(rd)?: action_type;
 };
 
 fn read_spawn_player(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *spawn_player;
+	p.entity_id = read_int(rd)?;
+	p.name = read_string16(rd)?;
+	p.x = read_int(rd)?;
+	p.y = read_int(rd)?;
+	p.z = read_int(rd)?;
+	p.yaw = read_i8(rd)?;
+	p.pitch = read_i8(rd)?;
+	p.item_id = read_i16(rd)?;
 };
 
 fn read_spawn_item(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *spawn_item;
+	p.entity_id = read_int(rd)?;
+	p.item_id = read_i16(rd)?;
+	p.count = read_i8(rd)?;
+	p.metadata = read_i16(rd)?;
+	p.x = read_int(rd)?;
+	p.y = read_int(rd)?;
+	p.z = read_int(rd)?;
+	p.yaw = read_i8(rd)?;
+	p.pitch = read_i8(rd)?;
+	p.roll = read_i8(rd)?;
 };
 
 fn read_collect_item(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *collect_item;
+	p.collected_id = read_int(rd)?;
+	p.collector_id = read_int(rd)?;
 };
 
 fn read_spawn_object(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *spawn_object;
+	p.entity_id = read_int(rd)?;
+	p.object_type = read_i8(rd)?: object_type;
+	p.x = read_int(rd)?;
+	p.y = read_int(rd)?;
+	p.z = read_int(rd)?;
+	p.data = read_int(rd)?;
+	if (p.data > 0) {
+		p.vel_x = read_i16(rd)?;
+		p.vel_y = read_i16(rd)?;
+		p.vel_z = read_i16(rd)?;
+	};
 };
 
 fn read_spawn_mob(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *spawn_mob;
+	p.entity_id = read_int(rd)?;
+	p.mob_type = read_i8(rd)?: mob_type;
+	p.x = read_int(rd)?;
+	p.y = read_int(rd)?;
+	p.z = read_int(rd)?;
+	p.yaw = read_i8(rd)?;
+	p.pitch = read_i8(rd)?;
+	read_metadata(rd)?; // TODO
 };
 
 fn read_spawn_painting(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *spawn_painting;
+	p.entity_id = read_int(rd)?;
+	p.title = read_string16(rd)?;
+	p.x = read_int(rd)?;
+	p.y = read_int(rd)?;
+	p.z = read_int(rd)?;
+	p.direction = read_int(rd)?;
 };
 
 fn read_entity_velocity(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *entity_velocity;
+	p.entity_id = read_int(rd)?;
+	p.vel_x = read_i16(rd)?;
+	p.vel_y = read_i16(rd)?;
+	p.vel_z = read_i16(rd)?;
 };
 
 fn read_entity_destroy(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *entity_destroy;
+	p.entity_id = read_int(rd)?;
 };
 
 fn read_entity(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *entity;
+	p.entity_id = read_int(rd)?;
 };
 
 fn read_entity_move(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *entity_move;
+	p.entity_id = read_int(rd)?;
+	p.dx = read_i8(rd)?;
+	p.dy = read_i8(rd)?;
+	p.dz = read_i8(rd)?;
 };
 
 fn read_entity_look(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *entity_look;
+	p.entity_id = read_int(rd)?;
+	p.yaw = read_i8(rd)?;
+	p.pitch = read_i8(rd)?;
 };
 
 fn read_entity_move_look(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *entity_move_look;
+	p.dx = read_i8(rd)?;
+	p.dy = read_i8(rd)?;
+	p.dz = read_i8(rd)?;
+	p.yaw = read_i8(rd)?;
+	p.pitch = read_i8(rd)?;
 };
 
 fn read_entity_teleport(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *entity_teleport;
+	p.entity_id = read_int(rd)?;
+	p.x = read_int(rd)?;
+	p.y = read_int(rd)?;
+	p.z = read_int(rd)?;
+	p.yaw = read_i8(rd)?;
+	p.pitch = read_i8(rd)?;
 };
 
 fn read_entity_status(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *entity_status;
+	p.entity_id = read_int(rd)?;
+	p.status = read_i8(rd)?: entity_status_type;
 };
 
 fn read_entity_attach(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *entity_attach;
+	p.entity_id = read_int(rd)?;
+	p.target_id = read_int(rd)?;
 };
 
 fn read_entity_metadata(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *entity_metadata;
+	p.entity_id = read_int(rd)?;
+	read_metadata(rd)?; // TODO
 };
 
 fn read_chunk_allocate(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *chunk_allocate;
+	p.x = read_int(rd)?;
+	p.z = read_int(rd)?;
+	p.load = read_bool(rd)?;
 };
 
 fn read_chunk_data(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *chunk_data;
+	p.x = read_int(rd)?;
+	p.y = read_i16(rd)?;
+	p.z = read_int(rd)?;
+	p.size_x = read_i8(rd)?;
+	p.size_y = read_i8(rd)?;
+	p.size_z = read_i8(rd)?;
+
+	const length = read_int(rd)?;
+	if (length < 0) return errors::invalid;
+	const length = length: size;
+
+	p.data = read(rd, length)?;
 };
 
 fn read_bulk_block_change(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *bulk_block_change;
+	p.chunk_x = read_int(rd)?;
+	p.chunk_z = read_int(rd)?;
+
+	const length = read_i16(rd)?;
+	if (length < 0) return errors::invalid;
+	const length = length: size;
+
+	const coords = read(rd, length / size(i16))?;
+	p.coords = (coords: *[*]i16)[..length];
+	p.block_ids = read(rd, length)?: []i8;
+	p.metadata = read(rd, length)?: []i8;
 };
 
 fn read_block_change(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *block_change;
+	p.x = read_int(rd)?;
+	p.y = read_i8(rd)?;
+	p.z = read_int(rd)?;
+	p.block_id = read_i8(rd)?;
+	p.metadata = read_i8(rd)?;
 };
 
 fn read_block_action(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *block_action;
+	p.x = read_int(rd)?;
+	p.y = read_i16(rd)?;
+	p.z = read_int(rd)?;
+	p.note.instrument = read_i8(rd)?;
+	p.note.pitch = read_i8(rd)?;
 };
 
 fn read_explosion(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *explosion;
+	p.x = read_f64(rd)?;
+	p.y = read_f64(rd)?;
+	p.z = read_f64(rd)?;
+	p.radius = read_f32(rd)?;
+
+	const length = read_int(rd)?;
+	if (length < 0) return errors::invalid;
+	const length = length: size;
+
+	const record_size = size((i8, i8, i8));
+	const data = read(rd, length * record_size)?;
+	p.blocks = (data: *[*](i8, i8, i8))[..length];
 };
 
 fn read_sound_effect(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *sound_effect;
+	p.effect_id = read_int(rd)?;
+	p.x = read_int(rd)?;
+	p.y = read_i8(rd)?;
+	p.z = read_int(rd)?;
+	p.data = read_int(rd)?;
 };
 
 fn read_environment_state(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *environment_state;
+	p.state_change = read_i8(rd)?: environment_state_change;
 };
 
 fn read_thunderbolt(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *thunderbolt;
+	p.entity_id = read_int(rd)?;
+	read_bool(rd)?; // unused field
+	p.x = read_int(rd)?;
+	p.y = read_int(rd)?;
+	p.z = read_int(rd)?;
 };
 
 fn read_window_open(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *window_open;
+	p.window_id = read_i8(rd)?;
+	p.kind = read_i8(rd)?: inventory_kind;
+	p.window_title = read_string8(rd)?;
+	p.nslot = read_i8(rd)?;
 };
 
 fn read_window_close(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *window_close;
+	p.window_id = read_i8(rd)?;
+};
+
+fn read_slot(rd: *reader, out: *slot) (void | io::error) = {
+	out.id = read_i16(rd)?;
+	if (out.id == -1) {
+		return;
+	};
+	out.count = read_i8(rd)?;
+	out.metadata = read_i16(rd)?;
 };
 
 fn read_window_click(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *window_click;
+	p.window_id = read_i8(rd)?;
+	p.index = read_i16(rd)?;
+	p.right = read_bool(rd)?;
+	p.transaction = read_i16(rd)?;
+	p.shift = read_bool(rd)?;
+	read_slot(rd, &p.item)?;
 };
 
 fn read_window_set_slot(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *window_set_slot;
+	p.window_id = read_i8(rd)?;
+	p.index = read_i16(rd)?;
+	read_slot(rd, &p.item)?;
 };
 
 fn read_window_items(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *window_items;
+	p.window_id = read_i8(rd)?;
+	p.nitem = read_i16(rd)?;
+
+	const start = tell(rd);
+	assert(start == 3);
+
+	for (let i = 0z; i < p.nitem: size; i += 1) {
+		let slot = slot { ... };
+		read_slot(rd, &slot)?;
+	};
+
+	const end = tell(rd);
+	p.items = rd.buf[start..end];
 };
 
 fn read_window_progress(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *window_progress;
+	p.window_id = read_i8(rd)?;
+	p.scalar = read_i16(rd)?;
+	p.value = read_i16(rd)?;
 };
 
 fn read_window_transaction(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *window_transaction;
+	p.window_id = read_i8(rd)?;
+	p.transaction = read_i16(rd)?;
+	p.accepted = read_bool(rd)?;
 };
 
 fn read_update_sign(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *update_sign;
+	p.x = read_int(rd)?;
+	p.y = read_i8(rd)?;
+	p.z = read_int(rd)?;
+	for (let s &.. p.text) {
+		*s = read_string16(rd)?;
+	};
 };
 
 fn read_map_data(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *map_data;
+	p.item_id = read_i16(rd)?;
+	p.metadata = read_i16(rd)?;
+
+	const length = read_u8(rd)?;
+	p.data = read(rd, length)?;
 };
 
 fn read_update_stat(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *update_stat;
+	p.stat_id = read_int(rd)?;
+	p.amount = read_i8(rd)?;
 };
 
 fn read_disconnect(rd: *reader, payload: *opaque) (void | io::error) = {
-	abort(); // TODO
+	let p = payload: *disconnect;
+	p.reason = read_string16(rd)?;
 };
 
 const packet_readers: [0x100]*read_packet_fn = [

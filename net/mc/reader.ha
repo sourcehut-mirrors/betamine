@@ -102,6 +102,8 @@ fn read_flush(rd: *reader) void = {
 	rd.avail = 0;
 };
 
+fn tell(rd: *reader) size = rd.off;
+
 fn read_i8(rd: *reader) (i8 | io::error) = {
 	return read(rd, 1)?[0]: i8;
 };
