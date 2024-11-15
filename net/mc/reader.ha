@@ -7,19 +7,30 @@ use strings;
 
 def INIT_BUFSZ = 4096;
 
+// Packet reader mode of operation
+export type reader_mode = enum {
+	CLIENT,
+	SERVER,
+};
+
 export type reader = struct {
 	sock: io::file,
+	mode: reader_mode,
 	buf: []u8,
 	off: size,
 	avail: size,
 };
 
 // Initializes a new Minecraft packet reader.
-export fn newreader(sock: io::file) reader = {
+export fn newreader(
+	sock: io::file,
+	mode: reader_mode = reader_mode::CLIENT,
+) reader = {
 	const fl = os::getfl(sock)!;
 	os::setfl(sock, fl | fs::flag::NONBLOCK)!;
 	return reader {
 		sock = sock,
+		mode = mode,
 		buf = alloc([0...], INIT_BUFSZ),
 		...
 	};
@@ -49,7 +60,7 @@ export fn read_packet(rd: *reader, out: *packet) (void | io::error) = {
 
 fn _read_packet(rd: *reader, out: *packet) (void | io::error) = {
 	out.id = read_i8(rd)?: u8;
-	// TODO
+	packet_readers[out.id](rd, &out._payload)?;
 };
 
 fn read(rd: *reader, n: size) ([]u8 | io::error) = {

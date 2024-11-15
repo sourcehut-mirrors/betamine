@@ -2,7 +2,7 @@
 export type packet = struct {
 	id: u8,
 	union {
-		keep_alive: keep_alive,
+		_payload: u8,
 		login_request: login_request,
 		handshake: handshake,
 		chat_message: chat_message,
@@ -63,11 +63,6 @@ export type packet = struct {
 
 // UCS-16 string.
 export type string16 = []u16;
-
-// Keep alive packet
-export type keep_alive = struct {
-	id: int,
-};
 
 // Login request packet
 export type login_request = struct {
