@@ -31,6 +31,16 @@ export fn write_login_request(
 	write_end(c)?;
 };
 
+// Writes a [[player]] packet to the connection.
+export fn write_player(
+	c: *conn,
+	packet: *player,
+) (void | io::error) = {
+	write_begin(c, PLAYER);
+	write_bool(c, packet.ground);
+	write_end(c)?;
+};
+
 // Writes a [[player_pos_look]] packet to the connection.
 export fn write_player_pos_look(
 	c: *conn,

@@ -31,6 +31,7 @@ export type state = struct {
 
 	// Game state
 	world: world::world,
+	chunkmgr: *chunk_manager,
 
 	// Number of game ticks ellapsed
 	ticks: u64,

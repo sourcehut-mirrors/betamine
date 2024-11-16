@@ -51,6 +51,7 @@ export fn chunk_manager_init(state: *state) void = {
 	});
 	append(state.modules, chunkmgr);
 	append(state.layers, chunkmgr);
+	state.chunkmgr = chunkmgr;
 };
 
 fn chunkmgr_update(mod: *module, state: *state) void = {
@@ -70,7 +71,7 @@ fn chunkmgr_update(mod: *module, state: *state) void = {
 		chunkmgr_procqueue(mgr);
 	};
 
-	chunkmgr_unload(mgr, state);
+	chunkmgr_procunload(mgr, state);
 };
 
 fn chunkmgr_draw(layer: *layer, state: *state) void = {
@@ -124,6 +125,30 @@ fn chunkmgr_drawchunk(state: *state, c: *chunk, trans: bool) void = {
 	};
 };
 
+// Queues a chunk for tesselation.
+fn chunkmgr_enqueue(mgr: *chunk_manager, chunk: const *world::chunk) void = {
+	if (world::chunk_isempty(chunk)) {
+		log::println("[chunkmgr] Attempted to schedule empty chunk");
+		return;
+	};
+
+	const (x, z) = chunk.coords;
+	log::printfln("[chunkmgr] schedule tesselation at <{},{}>", x, z);
+	append(mgr.queue, chunk);
+};
+
+// Schedules a chunk for unloading.
+fn chunkmgr_unload(mgr: *chunk_manager, coords: world::coords2D) void = {
+	const i = chunkmgr_bisect(mgr, coords);
+	const (x, z) = coords;
+	if (i < len(mgr.meshes) && world::coords2D_equal((x, z),
+			mgr.meshes[i].chunk.coords)) {
+		mgr.meshes[i].unload = 0;
+	};
+};
+
+// Schedules chunks for tesselation based on the player location. Assumes an
+// on-disk (not in-memory) world.
 fn chunkmgr_schedule(mgr: *chunk_manager, state: *state) void = {
 	def RD = RENDER_DISTANCE;
 	let coords = mgr.player_cc;
@@ -143,12 +168,6 @@ fn chunkmgr_schedule(mgr: *chunk_manager, state: *state) void = {
 			continue;
 		};
 
-		const queued = sort::search(mgr.queue, size(*chunk),
-			&chunk, &world::coords2D_cmp) is size;
-		if (queued) {
-			continue;
-		};
-
 		log::printfln("[chunkmgr] schedule tesselation at <{},{}>", x, z);
 		append(mgr.queue, chunk);
 	};
@@ -164,7 +183,7 @@ fn chunkmgr_schedule(mgr: *chunk_manager, state: *state) void = {
 	};
 };
 
-fn chunkmgr_unload(mgr: *chunk_manager, state: *state) void = {
+fn chunkmgr_procunload(mgr: *chunk_manager, state: *state) void = {
 	for (let i = 0z; i < len(mgr.meshes) && i < 32; i += 1) {
 		const mesh = &mgr.meshes[i];
 		const coords = mesh.chunk.coords;
@@ -199,10 +218,16 @@ fn chunkmgr_procqueue(mgr: *chunk_manager) void = {
 		tmesh.vert_translucent = tmesh.vert_translucent[..0];
 
 		engine::chunk_genmesh(mgr.world, next, &tmesh);
+
 		const mesh = gfx::chunk_init(&tmesh);
 
 		const coords = next.coords;
 		const i = chunkmgr_bisect(mgr, coords);
+
+		if (i < len(mgr.meshes) && mgr.meshes[i].chunk == next) {
+			abort(); // TODO: finish implementing retesselation
+		};
+
 		insert(mgr.meshes[i], chunk {
 			chunk = next,
 			mesh = mesh,

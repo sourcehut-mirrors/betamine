@@ -117,7 +117,7 @@ export fn get_chunk(
 	w: *world,
 	c: coords2D,
 	mode: mode = mode::EMPTY,
-) (const *chunk | error) = {
+) (*chunk | error) = {
 	const model = &c;
 	const cix = sort::lbisect(w.chunks, size(*chunk),
 		&model, &coords2D_cmp);
@@ -126,8 +126,18 @@ export fn get_chunk(
 		return w.chunks[cix];
 	};
 
-	if (mode == mode::EMPTY || is_memory(w)) {
-		return &empty_chunk;
+	if (mode == mode::EMPTY) {
+		if (is_memory(w)) {
+			let chunk = alloc(chunk {
+				refs = 1,
+				coords = c,
+				...
+			});
+			insert(w.chunks[cix], chunk);
+			return chunk;
+		} else {
+			return &empty_chunk;
+		};
 	};
 
 	let rcc: coords2D = (0, 0);

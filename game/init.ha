@@ -23,6 +23,7 @@ export fn init(
 		width = w: uint,
 		height = h: uint,
 		world = world::memory(),
+		chunkmgr = null: *chunk_manager,
 		...
 	});
 

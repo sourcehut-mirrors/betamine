@@ -1,5 +1,8 @@
+use compress::zlib;
 use io;
+use memio;
 use nbt;
+use net::mc;
 
 // Width and depth of a world chunk in blocks.
 export def CHUNK_WIDTH = 16;
@@ -36,15 +39,20 @@ const empty_chunk = chunk { ... };
 
 // Returns true if this is the empty chunk (i.e. from [[mode::EMPTY]]).
 export fn chunk_isempty(c: *chunk) bool = {
-	return c == &empty_chunk;
+	if (c == &empty_chunk) {
+		return true;
+	};
+	return c.flags & chunk_flag::POPULATED == 0;
 };
 
 // Populates a chunk from an [[nbt::reader]].
 export fn chunk_fromnbt(chunk: *chunk, rd: *nbt::reader) (void | io::error) = {
+	assert(chunk != &empty_chunk);
+
 	let tag = nbt::next(rd)? as nbt::value;
 	assert(tag.tag == nbt::nbt_tag::COMPOUND && tag.name == "");
 
-	tag = nbt::next(rd)? as nbt::value;
+	let tag = nbt::next(rd)? as nbt::value;
 	assert(tag.tag == nbt::nbt_tag::COMPOUND && tag.name == "Level");
 
 	for (const tag => nbt::next(rd)?) {
@@ -81,6 +89,24 @@ export fn chunk_fromnbt(chunk: *chunk, rd: *nbt::reader) (void | io::error) = {
 			nbt::skip(rd, tag)?;
 		};
 	};
+};
+
+// Populates a chunk from a [[net::mc::chunk_data]] packet.
+export fn chunk_frompacket(chunk: *chunk, p: *mc::chunk_data) (void | io::error) = {
+	assert(chunk != &empty_chunk);
+	const rd = memio::fixed(p.data);
+	const zrd = zlib::decompress(&rd)!;
+
+	if (p.size_x == 15 && p.size_z == 15 && p.size_y == 127 && p.y == 0) {
+		io::readall(&zrd, chunk.blocks)!;
+		io::readall(&zrd, chunk.metadata)!;
+		io::readall(&zrd, chunk.block_light)!;
+		io::readall(&zrd, chunk.sky_light)!;
+	} else {
+		void; // TODO
+	};
+
+	chunk.flags |= chunk_flag::POPULATED;
 };
 
 // Gets the block ID from a [[chunk]] at the given coordinates.
