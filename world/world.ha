@@ -69,6 +69,12 @@ export fn memory() world = {
 	};
 };
 
+// Returns true if this world is only represented in memory (and not persisted
+// on disk).
+export fn is_memory(w: *world) bool = {
+	return w.basedir == "";
+};
+
 // Frees resources associated with this world.
 export fn finish(w: *world) void = {
 	for (let c .. w.chunks) {
@@ -121,10 +127,7 @@ export fn get_chunk(
 		return w.chunks[cix];
 	};
 
-	if (mode == mode::EMPTY) {
-		return &empty_chunk;
-	};
-	if (w.basedir == "") {
+	if (mode == mode::EMPTY || is_memory(w)) {
 		return &empty_chunk;
 	};
 
@@ -199,6 +202,10 @@ export fn put_chunk(w: *world, ch: *chunk) void = {
 	delete(w.chunks[cix]);
 	defer free(ch);
 
+	if (is_memory(w)) {
+		return;
+	};
+
 	const rc = chunk_to_region(ch.coords);
 	model = &rc;
 	const rix = sort::lbisect(w.regions, size(*region), &model, &coords2D_cmp);
@@ -214,6 +221,8 @@ export fn put_chunk(w: *world, ch: *chunk) void = {
 // Map a region file into the [[world]]. The coordinates should be in the region
 // coordinate system.
 fn world_mapregion(w: *world, c: coords2D, ix: size) (*region | error) = {
+	assert(!is_memory(w));
+
 	let buf: [32]u8 = [0...];
 	const filename = fmt::bsprintf(buf, "r.{}.{}.mcr", c.0, c.1);
 	const path = path::init(w.basedir, "region", filename)!;
