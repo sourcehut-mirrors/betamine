@@ -43,18 +43,20 @@ export fn world_to_chunk(
 	match (out) {
 	case let c: *coords3D =>
 		*c = (
-			if (world.0 >= 0) world.0 % CHUNK_WIDTH
-			else CHUNK_WIDTH + world.0 % CHUNK_WIDTH,
+			(world.0 % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH,
 			world.1,
-			if (world.2 >= 0) world.2 % CHUNK_WIDTH
-			else CHUNK_WIDTH + world.2 % CHUNK_WIDTH,
+			(world.2 % CHUNK_WIDTH + CHUNK_WIDTH) % CHUNK_WIDTH,
 		);
 	case null => void;
 	};
 
+	const mod = (
+		if (world.0 < 0) 1 else 0,
+		if (world.2 < 0) 1 else 0,
+	);
 	return (
-		world.0 / CHUNK_WIDTH - (if (world.0 < 0) 1 else 0),
-		world.2 / CHUNK_WIDTH - (if (world.2 < 0) 1 else 0),
+		(world.0 + mod.0) / CHUNK_WIDTH - mod.0,
+		(world.2 + mod.1) / CHUNK_WIDTH - mod.1,
 	);
 };
 
