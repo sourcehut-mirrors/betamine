@@ -11,15 +11,9 @@ use types;
 use world;
 use world::{CHUNK_WIDTH, CHUNK_HEIGHT, mode};
 
-// TODO: Make this a configurable option
-def RENDER_DISTANCE = 12;
-
 // Maximum amount of time spent on tesselation in a single update
 // (No more than half a frame at 60 FPS)
 def MAX_TESS_TIME = 8 * time::MILLISECOND;
-
-// Delay to debounce unloading chunk meshes.
-def UNLOAD_DELAY = 30 * 1000;
 
 // Neighbors of a chunk.
 export type chunk_neighbor = enum uint {
@@ -210,41 +204,6 @@ fn chunkmgr_unload(mgr: *chunk_manager, coords: world::coords2D) void = {
 			mesh.unload = 0;
 			break;
 		};
-	};
-};
-
-// Schedules chunks for tesselation based on the player location. Assumes an
-// on-disk (not in-memory) world.
-fn chunkmgr_schedule(mgr: *chunk_manager, state: *state) void = {
-	def RD = RENDER_DISTANCE;
-	let coords = mgr.player_cc;
-	const min: world::coords2D = (coords.0 - RD, coords.1 - RD);
-	const max: world::coords2D = (coords.0 + RD, coords.1 + RD);
-	for (let x = min.0; x <= max.0; x += 1)
-	for (let z = min.1; z <= max.1; z += 1) {
-		const i = chunkmgr_bisect(mgr, (x, z));
-		if (i < len(mgr.meshes) && world::coords2D_equal((x, z),
-				mgr.meshes[i].chunk.coords)) {
-			mgr.meshes[i].unload = types::U32_MAX;
-			continue;
-		};
-
-		const chunk = world::get_chunk(mgr.world, (x, z), mode::LOAD)!;
-		if (world::chunk_isempty(chunk)) {
-			continue;
-		};
-
-		chunkmgr_queue_insert(mgr, chunk);
-	};
-
-	for (let i = 0z; i < len(mgr.meshes); i += 1) {
-		let mesh = &mgr.meshes[i];
-		const coords = mesh.chunk.coords;
-		if (coords.0 >= min.0 && coords.1 >= min.1
-			&& coords.0 <= max.0 && coords.1 <= max.1) {
-			continue;
-		};
-		mesh.unload = state.frame_time + UNLOAD_DELAY;
 	};
 };
 
