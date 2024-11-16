@@ -293,7 +293,7 @@ fn chunkmgr_procqueue(mgr: *chunk_manager) void = {
 			],
 			[
 				(coords.0 * CHUNK_WIDTH + CHUNK_WIDTH): f32,
-				tmesh.max_y: f32,
+				128.0,
 				(coords.1 * CHUNK_WIDTH + CHUNK_WIDTH): f32,
 			],
 		];
