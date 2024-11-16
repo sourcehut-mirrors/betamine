@@ -1,7 +1,7 @@
 # betamine
 
-This is an implementation of Minecraft beta 1.7.3. At the moment it is little
-more than a glorified world renderer.
+This is a Minecraft beta 1.7.3 client. At the moment it is very simple and
+limited in its capabilities.
 
 Dependencies:
 
@@ -10,11 +10,13 @@ Dependencies:
 * hare-glm
 * hare-gl
 
-To try it out, run `make` to compile betamine and then run `./betamine <path>`
-where _path_ is the path to a world in `~/.minecraft/saves` which was created
-by Minecraft beta 1.7.3.
+To try it out, run `make` to compile betamine and then run `./betamine <address>`
+where _address_ is the address (or hostname) of a Minecraft beta 1.7.3 server.
 
 ![Screenshot of betamine](https://redacted.moe/f/a0c2f3ff.png)
 
 You will need some assets -- run `./script/fetch-mojang-assets` to download the
 official assets from Mojang's servers.
+
+You can find a Minecraft beta 1.7.3 server jar
+[here](https://files.betacraft.uk/server-archive/beta/b1.7.3.jar).
