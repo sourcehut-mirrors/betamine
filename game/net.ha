@@ -72,6 +72,8 @@ fn network_incoming(
 	packet: *mc::packet,
 ) void = {
 	switch (packet.id) {
+	case mc::TIME_UPDATE =>
+		state.ticks = packet.time_update.time: u64;
 	case mc::SPAWN_POSITION =>
 		const sp = &packet.spawn_position;
 		state.world.level.spawn = (sp.x, sp.y, sp.z);
