@@ -2,6 +2,7 @@ use engine;
 use errors;
 use io;
 use log;
+use math;
 use net::mc;
 use types;
 use world;
@@ -52,12 +53,12 @@ fn network_update(mod: *module, state: *state) void = {
 	if (state.frame_time >= net.next_pos) {
 		// TODO: Choose appropriate packet based on last position/look
 		// sent to the server
-		mc::write_player(state.conn, &mc::player_pos_look {
+		mc::write_player_pos_look(state.conn, &mc::player_pos_look {
 			x = state.camera.pos[0],
 			y = state.camera.pos[1],
 			z = state.camera.pos[2],
-			stance = state.camera.pos[1] + engine::PLAYER_HEIGHT,
-			yaw = rad2deg(state.camera.yaw),
+			stance = state.camera.pos[1] + engine::PLAYER_STANCE_UPRIGHT,
+			yaw = -(rad2deg(state.camera.yaw) - 180.0) + 180.0,
 			pitch = rad2deg(state.camera.pitch),
 			ground = true,
 		})!;
@@ -81,7 +82,7 @@ fn network_incoming(
 			ppl.y: f32,
 			ppl.z: f32,
 		];
-		state.camera.yaw = deg2rad(ppl.yaw);
+		state.camera.yaw = deg2rad(-(ppl.yaw - 180.0) + 180.0);
 		state.camera.pitch = deg2rad(ppl.pitch);
 		mc::write_player_pos_look(state.conn, ppl)!;
 		net.next_pos = 0;
@@ -108,4 +109,12 @@ fn network_incoming(
 		};
 	case => void;
 	};
+};
+
+fn deg2rad(deg: f32) f32 = {
+	return (deg: f64 * math::PI / 180.0): f32;
+};
+
+fn rad2deg(rad: f32) f32 = {
+	return (rad: f64 * 180.0 / math::PI): f32;
 };

@@ -1,6 +1,5 @@
 use engine;
 use gfx;
-use math;
 use net::mc;
 use os;
 use sdl2;
@@ -57,12 +56,4 @@ export fn init(
 export fn destroy(state: *state) void = {
 	// TODO: Other stuff
 	free(state);
-};
-
-fn deg2rad(deg: f32) f32 = {
-	return (deg: f64 / 360.0 * math::PI * 2.0): f32;
-};
-
-fn rad2deg(rad: f32) f32 = {
-	return ((rad: f64 / (math::PI * 2.0)) / 360.0): f32;
 };
