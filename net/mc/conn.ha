@@ -192,7 +192,7 @@ fn read_f64(c: *conn) (f64 | io::error) = {
 	return *(&read_i64(c)?: *f64);
 };
 
-fn write_f64(c: *conn, v: f32) void = {
+fn write_f64(c: *conn, v: f64) void = {
 	write_i64(c, *(&v: *i64));
 };
 

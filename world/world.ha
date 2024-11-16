@@ -30,10 +30,9 @@ export type world = struct {
 	basedir: str,
 	level: level,
 
-	// List of loaded chunks, sorted by coordinates. All loaded chunks at
-	// runtime are sourced from a mapped region.
-	//
-	// XXX: Should we move these into [[region]]? Maybe
+	// List of loaded chunks, sorted by coordinates. If the world is backed
+	// by the filesystem, all loaded chunks at runtime are sourced from a
+	// mapped region.
 	chunks: []*chunk,
 
 	// List of mapped regions, sorted by coordinates.

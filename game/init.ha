@@ -7,7 +7,11 @@ use sdl2;
 use world;
 
 // Initializes the game engine.
-export fn init(win: *sdl2::SDL_Window, conn: *mc::conn) *state = {
+export fn init(
+	win: *sdl2::SDL_Window,
+	conn: *mc::conn,
+	login: *mc::login_request,
+) *state = {
 	let w = 0, h = 0;
 	sdl2::SDL_GL_GetDrawableSize(win, &w, &h);
 	gfx::init(w, h);
@@ -22,8 +26,11 @@ export fn init(win: *sdl2::SDL_Window, conn: *mc::conn) *state = {
 		...
 	});
 
-	const level = &state.world.level;
-	const player = &level.player;
+	let level = &state.world.level;
+	let player = &level.player;
+	level.seed = login.seed;
+	state.entity_id = login.entity_id;
+	// TODO: Do something with the dimension
 
 	state.camera = gfx::camera_new();
 	state.camera.pos = [
@@ -36,6 +43,7 @@ export fn init(win: *sdl2::SDL_Window, conn: *mc::conn) *state = {
 
 	// Initialize modules
 	input_init(state);
+	network_init(state);
 	chunk_manager_init(state);
 	clouds_init(state);
 
@@ -52,4 +60,8 @@ export fn destroy(state: *state) void = {
 
 fn deg2rad(deg: f32) f32 = {
 	return (deg: f64 / 360.0 * math::PI * 2.0): f32;
+};
+
+fn rad2deg(rad: f32) f32 = {
+	return ((rad: f64 / (math::PI * 2.0)) / 360.0): f32;
 };

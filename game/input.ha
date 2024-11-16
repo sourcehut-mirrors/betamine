@@ -8,7 +8,7 @@ use sdl2::{
 };
 
 // Enable flying in any direction
-def FLYING: bool = true;
+def FLYING: bool = false;
 
 // Player speed in meters per second
 def SPEED: f32 = 4.317;

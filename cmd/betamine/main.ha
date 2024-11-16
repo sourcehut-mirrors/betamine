@@ -1,6 +1,9 @@
+use encoding::ucs2;
 use fmt;
 use game;
 use getopt;
+use io;
+use log;
 use net::dial;
 use net::mc;
 use os;
@@ -43,8 +46,20 @@ export fn main() void = {
 	case let c: mc::conn =>
 		yield c;
 	};
+
+	const login = match (mc::login(&conn, username)) {
+	case let login: mc::login_request =>
+		yield login;
+	case let dc: mc::disconnect_packet =>
+		const reason = ucs2::fromucs2(dc.reason);
+		defer free(reason);
+		mc::close(&conn);
+		log::fatal(reason);
+	case let err: io::error =>
+		mc::close(&conn);
+		log::fatal(io::strerror(err));
+	};
 	defer mc::disconnect(&conn, "Player quit");
-	mc::login(&conn, username)!;
 
 	sdl2::SDL_Init(sdl2::SDL_INIT_VIDEO | sdl2::SDL_INIT_AUDIO)!;
 	defer sdl2::SDL_Quit();
@@ -76,7 +91,7 @@ export fn main() void = {
 	const ctx = sdl2::SDL_GL_CreateContext(win);
 	sdl2::SDL_GL_SetSwapInterval(VSYNC);
 
-	let state = game::init(win, &conn);
+	let state = game::init(win, &conn, &login);
 	game::run(state);
 	game::destroy(state);
 };

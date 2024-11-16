@@ -31,6 +31,35 @@ export fn write_login_request(
 	write_end(c)?;
 };
 
+// Writes a [[player_pos_look]] packet to the connection.
+export fn write_player_pos_look(
+	c: *conn,
+	packet: *player_pos_look,
+) (void | io::error) = {
+	write_begin(c, PLAYER_POS_LOOK);
+
+	switch (c.mode) {
+	case conn_mode::CLIENT =>
+		write_f64(c, packet.x);
+		write_f64(c, packet.y);
+		write_f64(c, packet.stance);
+		write_f64(c, packet.z);
+		write_f32(c, packet.yaw);
+		write_f32(c, packet.pitch);
+		write_bool(c, packet.ground);
+	case conn_mode::SERVER =>
+		write_f64(c, packet.x);
+		write_f64(c, packet.stance);
+		write_f64(c, packet.y);
+		write_f64(c, packet.z);
+		write_f32(c, packet.yaw);
+		write_f32(c, packet.pitch);
+		write_bool(c, packet.ground);
+	};
+
+	write_end(c)?;
+};
+
 // Writes a [[disconnect_packet]] to the connection. Does not close the socket
 // or otherwise clean up the connection -- just sends a DISCONNECT packet.
 export fn write_disconnect(

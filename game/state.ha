@@ -10,6 +10,7 @@ export type state = struct {
 
 	// Network state
 	conn: *mc::conn,
+	entity_id: int,
 
 	// SDL window
 	win: *sdl2::SDL_Window,
