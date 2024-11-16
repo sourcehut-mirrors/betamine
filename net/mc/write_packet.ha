@@ -30,3 +30,14 @@ export fn write_login_request(
 	write_i8(c, packet.dimension);
 	write_end(c)?;
 };
+
+// Writes a [[disconnect_packet]] to the connection. Does not close the socket
+// or otherwise clean up the connection -- just sends a DISCONNECT packet.
+export fn write_disconnect(
+	c: *conn,
+	packet: *disconnect_packet,
+) (void | io::error) = {
+	write_begin(c, DISCONNECT);
+	write_string16(c, packet.reason);
+	write_end(c)?;
+};

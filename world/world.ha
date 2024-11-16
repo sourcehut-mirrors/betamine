@@ -62,6 +62,13 @@ export fn open(path: str) (world | fs::error | io::error) = {
 	};
 };
 
+// Opens an in-memory world.
+export fn memory() world = {
+	return world {
+		...
+	};
+};
+
 // Frees resources associated with this world.
 export fn finish(w: *world) void = {
 	for (let c .. w.chunks) {
@@ -115,6 +122,9 @@ export fn get_chunk(
 	};
 
 	if (mode == mode::EMPTY) {
+		return &empty_chunk;
+	};
+	if (w.basedir == "") {
 		return &empty_chunk;
 	};
 

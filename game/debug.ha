@@ -75,7 +75,7 @@ fn debug_draw(layer: *layer, state: *state) void = {
 
 	const gfx = fmt::bsprintf(buf, "C: ({}/{}) V: {} V/C: {}",
 		state.chunks_rendered, state.nchunk, state.nvertex,
-		state.nvertex / state.nchunk);
+		if (state.nchunk == 0) 0 else state.nvertex / state.nchunk);
 	const (fw, _) = gfx::font_measure(gfx);
 	gfx::font_draw(&glm::v2_new((state.width - fw): f32, 2.0 * 24.0), gfx);
 };

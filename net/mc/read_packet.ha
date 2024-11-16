@@ -500,7 +500,7 @@ fn read_update_stat(c: *conn, payload: *opaque) (void | io::error) = {
 };
 
 fn read_disconnect(c: *conn, payload: *opaque) (void | io::error) = {
-	let p = payload: *disconnect;
+	let p = payload: *disconnect_packet;
 	p.reason = read_string16(c)?;
 };
 

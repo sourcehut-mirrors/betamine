@@ -1,11 +1,15 @@
 use gfx;
 use glm;
+use net::mc;
 use sdl2;
 use world;
 
 // Game state type.
 export type state = struct {
 	quit: bool,
+
+	// Network state
+	conn: *mc::conn,
 
 	// SDL window
 	win: *sdl2::SDL_Window,

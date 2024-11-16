@@ -62,7 +62,7 @@ export type packet = struct {
 		update_sign: update_sign,
 		map_data: map_data,
 		update_stat: update_stat,
-		disconnect: disconnect,
+		disconnect: disconnect_packet,
 	},
 };
 
@@ -610,6 +610,6 @@ export type update_stat = struct {
 };
 
 // Disconnect packet
-export type disconnect = struct {
+export type disconnect_packet = struct {
 	reason: string16,
 };

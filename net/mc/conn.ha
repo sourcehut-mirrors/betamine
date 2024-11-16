@@ -41,7 +41,7 @@ fn newconn(
 
 // Frees resources associated with a Minecraft packet [[conn]]. Does not close
 // the underlying socket.
-export fn conn_finish(c: *conn) void = {
+fn conn_finish(c: *conn) void = {
 	io::close(&c.wbuf)!;
 	free(c.rbuf);
 };

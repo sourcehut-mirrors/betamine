@@ -1,6 +1,7 @@
 use fmt;
 use game;
 use getopt;
+use net::dial;
 use net::mc;
 use os;
 use sdl2;
@@ -26,6 +27,24 @@ export fn main() void = {
 		getopt::printusage(os::stderr, os::args[0], usage)!;
 		os::exit(1);
 	};
+
+	let username = "betamine";
+	for (const (opt, val) .. cmd.opts) {
+		switch (opt) {
+		case 'u' =>
+			username = val;
+		case => abort();
+		};
+	};
+
+	const conn = match (mc::dial(cmd.args[0])) {
+	case let err: dial::error =>
+		fmt::fatal(dial::strerror(err));
+	case let c: mc::conn =>
+		yield c;
+	};
+	defer mc::disconnect(&conn, "Player quit");
+	mc::login(&conn, username)!;
 
 	sdl2::SDL_Init(sdl2::SDL_INIT_VIDEO | sdl2::SDL_INIT_AUDIO)!;
 	defer sdl2::SDL_Quit();
@@ -57,7 +76,7 @@ export fn main() void = {
 	const ctx = sdl2::SDL_GL_CreateContext(win);
 	sdl2::SDL_GL_SetSwapInterval(VSYNC);
 
-	let state = game::init(win);
+	let state = game::init(win, &conn);
 	game::run(state);
 	game::destroy(state);
 };
