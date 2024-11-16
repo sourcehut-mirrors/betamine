@@ -28,6 +28,14 @@ export type mode = enum uint {
 	ERROR = 1 << 2,
 };
 
+// What data to include in a [[voxel]].
+export type voxel_data = enum uint {
+	BLOCK_ID	= 1 << 0,
+	METADATA	= 1 << 1,
+	SKY_LIGHT	= 1 << 2,
+	BLOCK_LIGHT	= 1 << 3,
+};
+
 // A game world on disk.
 export type world = struct {
 	basedir: str,
@@ -112,6 +120,46 @@ export fn get(
 	out.data = chunk.metadata[hi] >> ho & 0xF;
 	out.sky_light = chunk.sky_light[hi] >> ho & 0xF;
 	out.block_light = chunk.block_light[hi] >> ho & 0xF;
+};
+
+// Sets a voxel in the world.
+export fn set(
+	w: *world,
+	c: coords3D,
+	v: *voxel,
+	data: voxel_data = voxel_data::BLOCK_ID | voxel_data::METADATA,
+	mode: mode = mode::EMPTY,
+) (void | error) = {
+	if (c.1 < 0 || c.1 >= 128) {
+		return range;
+	};
+	if (v.id == 0) {
+		// TODO: Do this properly
+		v.sky_light = 15;
+		data |= voxel_data::SKY_LIGHT;
+	};
+
+	const cc = world_to_chunk(c, &c);
+	const chunk = get_chunk(w, cc, mode)?;
+
+	const ix = c.0 * (CHUNK_WIDTH * CHUNK_HEIGHT) + c.2 * CHUNK_HEIGHT + c.1;
+	const hi = ix / 2;
+	const ho = (ix % 2): u8 * 4;
+	if (data & voxel_data::BLOCK_ID != 0) {
+		chunk.blocks[ix] = v.id;
+	};
+	if (data & voxel_data::METADATA != 0) {
+		chunk.metadata[hi] &= 0xF << ho;
+		chunk.metadata[hi] |= (v.data & 0xF) << ho;
+	};
+	if (data & voxel_data::SKY_LIGHT != 0) {
+		chunk.sky_light[hi] &= 0xF << ho;
+		chunk.sky_light[hi] |= (v.sky_light & 0xF) << ho;
+	};
+	if (data & voxel_data::BLOCK_LIGHT != 0) {
+		chunk.block_light[hi] &= 0xF << ho;
+		chunk.block_light[hi] |= (v.block_light & 0xF) << ho;
+	};
 };
 
 // Fetches a [[chunk]] from the world. Increments the chunk's reference count;

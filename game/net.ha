@@ -60,7 +60,7 @@ fn network_update(mod: *module, state: *state) void = {
 			z = player.pos[2],
 			stance = player.pos[1] + player.stance,
 			yaw = -(rad2deg(player.yaw) - 180.0) + 180.0,
-			pitch = rad2deg(player.pitch),
+			pitch = -(rad2deg(player.pitch) - 180.0) + 180.0,
 			ground = true,
 		})!;
 		net.next_pos = state.frame_time + 50;
@@ -111,6 +111,17 @@ fn network_incoming(
 			chunkmgr_enqueue(state.chunkmgr, chunk,
 				chunk_neighbor::ALL);
 		};
+	case mc::BLOCK_CHANGE =>
+		const bc = &packet.block_change;
+		world::set(&state.world, (bc.x, bc.y, bc.z),
+			&world::voxel {
+				id = bc.block_id: u8,
+				data = bc.metadata: u8,
+				...
+			})!;
+		const coords = world::world_to_chunk((bc.x, bc.y, bc.z));
+		const chunk = world::get_chunk(&state.world, coords)!;
+		chunkmgr_enqueue(state.chunkmgr, chunk);
 	case => void;
 	};
 };

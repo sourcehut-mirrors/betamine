@@ -44,10 +44,10 @@ export fn world_to_chunk(
 	case let c: *coords3D =>
 		*c = (
 			if (world.0 >= 0) world.0 % CHUNK_WIDTH
-			else (CHUNK_WIDTH - 1) + world.0 % CHUNK_WIDTH,
+			else CHUNK_WIDTH + world.0 % CHUNK_WIDTH,
 			world.1,
 			if (world.2 >= 0) world.2 % CHUNK_WIDTH
-			else (CHUNK_WIDTH - 1) + world.2 % CHUNK_WIDTH,
+			else CHUNK_WIDTH + world.2 % CHUNK_WIDTH,
 		);
 	case null => void;
 	};
