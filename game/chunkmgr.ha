@@ -174,14 +174,13 @@ fn chunkmgr_enqueue(
 		case => abort();
 		};
 
-		chunkmgr_queue_insert(mgr, neighbor, true);
+		chunkmgr_queue_insert(mgr, neighbor);
 	};
 };
 
 fn chunkmgr_queue_insert(
 	mgr: *chunk_manager,
 	chunk: const *world::chunk,
-	is_neighbor: bool = false,
 ) void = {
 	const ix = sort::lbisect(mgr.queue, size(*world::chunk),
 		&chunk, &world::coords2D_cmp);
