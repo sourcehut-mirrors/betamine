@@ -188,10 +188,6 @@ fn chunkmgr_queue_insert(
 	if (ix < len(mgr.queue) && mgr.queue[ix] == chunk) {
 		return;
 	};
-	log::printfln("[chunkmgr] schedule {}tesselation at <{},{}> {}",
-		if (is_neighbor) "neighbor for " else "",
-		chunk.coords.0, chunk.coords.1,
-		chunk);
 	insert(mgr.queue[ix], chunk);
 };
 
@@ -199,8 +195,6 @@ fn chunkmgr_queue_insert(
 fn chunkmgr_unload(mgr: *chunk_manager, coords: world::coords2D) void = {
 	for (let mesh &.. mgr.meshes) {
 		if (world::coords2D_equal(coords, mesh.chunk.coords)) {
-			log::printfln("[chunkmgr] schedule unload <{},{}>",
-				coords.0, coords.1);
 			mesh.unload = 0;
 			break;
 		};
@@ -215,7 +209,6 @@ fn chunkmgr_procunload(mgr: *chunk_manager, state: *state) void = {
 			continue;
 		};
 
-		log::printfln("[chunkmgr] unload <{},{}>", coords.0, coords.1);
 		gfx::chunk_finish(&mesh.mesh);
 		world::put_chunk(mgr.world, mesh.chunk);
 		static delete(mgr.meshes[i]);
@@ -281,11 +274,6 @@ fn chunkmgr_procqueue(mgr: *chunk_manager) void = {
 
 		// Put reference held by queue
 		world::put_chunk(mgr.world, next);
-
-		const tend = time::now(clock::MONOTONIC);
-		log::printfln("[chunkmgr] tesselate <{},{}> {}ms",
-			next.coords.0, next.coords.1,
-			time::diff(now, tend) / time::MILLISECOND);
 	};
 };
 

@@ -1,5 +1,6 @@
 use compress::zlib;
 use io;
+use log;
 use memio;
 use nbt;
 use net::mc;
@@ -111,7 +112,8 @@ export fn chunk_frompacket(chunk: *chunk, p: *mc::chunk_data) (void | io::error)
 		io::readall(&zrd, chunk.block_light)!;
 		io::readall(&zrd, chunk.sky_light)!;
 	} else {
-		void; // TODO
+		// TODO
+		log::println("Warning: dropping partial chunk update (TODO)");
 	};
 
 	chunk.flags |= chunk_flag::POPULATED;
