@@ -23,6 +23,9 @@ export type mode = enum uint {
 	LOAD = 1 << 0,
 	// Generate new chunks if necessary
 	GENERATE = 1 << 1,
+	// Return [[nochunk]] if no chunk is available at the requested
+	// location.
+	ERROR = 1 << 2,
 };
 
 // A game world on disk.
@@ -126,6 +129,10 @@ export fn get_chunk(
 		return w.chunks[cix];
 	};
 
+	if (mode == mode::ERROR) {
+		return nochunk;
+	};
+
 	if (mode == mode::EMPTY) {
 		if (is_memory(w)) {
 			let chunk = alloc(chunk {
@@ -199,6 +206,10 @@ export fn get_chunk(
 
 // Decrements the reference count of a [[chunk]], freeing it if necessary.
 export fn put_chunk(w: *world, ch: *chunk) void = {
+	if (ch == &empty_chunk) {
+		return;
+	};
+
 	ch.refs -= 1;
 	if (ch.refs > 0) {
 		return;

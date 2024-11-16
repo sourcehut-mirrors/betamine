@@ -21,6 +21,21 @@ def MAX_TESS_TIME = 8 * time::MILLISECOND;
 // Delay to debounce unloading chunk meshes.
 def UNLOAD_DELAY = 30 * 1000;
 
+// Neighbors of a chunk.
+export type chunk_neighbor = enum uint {
+	N	= 1 << 0,
+	NE	= 1 << 1,
+	E	= 1 << 2,
+	SE	= 1 << 3,
+	S	= 1 << 4,
+	SW	= 1 << 5,
+	W	= 1 << 6,
+	NW	= 1 << 7,
+
+	NONE	= 0,
+	ALL	= N | E | S | W | NE | SE | SW | NW,
+};
+
 // The chunk manager manages loaded chunks from the world, schedules
 // tesselation and manages meshes, and handles loading and unloading when
 // necessary.
@@ -125,16 +140,65 @@ fn chunkmgr_drawchunk(state: *state, c: *chunk, trans: bool) void = {
 	};
 };
 
-// Queues a chunk for tesselation.
-fn chunkmgr_enqueue(mgr: *chunk_manager, chunk: const *world::chunk) void = {
+// Queues a chunk for tesselation, and optionally its neighbors as well.
+fn chunkmgr_enqueue(
+	mgr: *chunk_manager,
+	chunk: const *world::chunk,
+	neighbors: chunk_neighbor = chunk_neighbor::NONE,
+) void = {
 	if (world::chunk_isempty(chunk)) {
 		log::println("[chunkmgr] Attempted to schedule empty chunk");
 		return;
 	};
 
 	const (x, z) = chunk.coords;
-	log::printfln("[chunkmgr] schedule tesselation at <{},{}>", x, z);
-	append(mgr.queue, chunk);
+	chunkmgr_queue_insert(mgr, chunk);
+
+	const adjacent: [_]world::coords2D = [
+		( 0, -1),	// N
+		( 1, -1),	// NE
+		( 1,  0),	// E
+		( 1,  1),	// SE
+		( 0,  1),	// S
+		(-1,  1),	// SW
+		(-1,  0),	// W
+		(-1, -1),	// NW
+	];
+	for (let i = 0u; i < len(adjacent); i += 1) {
+		if (neighbors & (1 << i) == 0) {
+			continue;
+		};
+
+		const offs = adjacent[i];
+		const ncoord: world::coords2D = (x + offs.0, z + offs.1);
+		const neighbor = match (world::get_chunk(mgr.world,
+			ncoord, world::mode::ERROR)) {
+		case let c: *world::chunk =>
+			yield c;
+		case world::nochunk =>
+			continue;
+		case => abort();
+		};
+
+		chunkmgr_queue_insert(mgr, neighbor, true);
+	};
+};
+
+fn chunkmgr_queue_insert(
+	mgr: *chunk_manager,
+	chunk: const *world::chunk,
+	is_neighbor: bool = false,
+) void = {
+	const ix = sort::lbisect(mgr.queue, size(*world::chunk),
+		&chunk, &world::coords2D_cmp);
+	if (ix < len(mgr.queue) && mgr.queue[ix] == chunk) {
+		return;
+	};
+	log::printfln("[chunkmgr] schedule {}tesselation at <{},{}> {}",
+		if (is_neighbor) "neighbor for " else "",
+		chunk.coords.0, chunk.coords.1,
+		chunk);
+	insert(mgr.queue[ix], chunk);
 };
 
 // Schedules a chunk for unloading.
@@ -170,8 +234,7 @@ fn chunkmgr_schedule(mgr: *chunk_manager, state: *state) void = {
 			continue;
 		};
 
-		log::printfln("[chunkmgr] schedule tesselation at <{},{}>", x, z);
-		append(mgr.queue, chunk);
+		chunkmgr_queue_insert(mgr, chunk);
 	};
 
 	for (let i = 0z; i < len(mgr.meshes); i += 1) {
@@ -216,37 +279,49 @@ fn chunkmgr_procqueue(mgr: *chunk_manager) void = {
 		const next = mgr.queue[len(mgr.queue)-1];
 		static delete(mgr.queue[len(mgr.queue)-1]);
 
+		const coords = next.coords;
 		tmesh.vert_opaque = tmesh.vert_opaque[..0];
 		tmesh.vert_translucent = tmesh.vert_translucent[..0];
-
 		engine::chunk_genmesh(mgr.world, next, &tmesh);
 
 		const mesh = gfx::chunk_init(&tmesh);
+		const aabb: [2]glm::v3 = [
+			[
+				(coords.0 * CHUNK_WIDTH): f32,
+				0.0,
+				(coords.1 * CHUNK_WIDTH): f32,
+			],
+			[
+				(coords.0 * CHUNK_WIDTH + CHUNK_WIDTH): f32,
+				tmesh.max_y: f32,
+				(coords.1 * CHUNK_WIDTH + CHUNK_WIDTH): f32,
+			],
+		];
 
-		const coords = next.coords;
-		const i = chunkmgr_bisect(mgr, coords);
+		const ix = chunkmgr_bisect(mgr, coords);
+		if (ix < len(mgr.meshes) && mgr.meshes[ix].chunk == next) {
+			// Update chunk mesh
+			gfx::chunk_finish(&mgr.meshes[ix].mesh);
+			mgr.meshes[ix] = chunk {
+				chunk = next,
+				mesh = mesh,
+				aabb = aabb,
+				unload = types::U32_MAX,
+			};
+		} else {
+			// Take reference for new mesh
+			world::chunk_ref(next);
 
-		if (i < len(mgr.meshes) && mgr.meshes[i].chunk == next) {
-			abort(); // TODO: finish implementing retesselation
+			insert(mgr.meshes[ix], chunk {
+				chunk = next,
+				mesh = mesh,
+				aabb = aabb,
+				unload = types::U32_MAX,
+			});
 		};
 
-		insert(mgr.meshes[i], chunk {
-			chunk = next,
-			mesh = mesh,
-			aabb = [
-				[
-					(coords.0 * CHUNK_WIDTH): f32,
-					0.0,
-					(coords.1 * CHUNK_WIDTH): f32,
-				],
-				[
-					(coords.0 * CHUNK_WIDTH + CHUNK_WIDTH): f32,
-					tmesh.max_y: f32,
-					(coords.1 * CHUNK_WIDTH + CHUNK_WIDTH): f32,
-				],
-			],
-			unload = types::U32_MAX,
-		});
+		// Put reference held by queue
+		world::put_chunk(mgr.world, next);
 
 		const tend = time::now(clock::MONOTONIC);
 		log::printfln("[chunkmgr] tesselate <{},{}> {}ms",
@@ -262,5 +337,5 @@ fn chunkmgr_bisect(mgr: *chunk_manager, key: world::coords2D) size = {
 fn chunk_cmp(a: const *opaque, b: const *opaque) int = {
 	const key = a: const *world::coords2D;
 	const val = b: const *chunk;
-	return world::coords2D_cmp(&key, &b);
+	return world::coords2D_cmp(&key, &val.chunk);
 };

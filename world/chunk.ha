@@ -45,6 +45,14 @@ export fn chunk_isempty(c: *chunk) bool = {
 	return c.flags & chunk_flag::POPULATED == 0;
 };
 
+// Increment the reference count for a chunk.
+export fn chunk_ref(c: *chunk) void = {
+	if (c == &empty_chunk) {
+		return;
+	};
+	c.refs += 1;
+};
+
 // Populates a chunk from an [[nbt::reader]].
 export fn chunk_fromnbt(chunk: *chunk, rd: *nbt::reader) (void | io::error) = {
 	assert(chunk != &empty_chunk);

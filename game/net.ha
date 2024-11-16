@@ -107,7 +107,8 @@ fn network_incoming(
 			log::printfln("WARNING: Error loading chunk <{},{}>: {}",
 				cd.x, cd.y, io::strerror(err));
 		case void =>
-			chunkmgr_enqueue(state.chunkmgr, chunk);
+			chunkmgr_enqueue(state.chunkmgr, chunk,
+				chunk_neighbor::ALL);
 		};
 	case => void;
 	};
