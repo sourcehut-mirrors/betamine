@@ -4,6 +4,14 @@ use net::mc;
 use sdl2;
 use world;
 
+// Player state
+export type player = struct {
+	pos: glm::v3,
+	stance: f32,
+	yaw: f32,
+	pitch: f32,
+};
+
 // Game state type.
 export type state = struct {
 	quit: bool,
@@ -25,6 +33,9 @@ export type state = struct {
 	input: input_state,
 
 	// Player state
+	player: player,
+
+	// Camera state
 	camera: gfx::camera,
 	vp: glm::m4,
 	frustrum: [6]glm::v4,

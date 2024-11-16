@@ -30,23 +30,22 @@ export fn init(
 	let player = &level.player;
 	level.seed = login.seed;
 	state.entity_id = login.entity_id;
-	// TODO: Do something with the dimension
 
 	state.camera = gfx::camera_new();
-	state.camera.pos = [
+	state.player.pos = [
 		player.pos[0]: f32,
 		player.pos[1]: f32,
 		player.pos[2]: f32,
 	];
-	state.camera.pitch = deg2rad(player.rotation.0);
-	state.camera.yaw = deg2rad(player.rotation.1);
+	state.player.stance = engine::PLAYER_STANCE_UPRIGHT;
+	state.player.pitch = deg2rad(player.rotation.0);
+	state.player.yaw = deg2rad(player.rotation.1);
 
 	// Initialize modules
 	input_init(state);
 	network_init(state);
 	chunk_manager_init(state);
 	clouds_init(state);
-
 	debug_init(state);
 
 	return state;

@@ -43,7 +43,8 @@ fn network_update(mod: *module, state: *state) void = {
 	};
 
 	// Other housekeeping
-	//
+	let player = &state.player;
+
 	// Send keep alives every 30 seconds
 	if (state.frame_time >= net.next_keepalive) {
 		mc::write_keep_alive(state.conn)!;
@@ -54,12 +55,12 @@ fn network_update(mod: *module, state: *state) void = {
 		// TODO: Choose appropriate packet based on last position/look
 		// sent to the server
 		mc::write_player_pos_look(state.conn, &mc::player_pos_look {
-			x = state.camera.pos[0],
-			y = state.camera.pos[1],
-			z = state.camera.pos[2],
-			stance = state.camera.pos[1] + engine::PLAYER_STANCE_UPRIGHT,
-			yaw = -(rad2deg(state.camera.yaw) - 180.0) + 180.0,
-			pitch = rad2deg(state.camera.pitch),
+			x = player.pos[0],
+			y = player.pos[1],
+			z = player.pos[2],
+			stance = player.pos[1] + player.stance,
+			yaw = -(rad2deg(player.yaw) - 180.0) + 180.0,
+			pitch = rad2deg(player.pitch),
 			ground = true,
 		})!;
 		net.next_pos = state.frame_time + 50;
@@ -79,13 +80,13 @@ fn network_incoming(
 		state.world.level.spawn = (sp.x, sp.y, sp.z);
 	case mc::PLAYER_POS_LOOK =>
 		const ppl = &packet.player_pos_look;
-		state.camera.pos = [
+		state.player.pos = [
 			ppl.x: f32,
 			ppl.y: f32,
 			ppl.z: f32,
 		];
-		state.camera.yaw = deg2rad(-(ppl.yaw - 180.0) + 180.0);
-		state.camera.pitch = deg2rad(ppl.pitch);
+		state.player.yaw = deg2rad(-(ppl.yaw - 180.0) + 180.0);
+		state.player.pitch = deg2rad(ppl.pitch);
 		mc::write_player_pos_look(state.conn, ppl)!;
 		net.next_pos = 0;
 	case mc::CHUNK_ALLOCATE =>

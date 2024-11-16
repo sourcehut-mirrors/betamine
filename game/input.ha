@@ -52,6 +52,7 @@ fn input_update(mod: *module, state: *state) void = {
 	let mod = mod: *input_module;
 	let istate = &state.input;
 	let camera = &state.camera;
+	let player = &state.player;
 
 	let mx = 0i32, my = 0i32;
 	let ev = sdl2::event { ... };
@@ -109,9 +110,9 @@ fn input_update(mod: *module, state: *state) void = {
 		];
 	} else {
 		forward = [
-			math::sinf64(camera.yaw): f32 * delta * SPEED,
+			math::sinf64(player.yaw): f32 * delta * SPEED,
 			0.0,
-			math::cosf64(camera.yaw): f32 * delta * SPEED,
+			math::cosf64(player.yaw): f32 * delta * SPEED,
 		];
 	};
 
@@ -123,31 +124,38 @@ fn input_update(mod: *module, state: *state) void = {
 	const up: glm::v3 = [0.0, delta * SPEED * 2.0, 0.0];
 
 	if (istate.move & movement::FORWARD != 0) {
-		camera.pos = glm::v3_add(&camera.pos, &forward);
+		player.pos = glm::v3_add(&player.pos, &forward);
 	};
 	if (istate.move & movement::BACKWARD != 0) {
-		camera.pos = glm::v3_sub(&camera.pos, &forward);
+		player.pos = glm::v3_sub(&player.pos, &forward);
 	};
 	if (istate.move & movement::LEFT != 0) {
-		camera.pos = glm::v3_sub(&camera.pos, &right);
+		player.pos = glm::v3_sub(&player.pos, &right);
 	};
 	if (istate.move & movement::RIGHT != 0) {
-		camera.pos = glm::v3_add(&camera.pos, &right);
+		player.pos = glm::v3_add(&player.pos, &right);
 	};
 	if (istate.move & movement::UP != 0 && FLYING) {
-		camera.pos = glm::v3_add(&camera.pos, &up);
+		player.pos = glm::v3_add(&player.pos, &up);
 	};
 	if (istate.move & movement::DOWN != 0 && FLYING) {
-		camera.pos = glm::v3_sub(&camera.pos, &up);
+		player.pos = glm::v3_sub(&player.pos, &up);
 	};
 
-	camera.yaw += MOUSE_SPEED * delta * -mx: f32;
-	camera.pitch += MOUSE_SPEED * delta * -my: f32;
+	player.yaw += MOUSE_SPEED * delta * -mx: f32;
+	player.pitch += MOUSE_SPEED * delta * -my: f32;
 
-	if (camera.pitch < PITCH_MIN) camera.pitch = PITCH_MIN;
-	if (camera.pitch > PITCH_MAX) camera.pitch = PITCH_MAX;
+	if (player.pitch < PITCH_MIN) player.pitch = PITCH_MIN;
+	if (player.pitch > PITCH_MAX) player.pitch = PITCH_MAX;
 
 	if (istate.move != 0 || mx != 0 || my != 0) {
+		camera.pos = [
+			player.pos[0],
+			player.pos[1] + player.stance,
+			player.pos[2],
+		];
+		camera.pitch = player.pitch;
+		camera.yaw = player.yaw;
 		gfx::camera_apply(camera);
 	};
 };
