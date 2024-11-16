@@ -14,13 +14,13 @@ use sdl2::mixer;
 
 def WIN_WIDTH = 1280;
 def WIN_HEIGHT = 720;
-def FULLSCREEN = false;
 def VSYNC = 0;
 
 export fn main() void = {
 	const usage: []getopt::help = [
 		"betamine client",
 		('u', "username", "set client username"),
+		('f', "set fullscreen"),
 		"hostname[:port]",
 	];
 	const cmd = getopt::parse(os::args, usage...);
@@ -32,10 +32,13 @@ export fn main() void = {
 	};
 
 	let username = "betamine";
+	let fullscreen = false;
 	for (const (opt, val) .. cmd.opts) {
 		switch (opt) {
 		case 'u' =>
 			username = val;
+		case 'f' =>
+			fullscreen = true;
 		case => abort();
 		};
 	};
@@ -77,7 +80,7 @@ export fn main() void = {
 	defer mixer::Mix_CloseAudio();
 
 	let winflags = SDL_WindowFlags::OPENGL | SDL_WindowFlags::INPUT_GRABBED;
-	if (FULLSCREEN) {
+	if (fullscreen) {
 		winflags |= SDL_WindowFlags::FULLSCREEN;
 	};
 
