@@ -34,8 +34,29 @@ export type entity_type = enum uint {
 export type entity = struct {
 	id: int,
 	etype: entity_type,
+
 	pos: glm::v3,
 	yaw: f32,
 	pitch: f32,
 	ground: bool,
+
+	dims: glm::v2,
+	vel: glm::v3,
+};
+
+// Initializes entity state.
+export fn entity_init(
+	ent: *entity,
+	entity_id: int,
+	etype: entity_type,
+	width: f32,
+	height: f32,
+) void = {
+	*ent = entity {
+		id = entity_id,
+		etype = etype,
+		dims = [width, height],
+		ground = true,
+		...
+	};
 };

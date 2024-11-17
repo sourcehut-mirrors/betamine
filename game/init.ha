@@ -31,13 +31,7 @@ export fn init(
 	level.seed = login.seed;
 
 	state.camera = gfx::camera_new();
-	state.player = engine::player {
-		id = login.entity_id,
-		name = username,
-		stance = engine::STANCE_UPRIGHT,
-		ground = true,
-		...
-	};
+	engine::player_init(&state.player, login.entity_id, username);
 
 	// Initialize modules
 	input_init(state);
