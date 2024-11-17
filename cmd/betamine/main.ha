@@ -94,7 +94,7 @@ export fn main() void = {
 	const ctx = sdl2::SDL_GL_CreateContext(win);
 	sdl2::SDL_GL_SetSwapInterval(VSYNC);
 
-	let state = game::init(win, &conn, &login);
+	let state = game::init(win, &conn, &login, username);
 	game::run(state);
 	game::destroy(state);
 };

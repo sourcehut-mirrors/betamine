@@ -1,24 +1,17 @@
+use engine;
 use gfx;
 use glm;
 use net::mc;
 use sdl2;
 use world;
 
-// Player state
-export type player = struct {
-	pos: glm::v3,
-	stance: f32,
-	yaw: f32,
-	pitch: f32,
-};
-
 // Game state type.
 export type state = struct {
 	quit: bool,
-
-	// Network state
 	conn: *mc::conn,
-	entity_id: int,
+
+	// Player state
+	player: engine::player,
 
 	// SDL window
 	win: *sdl2::SDL_Window,
@@ -31,9 +24,6 @@ export type state = struct {
 
 	// Input state
 	input: input_state,
-
-	// Player state
-	player: player,
 
 	// Camera state
 	camera: gfx::camera,

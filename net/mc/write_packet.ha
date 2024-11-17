@@ -41,6 +41,36 @@ export fn write_player(
 	write_end(c)?;
 };
 
+// Writes a [[player_pos]] packet to the connection.
+export fn write_player_pos(
+	c: *conn,
+	packet: *player_pos,
+) (void | io::error) = {
+	write_begin(c, PLAYER_POS);
+
+	write_f64(c, packet.x);
+	write_f64(c, packet.y);
+	write_f64(c, packet.stance);
+	write_f64(c, packet.z);
+	write_bool(c, packet.ground);
+
+	write_end(c)?;
+};
+
+// Writes a [[player_look]] packet to the connection.
+export fn write_player_look(
+	c: *conn,
+	packet: *player_look,
+) (void | io::error) = {
+	write_begin(c, PLAYER_LOOK);
+
+	write_f32(c, packet.yaw);
+	write_f32(c, packet.pitch);
+	write_bool(c, packet.ground);
+
+	write_end(c)?;
+};
+
 // Writes a [[player_pos_look]] packet to the connection.
 export fn write_player_pos_look(
 	c: *conn,

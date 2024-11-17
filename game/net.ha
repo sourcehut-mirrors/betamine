@@ -11,6 +11,7 @@ use world;
 export type network_manager = struct {
 	module,
 	next_keepalive: u32,
+	last_pos: engine::entity,
 	next_pos: u32,
 };
 
@@ -19,6 +20,7 @@ export fn network_init(state: *state) void = {
 	const netmgr = alloc(network_manager {
 		update = &network_update,
 		next_pos = types::U32_MAX,
+		last_pos = *(&state.player: *engine::entity),
 		...
 	});
 	append(state.modules, netmgr);
@@ -52,19 +54,58 @@ fn network_update(mod: *module, state: *state) void = {
 	};
 
 	if (state.frame_time >= net.next_pos) {
-		// TODO: Choose appropriate packet based on last position/look
-		// sent to the server
+		net_update_player(net, state);
+		net.next_pos = state.frame_time + 50;
+	};
+};
+
+fn net_update_player(
+	net: *network_manager,
+	state: *state,
+) void = {
+	defer net.last_pos = *(&state.player: *engine::entity);
+	const player = &state.player, prev = &net.last_pos;
+	const pos_diff =
+		player.pos[0] != prev.pos[0] ||
+		player.pos[1] != prev.pos[1] ||
+		player.pos[2] != prev.pos[2];
+	const look_diff =
+		player.yaw != prev.yaw ||
+		player.pitch != prev.pitch;
+	const yaw = -(rad2deg(player.yaw) - 180.0) + 180.0;
+	const pitch = -(rad2deg(player.pitch) - 180.0) + 180.0;
+	const stance = player.pos[1] + player.stance;
+
+	if (pos_diff && look_diff) {
 		mc::write_player_pos_look(state.conn, &mc::player_pos_look {
 			x = player.pos[0],
 			y = player.pos[1],
 			z = player.pos[2],
-			stance = player.pos[1] + player.stance,
-			yaw = -(rad2deg(player.yaw) - 180.0) + 180.0,
-			pitch = -(rad2deg(player.pitch) - 180.0) + 180.0,
-			ground = true,
+			stance = stance,
+			yaw = yaw,
+			pitch = pitch,
+			ground = player.ground,
 		})!;
-		net.next_pos = state.frame_time + 50;
+	} else if (pos_diff) {
+		mc::write_player_pos(state.conn, &mc::player_pos {
+			x = player.pos[0],
+			y = player.pos[1],
+			z = player.pos[2],
+			stance = stance,
+			ground = player.ground,
+		})!;
+	} else if (look_diff) {
+		mc::write_player_look(state.conn, &mc::player_look {
+			yaw = yaw,
+			pitch = pitch,
+			ground = player.ground,
+		})!;
+	} else {
+		mc::write_player(state.conn, &mc::player {
+			ground = player.ground,
+		})!;
 	};
+
 };
 
 fn network_incoming(
@@ -87,6 +128,7 @@ fn network_incoming(
 		];
 		state.player.yaw = deg2rad(-(ppl.yaw - 180.0) + 180.0);
 		state.player.pitch = deg2rad(ppl.pitch);
+		state.player.ground = ppl.ground;
 		mc::write_player_pos_look(state.conn, ppl)!;
 		net.next_pos = 0;
 	case mc::CHUNK_ALLOCATE =>

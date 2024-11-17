@@ -10,6 +10,7 @@ export fn init(
 	win: *sdl2::SDL_Window,
 	conn: *mc::conn,
 	login: *mc::login_request,
+	username: str,
 ) *state = {
 	let w = 0, h = 0;
 	sdl2::SDL_GL_GetDrawableSize(win, &w, &h);
@@ -27,19 +28,16 @@ export fn init(
 	});
 
 	let level = &state.world.level;
-	let player = &level.player;
 	level.seed = login.seed;
-	state.entity_id = login.entity_id;
 
 	state.camera = gfx::camera_new();
-	state.player.pos = [
-		player.pos[0]: f32,
-		player.pos[1]: f32,
-		player.pos[2]: f32,
-	];
-	state.player.stance = engine::PLAYER_STANCE_UPRIGHT;
-	state.player.pitch = deg2rad(player.rotation.0);
-	state.player.yaw = deg2rad(player.rotation.1);
+	state.player = engine::player {
+		id = login.entity_id,
+		name = username,
+		stance = engine::STANCE_UPRIGHT,
+		ground = true,
+		...
+	};
 
 	// Initialize modules
 	input_init(state);
