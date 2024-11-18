@@ -90,6 +90,8 @@ fn input_update(mod: *module, state: *state) void = {
 				istate.move &= ~movement::DOWN;
 			case SDL_Scancode::SPACE =>
 				istate.move &= ~movement::UP;
+			case SDL_Scancode::F3 =>
+				state.debug = !state.debug;
 			case => void;
 			};
 		case SDL_EventType::MOUSEMOTION =>

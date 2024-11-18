@@ -20,6 +20,7 @@ export fn main() void = {
 	const usage: []getopt::help = [
 		"betamine client",
 		('u', "username", "set client username"),
+		('d', "enable debug overlay at startup"),
 		('f', "set fullscreen"),
 		"hostname[:port]",
 	];
@@ -32,13 +33,12 @@ export fn main() void = {
 	};
 
 	let username = "betamine";
-	let fullscreen = false;
+	let fullscreen = false, debug = false;
 	for (const (opt, val) .. cmd.opts) {
 		switch (opt) {
-		case 'u' =>
-			username = val;
-		case 'f' =>
-			fullscreen = true;
+		case 'd' => debug = true;
+		case 'f' => fullscreen = true;
+		case 'u' => username = val;
 		case => abort();
 		};
 	};
@@ -95,6 +95,8 @@ export fn main() void = {
 	sdl2::SDL_GL_SetSwapInterval(VSYNC);
 
 	let state = game::init(win, &conn, &login, username);
+	state.debug = debug;
+
 	game::run(state);
 	game::destroy(state);
 };
