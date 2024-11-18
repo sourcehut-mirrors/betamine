@@ -131,8 +131,6 @@ fn network_incoming(
 			ppl.y: f32,
 			ppl.z: f32,
 		];
-		state.player.yaw = deg2rad(-(ppl.yaw - 180.0) + 180.0);
-		state.player.pitch = deg2rad(-(ppl.pitch - 180.0) + 180.0);
 		state.player.ground = ppl.ground;
 		mc::write_player_pos_look(state.conn, ppl)!;
 		net.next_pos = 0;
