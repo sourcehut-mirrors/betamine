@@ -167,6 +167,36 @@ fn network_incoming(
 		const coords = world::world_to_chunk((bc.x, bc.y, bc.z));
 		const chunk = world::get_chunk(&state.world, coords)!;
 		chunkmgr_enqueue(state.chunkmgr, chunk);
+	case mc::BULK_BLOCK_CHANGE =>
+		const bc = &packet.bulk_block_change;
+		let chunk = world::get_chunk(&state.world,
+			(bc.chunk_x, bc.chunk_z))!;
+
+		const block_coords: world::coords2D = (
+			bc.chunk_x * world::CHUNK_WIDTH,
+			bc.chunk_z * world::CHUNK_WIDTH,
+		);
+		assert(len(bc.coords) == len(bc.block_ids));
+		assert(len(bc.coords) == len(bc.metadata));
+		for (let i = 0z; i < len(bc.coords); i += 1) {
+			let voxel = world::voxel {
+				id = bc.block_ids[i]: u8,
+				data = bc.metadata[i]: u8,
+				...
+			};
+			const pos = bc.coords[i]: u16;
+			const x: u16 = pos >> 12 & 0xF;
+			const y: u16 = pos & 0xFF;
+			const z: u16 = pos >> 8 & 0xF;
+			const coords: world::coords3D = (
+				block_coords.0 + x: int,
+				y: int,
+				block_coords.1 + z: int,
+			);
+			world::set(&state.world, coords, &voxel)!;
+		};
+
+		chunkmgr_enqueue(state.chunkmgr, chunk);
 	case => void;
 	};
 };

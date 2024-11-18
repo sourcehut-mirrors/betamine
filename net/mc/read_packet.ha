@@ -1,3 +1,4 @@
+use endian;
 use errors;
 use io;
 use log;
@@ -342,9 +343,13 @@ fn read_bulk_block_change(c: *conn, payload: *opaque) (void | io::error) = {
 	const length = length: size;
 
 	const coords = read(c, length * size(i16))?;
-	p.coords = (coords: *[*]i16)[..length];
+	p.coords = (&coords[0]: *[*]i16)[..length];
 	p.block_ids = read(c, length)?: []i8;
 	p.metadata = read(c, length)?: []i8;
+
+	for (let c &.. p.coords) {
+		*c = endian::ntohu16(*c: u16): i16;
+	};
 };
 
 fn read_block_change(c: *conn, payload: *opaque) (void | io::error) = {
