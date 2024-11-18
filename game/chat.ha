@@ -132,6 +132,7 @@ fn chat_draw(layer: *layer, state: *state) void = {
 				break;
 			};
 		};
+		x = CHAT_MARGIN;
 	};
 };
 
