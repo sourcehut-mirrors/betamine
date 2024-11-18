@@ -5,11 +5,11 @@ limited in its capabilities.
 
 Dependencies:
 
-* Hare
+* Hare ([patched](https://lists.sr.ht/~sircmpwn/hare-dev/patches/55954))
 * sdl2 & hare-sdl2
 * hare-compress
 * hare-gl
-* hare-glm
+* hare-glm ([forked](https://git.sr.ht/~sircmpwn/hare-glm))
 
 To try it out, run `make` to compile betamine and then run `./betamine <address>`
 where _address_ is the address (or hostname) of a Minecraft beta 1.7.3 server.
