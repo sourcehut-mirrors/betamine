@@ -1,3 +1,4 @@
+use engine;
 use gfx;
 use glm;
 use strings;
@@ -6,8 +7,7 @@ def CHAT_MARGIN = gfx::CHAR_WIDTH * 2;
 
 export type chat_message = struct {
 	time: u32,
-	// TODO: Parse and split up colored segments
-	text: str,
+	text: []engine::chat_text,
 };
 
 export type chat_layer = struct {
@@ -29,9 +29,10 @@ export fn chat_init(state: *state) void = {
 
 // Appends a chat message to the chat window.
 export fn chat_receivemsg(state: *state, msg: str) void = {
+	const text = engine::chat_parse(msg);
 	insert(state.chat.messages[0], chat_message {
 		time = state.frame_time,
-		text = strings::dup(msg),
+		text = text,
 	});
 };
 
@@ -42,41 +43,50 @@ fn chat_draw(layer: *layer, state: *state) void = {
 	};
 
 	const chat = layer: *chat_layer;
-	let y = state.height - CHAT_MARGIN - 2;
+	let x: uint = CHAT_MARGIN;
+	let y: uint = state.height - CHAT_MARGIN - 2;
 	y -= refheight * 3; // Reserve space for text input
 
+	// TODO: Deal with text wrapping and x advance
 	const min_y = state.height / 3;
 	for (let msg &.. chat.messages) {
-		y = chat_drawmsg(state, msg, y);
-		if (y <= min_y) {
-			break;
+		for (let text &.. msg.text) {
+			chat_drawmsg(state, text, &x, &y);
+			if (y <= min_y) {
+				break;
+			};
 		};
 	};
 };
 
 fn chat_drawmsg(
 	state: *state,
-	msg: *chat_message,
-	y: uint,
-) uint = {
-	let (mw, mh) = gfx::font_measure(msg.text);
-	y -= mh;
+	span: *engine::chat_text,
+	x: *uint,
+	y: *uint,
+) void = {
+	let (mw, mh) = gfx::font_measure(span.text);
+	*y -= mh;
 
 	// Background
 	chat_drawrect(
-		CHAT_MARGIN,
-		y,
+		*x, *y,
 		state.width - (CHAT_MARGIN * 2),
 		mh,
 		[0.0, 0.0, 0.0, 0.5],
 	);
 
-	// Text
-	// TODO: Deal with text wrapping
-	let pos: glm::v2 = [CHAT_MARGIN: f32, y: f32];
-	gfx::font_draw(&pos, msg.text);
+	const color = engine::chat_colors[span.color];
+	const color: glm::v4 = [
+		(color >> 16 & 0xFF): f32 / 255.0,
+		(color >> 8 & 0xFF): f32 / 255.0,
+		(color & 0xFF): f32 / 255.0,
+		1.0,
+	];
 
-	return y;
+	// Text
+	let pos: glm::v2 = [*x: f32, *y: f32];
+	gfx::font_draw(&pos, span.text, color);
 };
 
 // XXX: Should this be put somewhere more general-purpose?
