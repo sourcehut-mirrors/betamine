@@ -9,11 +9,29 @@ use gl::{
 use sdl2;
 use sdl2::image;
 
+// Texture of a 1x1 opaque white pixel
+export let white1x1 = texture { ... };
+
 // A texture loaded onto the GPU.
 export type texture = struct {
 	id: uint,
 	w: i32,
 	h: i32,
+};
+
+fn textures_init() void = {
+	let id = 0u;
+	glGenTextures(1, &id);
+	glBindTexture(gl::GL_TEXTURE_2D, id);
+
+	let pixel: [4]u8 = [0xFF...];
+	glTexImage2D(gl::GL_TEXTURE_2D, 0,
+		gl::GL_RGBA: i32, 1, 1, 0,
+		gl::GL_RGBA, gl::GL_UNSIGNED_BYTE,
+		&pixel);
+	glcheck()!;
+
+	white1x1 = texture { id = id, w = 1, h = 1 };
 };
 
 // Loads a texture from the filesystem.

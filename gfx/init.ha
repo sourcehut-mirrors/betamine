@@ -32,6 +32,7 @@ export fn init(width: i32, height: i32) void = {
 	shaders_init();
 
 	// Initialize subsystems
+	textures_init();
 	font_init();
 	plane_init();
 	sky_init();
