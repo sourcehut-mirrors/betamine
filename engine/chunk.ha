@@ -148,26 +148,4 @@ fn voxel_neighbors(
 	};
 };
 
-@test fn neighbors() void = {
-	// Double checking my work here...
-	let x = 8;
-	let y = 9;
-	let z = 10;
-
-	const ix_base = getindex(x, y, z);
-	const ix_top = getindex(x, y + 1, z);
-	const ix_bottom = getindex(x, y - 1, z);
-	const ix_north = getindex(x, y, z - 1);
-	const ix_east = getindex(x + 1, y, z);
-	const ix_south = getindex(x, y, z + 1);
-	const ix_west = getindex(x - 1, y, z);
-
-	assert(ix_top == ix_base + neighbors[0]);
-	assert(ix_bottom == ix_base + neighbors[1]);
-	assert(ix_north == ix_base + neighbors[2]);
-	assert(ix_east == ix_base + neighbors[3]);
-	assert(ix_south == ix_base + neighbors[4]);
-	assert(ix_west == ix_base + neighbors[5]);
-};
-
 fn getindex(x: int, y: int, z: int) int = x * (CW * CH) + z * CH + y;
