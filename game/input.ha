@@ -49,6 +49,10 @@ fn input_init(state: *state) void = {
 };
 
 fn input_update(mod: *module, state: *state) void = {
+	if (state.focus != input_focus::GAMEPLAY) {
+		return;
+	};
+
 	let mod = mod: *input_module;
 	let istate = &state.input;
 	let camera = &state.camera;
@@ -92,6 +96,8 @@ fn input_update(mod: *module, state: *state) void = {
 				istate.move &= ~movement::UP;
 			case SDL_Scancode::F3 =>
 				state.debug = !state.debug;
+			case SDL_Scancode::T =>
+				chat_begin(state);
 			case => void;
 			};
 		case SDL_EventType::MOUSEMOTION =>

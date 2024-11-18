@@ -18,6 +18,16 @@ export fn write_handshake(
 	write_end(c)?;
 };
 
+// Write a [[chat_message]] packet to the connection.
+export fn write_chat_message(
+	c: *conn,
+	packet: *chat_message,
+) (void | io::error) = {
+	write_begin(c, CHAT_MESSAGE);
+	write_string16(c, packet.message);
+	write_end(c)?;
+};
+
 // Writes a [[login_request]] packet to the connection.
 export fn write_login_request(
 	c: *conn,

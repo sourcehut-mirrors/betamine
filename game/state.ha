@@ -5,6 +5,13 @@ use net::mc;
 use sdl2;
 use world;
 
+// Which module has input focus
+// This is a bit hacky... it will work but maybe some kind of stack is better
+export type input_focus = enum uint {
+	GAMEPLAY,
+	CHAT,
+};
+
 // Game state type.
 export type state = struct {
 	quit: bool,
@@ -24,6 +31,7 @@ export type state = struct {
 
 	// Input state
 	input: input_state,
+	focus: input_focus,
 
 	// Camera state
 	camera: gfx::camera,
