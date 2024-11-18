@@ -112,8 +112,58 @@ export fn chunk_frompacket(chunk: *chunk, p: *mc::chunk_data) (void | io::error)
 		io::readall(&zrd, chunk.block_light)!;
 		io::readall(&zrd, chunk.sky_light)!;
 	} else {
-		// TODO
-		log::println("Warning: dropping partial chunk update (TODO)");
+		let data = io::drain(&zrd)!;
+		defer free(data);
+
+		const l =
+			(p.size_x: size + 1) *
+			(p.size_y: size + 1) *
+			(p.size_z: size + 1);
+		const hl = l / 2;
+
+		const off_data = l;
+		const off_blight = l + hl;
+		const off_slight = l + hl * 2;
+
+		const id = data[..l];
+		const metadata = data[off_data..off_blight];
+		const blight = data[off_blight..off_slight];
+		const slight = data[off_slight..];
+
+		const base_x = p.x & 0xF;
+		const base_y = p.y & 0x7F;
+		const base_z = p.z & 0xF;
+
+		for (let z = 0; z < p.size_z+1; z += 1)
+		for (let x = 0; x < p.size_x+1; x += 1)
+		for (let y = 0; y < p.size_y+1; y += 1) {
+			const in_ix =
+				y +
+				(z * (p.size_y+1)) +
+				(x * (p.size_y+1) * (p.size_z+1));
+			const out_ix =
+				(base_x+x) * (CHUNK_WIDTH * CHUNK_HEIGHT) +
+				(base_z+z) * CHUNK_HEIGHT +
+				(base_y+y);
+			chunk.blocks[out_ix] = id[in_ix];
+
+			const in_hi = in_ix / 2;
+			const in_ho = (in_ix % 2): u8 * 4;
+			const out_hi = out_ix / 2;
+			const out_ho = (out_ix % 2): u8 * 4;
+
+			const in_data = metadata[in_hi] >> in_ho & 0xF;
+			chunk.metadata[out_hi] &= 0xF << out_ho;
+			chunk.metadata[out_hi] |= (in_data & 0xF) << out_ho;
+
+			const in_slight = slight[in_hi] >> in_ho & 0xF;
+			chunk.sky_light[out_hi] &= 0xF << out_ho;
+			chunk.sky_light[out_hi] |= (in_slight & 0xF) << out_ho;
+
+			const in_blight = blight[in_hi] >> in_ho & 0xF;
+			chunk.block_light[out_hi] &= 0xF << out_ho;
+			chunk.block_light[out_hi] |= (in_blight & 0xF) << out_ho;
+		};
 	};
 
 	chunk.flags |= chunk_flag::POPULATED;
