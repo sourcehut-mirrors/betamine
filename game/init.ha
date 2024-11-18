@@ -16,6 +16,8 @@ export fn init(
 	sdl2::SDL_GL_GetDrawableSize(win, &w, &h);
 	gfx::init(w, h);
 
+	// TODO: I want to refactor this so that all of the standard gameplay
+	// modules/etc are accessible via a scene object
 	let state = alloc(state {
 		quit = false,
 		conn = conn,
@@ -24,6 +26,7 @@ export fn init(
 		height = h: uint,
 		world = world::memory(),
 		chunkmgr = null: *chunk_manager,
+		chat = null: *chat_layer,
 		...
 	});
 
@@ -39,6 +42,7 @@ export fn init(
 	chunk_manager_init(state);
 	clouds_init(state);
 	debug_init(state);
+	chat_init(state);
 
 	return state;
 };

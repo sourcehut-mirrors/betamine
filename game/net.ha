@@ -1,3 +1,4 @@
+use encoding::ucs2;
 use engine;
 use errors;
 use io;
@@ -114,6 +115,10 @@ fn network_incoming(
 	packet: *mc::packet,
 ) void = {
 	switch (packet.id) {
+	case mc::CHAT_MESSAGE =>
+		const msg = ucs2::fromucs2(packet.chat_message.message);
+		defer free(msg);
+		chat_receivemsg(state, msg);
 	case mc::TIME_UPDATE =>
 		state.ticks = packet.time_update.time: u64;
 	case mc::SPAWN_POSITION =>

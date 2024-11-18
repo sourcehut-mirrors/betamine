@@ -4,13 +4,10 @@ use sdl2;
 use sdl2::image;
 use strings;
 
-def CHAR_WIDTH = 8;
-def CHAR_HEIGHT = 8;
-def CHAR_FWIDTH: f32 = 8.0;
-def CHAR_FHEIGHT: f32 = 8.0;
-
-// TODO: Horizontal advance differs per character
-def CHAR_HADVANCE: f32 = 6.0;
+export def CHAR_WIDTH = 8;
+export def CHAR_HEIGHT = 8;
+export def CHAR_FWIDTH: f32 = 8.0;
+export def CHAR_FHEIGHT: f32 = 8.0;
 
 export type fontmap = struct {
 	tex: texture,
@@ -123,7 +120,10 @@ export fn font_drawrune(
 };
 
 // Returns the pixel size of the specified text when rendered.
-export fn font_measure(text: str, fsize: uint = 3) (uint, uint) = {
+export fn font_measure(
+	text: str,
+	fsize: uint = 3,
+) (uint, uint) = {
 	let w: uint = 0, h: uint = CHAR_HEIGHT * fsize;
 	const iter = strings::iter(text);
 	for (const rn => strings::next(&iter)) {
