@@ -7,8 +7,9 @@ Dependencies:
 
 * Hare
 * sdl2 & hare-sdl2
-* hare-glm
+* hare-compress
 * hare-gl
+* hare-glm
 
 To try it out, run `make` to compile betamine and then run `./betamine <address>`
 where _address_ is the address (or hostname) of a Minecraft beta 1.7.3 server.
