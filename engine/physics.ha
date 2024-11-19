@@ -225,6 +225,29 @@ fn physics_living_tick(
 	//if (ent.move & movement::DOWN != 0) {
 	//	*move = glm::v3_sub(move, &up);
 	//};
+
+	// Collect blocks of interest
+	const feet_coords: world::coords3D = (
+		ent.pos[0]: int,
+		ent.pos[1]: int - 1,
+		ent.pos[2]: int,
+	);
+	match (world::get(sim.world, &ent.blocks.feet, feet_coords)) {
+	case world::error =>
+		ent.blocks.feet = world::voxel { ... };
+	case void => void;
+	};
+
+	const head_coords: world::coords3D = (
+		ent.pos[0]: int,
+		(ent.pos[1] + ent.dims[1]): int,
+		ent.pos[2]: int,
+	);
+	match (world::get(sim.world, &ent.blocks.head, head_coords)) {
+	case world::error =>
+		ent.blocks.feet = world::voxel { ... };
+	case void => void;
+	};
 };
 
 fn physics_gather_collisions(

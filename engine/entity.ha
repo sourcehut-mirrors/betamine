@@ -1,4 +1,5 @@
 use glm;
+use world;
 
 // Entity type.
 export type entity_type = enum uint {
@@ -66,6 +67,14 @@ export type living_entity = struct {
 	entity,
 	move: movement,
 	health: uint,
+
+	// Nearby blocks of interest
+	blocks: struct {
+		// Block beneath entity's feet
+		feet: world::voxel,
+		// Block at entity's head (players only)
+		head: world::voxel,
+	},
 };
 
 // Returns true if this is a [[living_entity]].
