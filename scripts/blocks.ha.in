@@ -14,9 +14,10 @@ const block_air = block {
 	id = AIR,
 	model = &model_none,
 	flags = flag::NON_OCCLUDING,
+	aabb = void,
 	...
 };
-{% for block in blocks %}
+{%- for block in blocks %}
 {% set flag = flags(block) %}
 const block_{{block_names[block.id].lower()}} = block {
 	id = {{block_names[block.id]}},
@@ -32,6 +33,7 @@ const block_{{block_names[block.id].lower()}} = block {
 	tex = ({{block.texture.x}}, {{block.texture.y}}),
 	{%- endif %}
 	hardness = {{"{:.2f}".format(block["hardness"])}},
+	aabb = {{aabb(block)}},
 	...
 };
 {%- endfor %}

@@ -264,9 +264,9 @@ const block_air = block {
 	id = AIR,
 	model = &model_none,
 	flags = flag::NON_OCCLUDING,
+	aabb = void,
 	...
 };
-
 
 const block_stone = block {
 	id = STONE,
@@ -274,6 +274,7 @@ const block_stone = block {
 	display_name = "Stone",
 	tex = (1, 0),
 	hardness = 1.50,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -283,6 +284,7 @@ const block_grass = block {
 	display_name = "Grass",
 	tex = (3, 0),
 	hardness = 0.60,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -292,6 +294,7 @@ const block_dirt = block {
 	display_name = "Dirt",
 	tex = (2, 0),
 	hardness = 0.50,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -301,6 +304,7 @@ const block_cobble = block {
 	display_name = "Cobblestone",
 	tex = (0, 1),
 	hardness = 2.00,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -310,6 +314,7 @@ const block_wood_plank = block {
 	display_name = "Wooden Planks",
 	tex = (4, 0),
 	hardness = 2.00,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -320,6 +325,7 @@ const block_sapling = block {
 	display_name = "Sapling",
 	tex = (15, 0),
 	hardness = 0.00,
+	aabb = void,
 	...
 };
 
@@ -329,6 +335,7 @@ const block_bedrock = block {
 	display_name = "Bedrock",
 	tex = (1, 1),
 	hardness = 0.00,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -338,6 +345,7 @@ const block_water = block {
 	flags = flag::TRANSLUCENT | flag::NON_OCCLUDING,
 	display_name = "Water",
 	hardness = 100.00,
+	aabb = void,
 	...
 };
 
@@ -347,6 +355,7 @@ const block_water_stationary = block {
 	flags = flag::TRANSLUCENT | flag::NON_OCCLUDING,
 	display_name = "Water",
 	hardness = 100.00,
+	aabb = void,
 	...
 };
 
@@ -356,6 +365,7 @@ const block_lava = block {
 	flags = flag::TRANSLUCENT | flag::NON_OCCLUDING,
 	display_name = "Lava",
 	hardness = 0.00,
+	aabb = void,
 	...
 };
 
@@ -365,6 +375,7 @@ const block_lava_stationary = block {
 	flags = flag::TRANSLUCENT | flag::NON_OCCLUDING,
 	display_name = "Lava",
 	hardness = 100.00,
+	aabb = void,
 	...
 };
 
@@ -374,6 +385,7 @@ const block_sand = block {
 	display_name = "Sand",
 	tex = (2, 1),
 	hardness = 0.50,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -383,6 +395,7 @@ const block_gravel = block {
 	display_name = "Gravel",
 	tex = (3, 1),
 	hardness = 0.60,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -392,6 +405,7 @@ const block_gold_ore = block {
 	display_name = "Gold Ore",
 	tex = (0, 2),
 	hardness = 3.00,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -401,6 +415,7 @@ const block_iron_ore = block {
 	display_name = "Iron Ore",
 	tex = (1, 2),
 	hardness = 3.00,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -410,6 +425,7 @@ const block_coal_ore = block {
 	display_name = "Coal Ore",
 	tex = (2, 2),
 	hardness = 3.00,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -419,6 +435,7 @@ const block_wood = block {
 	display_name = "Wood",
 	tex = (4, 1),
 	hardness = 2.00,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -429,6 +446,7 @@ const block_leaves = block {
 	display_name = "Leaves",
 	tex = (4, 3),
 	hardness = 0.20,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -438,6 +456,7 @@ const block_sponge = block {
 	display_name = "Sponge",
 	tex = (0, 3),
 	hardness = 0.60,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -448,6 +467,7 @@ const block_glass = block {
 	display_name = "Glass",
 	tex = (1, 3),
 	hardness = 0.30,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -457,6 +477,7 @@ const block_lapis_ore = block {
 	display_name = "Lapis Lazuli Ore",
 	tex = (0, 10),
 	hardness = 3.00,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -466,6 +487,7 @@ const block_lapis_block = block {
 	display_name = "Lapis Lazuli Block",
 	tex = (0, 9),
 	hardness = 3.00,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -475,6 +497,7 @@ const block_dispenser = block {
 	display_name = "Dispenser",
 	tex = (13, 2),
 	hardness = 3.50,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -484,6 +507,7 @@ const block_sandstone = block {
 	display_name = "Sandstone",
 	tex = (0, 12),
 	hardness = 0.80,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -493,6 +517,7 @@ const block_note = block {
 	display_name = "Note Block",
 	tex = (10, 4),
 	hardness = 0.80,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -503,6 +528,7 @@ const block_bed = block {
 	display_name = "Bed",
 	tex = (6, 8),
 	hardness = 0.20,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -513,6 +539,7 @@ const block_rail_powered = block {
 	display_name = "Powered Rail",
 	tex = (3, 11),
 	hardness = 0.70,
+	aabb = void,
 	...
 };
 
@@ -523,6 +550,7 @@ const block_rail_detector = block {
 	display_name = "Detector Rail",
 	tex = (3, 12),
 	hardness = 0.70,
+	aabb = void,
 	...
 };
 
@@ -533,6 +561,7 @@ const block_piston_sticky = block {
 	display_name = "Sticky Piston",
 	tex = (10, 6),
 	hardness = 0.00,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -543,6 +572,7 @@ const block_web = block {
 	display_name = "Cobweb",
 	tex = (11, 0),
 	hardness = 4.00,
+	aabb = void,
 	...
 };
 
@@ -553,6 +583,7 @@ const block_tall_grass = block {
 	display_name = "tallgrass",
 	tex = (7, 2),
 	hardness = 0.00,
+	aabb = void,
 	...
 };
 
@@ -563,6 +594,7 @@ const block_dry_bush = block {
 	display_name = "deadbush",
 	tex = (7, 3),
 	hardness = 0.00,
+	aabb = void,
 	...
 };
 
@@ -573,6 +605,7 @@ const block_piston = block {
 	display_name = "Piston",
 	tex = (11, 6),
 	hardness = 0.00,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -583,6 +616,7 @@ const block_piston_head = block {
 	display_name = "",
 	tex = (11, 6),
 	hardness = 0.00,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -592,6 +626,7 @@ const block_wool = block {
 	display_name = "Wool",
 	tex = (0, 4),
 	hardness = 0.80,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -600,6 +635,7 @@ const block_piston_placeholder = block {
 	model = &model_cube,
 	display_name = "",
 	hardness = 0.00,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -610,6 +646,7 @@ const block_dandelion = block {
 	display_name = "Flower",
 	tex = (13, 0),
 	hardness = 0.00,
+	aabb = void,
 	...
 };
 
@@ -620,6 +657,7 @@ const block_rose = block {
 	display_name = "Rose",
 	tex = (12, 0),
 	hardness = 0.00,
+	aabb = void,
 	...
 };
 
@@ -630,6 +668,7 @@ const block_mushroom_brown = block {
 	display_name = "Mushroom",
 	tex = (13, 1),
 	hardness = 0.00,
+	aabb = void,
 	...
 };
 
@@ -640,6 +679,7 @@ const block_mushroom_red = block {
 	display_name = "Mushroom",
 	tex = (12, 1),
 	hardness = 0.00,
+	aabb = void,
 	...
 };
 
@@ -649,6 +689,7 @@ const block_gold_block = block {
 	display_name = "Block of Gold",
 	tex = (7, 1),
 	hardness = 3.00,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -658,6 +699,7 @@ const block_iron_block = block {
 	display_name = "Block of Iron",
 	tex = (6, 1),
 	hardness = 5.00,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -667,6 +709,7 @@ const block_slab_double = block {
 	display_name = "stoneSlab",
 	tex = (6, 0),
 	hardness = 2.00,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -677,6 +720,7 @@ const block_slab_single = block {
 	display_name = "stoneSlab",
 	tex = (6, 0),
 	hardness = 2.00,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -686,6 +730,7 @@ const block_bricks = block {
 	display_name = "Bricks",
 	tex = (7, 0),
 	hardness = 2.00,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -695,6 +740,7 @@ const block_tnt = block {
 	display_name = "TNT",
 	tex = (8, 0),
 	hardness = 0.00,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -704,6 +750,7 @@ const block_bookshelf = block {
 	display_name = "Bookshelf",
 	tex = (3, 2),
 	hardness = 1.50,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -713,6 +760,7 @@ const block_cobble_moss = block {
 	display_name = "Moss Stone",
 	tex = (4, 2),
 	hardness = 2.00,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -722,6 +770,7 @@ const block_obsidian = block {
 	display_name = "Obsidian",
 	tex = (5, 2),
 	hardness = 10.00,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -732,6 +781,7 @@ const block_torch = block {
 	display_name = "Torch",
 	tex = (0, 5),
 	hardness = 0.00,
+	aabb = void,
 	...
 };
 
@@ -742,6 +792,7 @@ const block_fire = block {
 	display_name = "Fire",
 	tex = (15, 1),
 	hardness = 0.00,
+	aabb = void,
 	...
 };
 
@@ -752,6 +803,7 @@ const block_spawner = block {
 	display_name = "Monster Spawner",
 	tex = (1, 4),
 	hardness = 5.00,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -761,6 +813,7 @@ const block_stairs_wooden = block {
 	flags = flag::NON_OCCLUDING,
 	display_name = "Wooden Stairs",
 	hardness = 0.00,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -770,6 +823,7 @@ const block_chest = block {
 	display_name = "Chest",
 	tex = (10, 1),
 	hardness = 2.50,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -780,6 +834,7 @@ const block_redstone = block {
 	display_name = "Redstone Dust",
 	tex = (4, 10),
 	hardness = 0.00,
+	aabb = void,
 	...
 };
 
@@ -789,6 +844,7 @@ const block_diamond_ore = block {
 	display_name = "Diamond Ore",
 	tex = (2, 3),
 	hardness = 3.00,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -798,6 +854,7 @@ const block_diamond_block = block {
 	display_name = "Block of Diamond",
 	tex = (8, 1),
 	hardness = 5.00,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -807,6 +864,7 @@ const block_craft_bench = block {
 	display_name = "Crafting Table",
 	tex = (11, 3),
 	hardness = 2.50,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -817,6 +875,7 @@ const block_seeds = block {
 	display_name = "Crops",
 	tex = (8, 5),
 	hardness = 0.00,
+	aabb = void,
 	...
 };
 
@@ -826,6 +885,7 @@ const block_farmland = block {
 	display_name = "Farmland",
 	tex = (7, 5),
 	hardness = 0.60,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -835,6 +895,7 @@ const block_furnace = block {
 	display_name = "Furnace",
 	tex = (13, 2),
 	hardness = 3.50,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -844,6 +905,7 @@ const block_furnace_lit = block {
 	display_name = "Furnace",
 	tex = (13, 2),
 	hardness = 3.50,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -853,6 +915,7 @@ const block_signpost = block {
 	display_name = "Sign",
 	tex = (4, 0),
 	hardness = 1.00,
+	aabb = void,
 	...
 };
 
@@ -863,6 +926,7 @@ const block_door = block {
 	display_name = "Wooden Door",
 	tex = (1, 6),
 	hardness = 3.00,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -873,6 +937,7 @@ const block_ladder = block {
 	display_name = "Ladder",
 	tex = (3, 5),
 	hardness = 0.40,
+	aabb = void,
 	...
 };
 
@@ -883,6 +948,7 @@ const block_rail = block {
 	display_name = "Rail",
 	tex = (0, 8),
 	hardness = 0.70,
+	aabb = void,
 	...
 };
 
@@ -892,6 +958,7 @@ const block_stairs_stone = block {
 	flags = flag::NON_OCCLUDING,
 	display_name = "Stone Stairs",
 	hardness = 0.00,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -901,6 +968,7 @@ const block_sign_wall = block {
 	display_name = "Sign",
 	tex = (4, 0),
 	hardness = 1.00,
+	aabb = void,
 	...
 };
 
@@ -911,6 +979,7 @@ const block_lever = block {
 	display_name = "Lever",
 	tex = (0, 6),
 	hardness = 0.50,
+	aabb = void,
 	...
 };
 
@@ -920,6 +989,7 @@ const block_plate_stone = block {
 	flags = flag::NON_OCCLUDING,
 	display_name = "Pressure Plate",
 	hardness = 0.50,
+	aabb = void,
 	...
 };
 
@@ -930,6 +1000,7 @@ const block_door_iron = block {
 	display_name = "Iron Door",
 	tex = (1, 6),
 	hardness = 5.00,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -939,6 +1010,7 @@ const block_plate_wood = block {
 	flags = flag::NON_OCCLUDING,
 	display_name = "Pressure Plate",
 	hardness = 0.50,
+	aabb = void,
 	...
 };
 
@@ -948,6 +1020,7 @@ const block_redstone_ore_dim = block {
 	display_name = "Redstone Ore",
 	tex = (3, 3),
 	hardness = 3.00,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -957,6 +1030,7 @@ const block_redstone_ore_lit = block {
 	display_name = "Redstone Ore",
 	tex = (3, 3),
 	hardness = 3.00,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -967,6 +1041,7 @@ const block_redstone_torch_dim = block {
 	display_name = "Redstone Torch",
 	tex = (3, 7),
 	hardness = 0.00,
+	aabb = void,
 	...
 };
 
@@ -977,6 +1052,7 @@ const block_redstone_torch_lit = block {
 	display_name = "Redstone Torch",
 	tex = (3, 6),
 	hardness = 0.00,
+	aabb = void,
 	...
 };
 
@@ -985,6 +1061,7 @@ const block_button = block {
 	model = &model_cube,
 	display_name = "Button",
 	hardness = 0.50,
+	aabb = void,
 	...
 };
 
@@ -995,6 +1072,7 @@ const block_snow = block {
 	display_name = "Snow",
 	tex = (2, 4),
 	hardness = 0.10,
+	aabb = void,
 	...
 };
 
@@ -1005,6 +1083,7 @@ const block_ice = block {
 	display_name = "Ice",
 	tex = (3, 4),
 	hardness = 0.50,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -1014,6 +1093,7 @@ const block_snow_block = block {
 	display_name = "Snow",
 	tex = (2, 4),
 	hardness = 0.20,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -1024,6 +1104,7 @@ const block_cactus = block {
 	display_name = "Cactus",
 	tex = (6, 4),
 	hardness = 0.40,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -1033,6 +1114,7 @@ const block_clay = block {
 	display_name = "Clay",
 	tex = (8, 4),
 	hardness = 0.60,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -1043,6 +1125,7 @@ const block_sugarcane = block {
 	display_name = "Sugar cane",
 	tex = (9, 4),
 	hardness = 0.00,
+	aabb = void,
 	...
 };
 
@@ -1052,6 +1135,7 @@ const block_jukebox = block {
 	display_name = "Jukebox",
 	tex = (10, 4),
 	hardness = 2.00,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -1061,6 +1145,7 @@ const block_fence = block {
 	display_name = "Fence",
 	tex = (4, 0),
 	hardness = 2.00,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -1070,6 +1155,7 @@ const block_pumpkin = block {
 	display_name = "Pumpkin",
 	tex = (6, 6),
 	hardness = 1.00,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -1079,6 +1165,7 @@ const block_netherrack = block {
 	display_name = "Netherrack",
 	tex = (7, 6),
 	hardness = 0.40,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -1088,6 +1175,7 @@ const block_soul_sand = block {
 	display_name = "Soul Sand",
 	tex = (8, 6),
 	hardness = 0.50,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -1097,6 +1185,7 @@ const block_glowstone = block {
 	display_name = "Glowstone",
 	tex = (9, 6),
 	hardness = 0.30,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -1107,6 +1196,7 @@ const block_portal = block {
 	display_name = "Portal",
 	tex = (14, 0),
 	hardness = -1.00,
+	aabb = void,
 	...
 };
 
@@ -1116,6 +1206,7 @@ const block_jack_o_lantern = block {
 	display_name = "Jack 'o' Lantern",
 	tex = (6, 6),
 	hardness = 1.00,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -1126,6 +1217,7 @@ const block_cake = block {
 	display_name = "Cake",
 	tex = (9, 7),
 	hardness = 0.50,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -1135,6 +1227,7 @@ const block_repeater_dim = block {
 	display_name = "diode",
 	tex = (6, 0),
 	hardness = 0.00,
+	aabb = void,
 	...
 };
 
@@ -1144,6 +1237,7 @@ const block_repeater_lit = block {
 	display_name = "diode",
 	tex = (6, 0),
 	hardness = 0.00,
+	aabb = void,
 	...
 };
 
@@ -1153,6 +1247,7 @@ const block_locked_chest = block {
 	display_name = "Locked chest",
 	tex = (10, 1),
 	hardness = 0.00,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };
 
@@ -1163,5 +1258,6 @@ const block_trapdoor = block {
 	display_name = "Trapdoor",
 	tex = (4, 5),
 	hardness = 3.00,
+	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	...
 };

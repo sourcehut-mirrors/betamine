@@ -313,23 +313,18 @@ fn physics_gather_collisions(
 		};
 		if (vox.id == 0) continue;
 
-		// TODO: Figure out the actual bounding box of the block
 		const block = block::blocks[vox.id];
-		if (block.flags & block::flag::NON_OCCLUDING != 0) {
-			continue;
+
+		let pos: glm::v3 = [x: f32, y: f32, z: f32];
+		match (block.aabb) {
+		case let aabb: [2]glm::v3 =>
+			aabb[0] = glm::v3_add(&aabb[0], &pos);
+			aabb[1] = glm::v3_add(&aabb[1], &pos);
+			append(out, aabb);
+		case let func: *block::aabbfunc =>
+			abort(); // TODO
+		case void => continue;
 		};
-		append(out, [
-			[
-				x: f32,
-				y: f32,
-				z: f32,
-			],
-			[
-				(x + 1): f32,
-				(y + 1): f32,
-				(z + 1): f32,
-			],
-		]);
 	};
 
 	return true;

@@ -1,3 +1,5 @@
+use glm;
+
 // Data structures defining game engine data for a block.
 export type block = struct {
 	// Block ID
@@ -13,6 +15,8 @@ export type block = struct {
 	tex: (int, int),
 	// Block hardness.
 	hardness: f64,
+	// Axis-aligned bounding box
+	aabb: ([2]glm::v3 | *aabbfunc | void),
 };
 
 // Flags that apply to a block descriptor.

@@ -32,6 +32,38 @@ twoquad_models = [
     "SUGARCANE",
 ]
 
+no_aabb = [
+    "WATER",
+    "WATER_STATIONARY",
+    "LAVA",
+    "LAVA_STATIONARY",
+    "TORCH",
+    "REDSTONE_TORCH_DIM",
+    "REDSTONE_TORCH_LIT",
+    "SNOW",
+    "PORTAL",
+    "REPEATER_LIT",
+    "REPEATER_DIM",
+    "BUTTON",
+    "SIGN_WALL",
+    "SIGNPOST",
+    "PLATE_STONE",
+    "PLATE_WOOD",
+    "LEVER",
+]
+
+custom_aabb = {
+    # TODO:
+    # CAKE
+    # PISTON_HEAD
+    # BED
+    # SLAB
+    # DOOR
+    # CACTUS
+    # TRAPDOOR
+    # FENCE
+}
+
 custom_models = {
     "GRASS": "grass",
     "SNOW": "snow",
@@ -206,6 +238,15 @@ def getmodel(block):
         return f"model_{custom_models[name]}"
     return "model_cube"
 
+def getaabb(block):
+    name = block_names[block["id"]]
+    if name in custom_aabb:
+        return custom_aabb[name]
+    elif name in onequad_models or name in twoquad_models or name in no_aabb:
+        return "void"
+    else:
+        return "[[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]]"
+
 def getflags(block):
     flags = []
 
@@ -227,5 +268,6 @@ print(template.render(
     block_names=block_names,
     num_null=256-len(block_names),
     model=getmodel,
+    aabb=getaabb,
     flags=getflags,
 ))
