@@ -62,16 +62,28 @@ export type movement = enum uint {
 	DOWN		= 1 << 5,
 };
 
+// Flags associated with a living entity.
+export type entity_flag = enum uint {
+	NONE		= 0,
+	FEET_IN_WATER	= 1 << 0,
+	FEET_IN_LAVA	= 1 << 1,
+	HEAD_IN_WATER	= 1 << 2,
+	HEAD_IN_LAVA	= 1 << 3,
+};
+
 // Living entity
 export type living_entity = struct {
 	entity,
 	move: movement,
 	health: uint,
+	flags: entity_flag,
 
 	// Nearby blocks of interest
 	blocks: struct {
-		// Block beneath entity's feet
+		// Block at entity's feet
 		feet: world::voxel,
+		// Block beneath entity's feet
+		ground: world::voxel,
 		// Block at entity's head (players only)
 		head: world::voxel,
 	},

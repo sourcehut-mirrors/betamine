@@ -227,9 +227,20 @@ fn physics_living_tick(
 	//};
 
 	// Collect blocks of interest
-	const feet_coords: world::coords3D = (
+	const ground_coords: world::coords3D = (
 		ent.pos[0]: int,
 		ent.pos[1]: int - 1,
+		ent.pos[2]: int,
+	);
+	match (world::get(sim.world, &ent.blocks.ground, ground_coords)) {
+	case world::error =>
+		ent.blocks.ground = world::voxel { ... };
+	case void => void;
+	};
+
+	const feet_coords: world::coords3D = (
+		ent.pos[0]: int,
+		ent.pos[1]: int,
 		ent.pos[2]: int,
 	);
 	match (world::get(sim.world, &ent.blocks.feet, feet_coords)) {
@@ -247,6 +258,32 @@ fn physics_living_tick(
 	case world::error =>
 		ent.blocks.feet = world::voxel { ... };
 	case void => void;
+	};
+
+	const feet_id = ent.blocks.feet.id;
+	const head_id = ent.blocks.head.id;
+	if (feet_id == block::WATER || feet_id == block::WATER_STATIONARY) {
+		ent.flags |= entity_flag::FEET_IN_WATER;
+	} else {
+		ent.flags &= ~entity_flag::FEET_IN_WATER;
+	};
+
+	if (feet_id == block::LAVA || feet_id == block::LAVA_STATIONARY) {
+		ent.flags |= entity_flag::FEET_IN_LAVA;
+	} else {
+		ent.flags &= ~entity_flag::FEET_IN_LAVA;
+	};
+
+	if (head_id == block::WATER || head_id == block::WATER_STATIONARY) {
+		ent.flags |= entity_flag::HEAD_IN_WATER;
+	} else {
+		ent.flags &= ~entity_flag::HEAD_IN_WATER;
+	};
+
+	if (head_id == block::LAVA || head_id == block::LAVA_STATIONARY) {
+		ent.flags |= entity_flag::HEAD_IN_LAVA;
+	} else {
+		ent.flags &= ~entity_flag::HEAD_IN_LAVA;
 	};
 };
 
