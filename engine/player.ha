@@ -10,9 +10,12 @@ export def STANCE_UPRIGHT: f32 = 1.6;
 // Camera height when player is crouching.
 export def STANCE_CROUCH: f32 = 1.5;
 
+// Initial health points for player entities
+export def PLAYER_HEALTH: uint = 20;
+
 // Player state
 export type player = struct {
-	entity,
+	living_entity,
 	stance: f32,
 	name: str,
 };
@@ -25,4 +28,5 @@ export fn player_init(p: *player, id: int, username: str) void = {
 		PLAYER_HEIGHT);
 	p.stance = STANCE_UPRIGHT;
 	p.name = username;
+	p.health = PLAYER_HEALTH;
 };

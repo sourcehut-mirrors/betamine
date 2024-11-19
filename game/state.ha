@@ -30,7 +30,6 @@ export type state = struct {
 	layers: []*layer,
 
 	// Input state
-	input: input_state,
 	focus: input_focus,
 
 	// Camera state

@@ -44,6 +44,25 @@ export type entity = struct {
 	vel: glm::v3,
 };
 
+// Entity movement
+export type movement = enum uint {
+	NONE		= 0,
+	LEFT		= 1 << 0,
+	RIGHT		= 1 << 1,
+	FORWARD		= 1 << 2,
+	BACKWARD	= 1 << 3,
+	// Only used if flying is enabled:
+	UP		= 1 << 4,
+	DOWN		= 1 << 5,
+};
+
+// Living entity
+export type living_entity = struct {
+	entity,
+	move: movement,
+	health: uint,
+};
+
 // Initializes entity state.
 export fn entity_init(
 	ent: *entity,

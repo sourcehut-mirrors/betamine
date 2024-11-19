@@ -1,3 +1,4 @@
+use engine::{movement};
 use gfx;
 use glm;
 use math;
@@ -19,23 +20,6 @@ def MOUSE_SPEED: f32 = 2.0;
 def PITCH_MIN = -(math::PI / 2.0): f32;
 def PITCH_MAX = (math::PI / 2.0): f32;
 
-// Player movement inputs
-export type movement = enum uint {
-	NONE		= 0,
-	LEFT		= 1 << 0,
-	RIGHT		= 1 << 1,
-	FORWARD		= 1 << 2,
-	BACKWARD	= 1 << 3,
-	// Only used if flying is enabled:
-	UP		= 1 << 4,
-	DOWN		= 1 << 5,
-};
-
-// Input state.
-export type input_state = struct {
-	move: movement,
-};
-
 // Input module
 export type input_module = struct {
 	module,
@@ -54,7 +38,6 @@ fn input_update(mod: *module, state: *state) void = {
 	};
 
 	let mod = mod: *input_module;
-	let istate = &state.input;
 	let camera = &state.camera;
 	let player = &state.player;
 
@@ -67,33 +50,33 @@ fn input_update(mod: *module, state: *state) void = {
 		case SDL_EventType::KEYDOWN =>
 			switch (ev.key.keysym.scancode) {
 			case SDL_Scancode::W =>
-				istate.move |= movement::FORWARD;
+				player.move |= movement::FORWARD;
 			case SDL_Scancode::S =>
-				istate.move |= movement::BACKWARD;
+				player.move |= movement::BACKWARD;
 			case SDL_Scancode::A =>
-				istate.move |= movement::LEFT;
+				player.move |= movement::LEFT;
 			case SDL_Scancode::D =>
-				istate.move |= movement::RIGHT;
+				player.move |= movement::RIGHT;
 			case SDL_Scancode::LSHIFT =>
-				istate.move |= movement::DOWN;
+				player.move |= movement::DOWN;
 			case SDL_Scancode::SPACE =>
-				istate.move |= movement::UP;
+				player.move |= movement::UP;
 			case => void;
 			};
 		case SDL_EventType::KEYUP =>
 			switch (ev.key.keysym.scancode) {
 			case SDL_Scancode::W =>
-				istate.move &= ~movement::FORWARD;
+				player.move &= ~movement::FORWARD;
 			case SDL_Scancode::S =>
-				istate.move &= ~movement::BACKWARD;
+				player.move &= ~movement::BACKWARD;
 			case SDL_Scancode::A =>
-				istate.move &= ~movement::LEFT;
+				player.move &= ~movement::LEFT;
 			case SDL_Scancode::D =>
-				istate.move &= ~movement::RIGHT;
+				player.move &= ~movement::RIGHT;
 			case SDL_Scancode::LSHIFT =>
-				istate.move &= ~movement::DOWN;
+				player.move &= ~movement::DOWN;
 			case SDL_Scancode::SPACE =>
-				istate.move &= ~movement::UP;
+				player.move &= ~movement::UP;
 			case SDL_Scancode::F3 =>
 				state.debug = !state.debug;
 			case SDL_Scancode::T =>
@@ -131,22 +114,22 @@ fn input_update(mod: *module, state: *state) void = {
 	];
 	const up: glm::v3 = [0.0, delta * SPEED * 2.0, 0.0];
 
-	if (istate.move & movement::FORWARD != 0) {
+	if (player.move & movement::FORWARD != 0) {
 		player.pos = glm::v3_add(&player.pos, &forward);
 	};
-	if (istate.move & movement::BACKWARD != 0) {
+	if (player.move & movement::BACKWARD != 0) {
 		player.pos = glm::v3_sub(&player.pos, &forward);
 	};
-	if (istate.move & movement::LEFT != 0) {
+	if (player.move & movement::LEFT != 0) {
 		player.pos = glm::v3_sub(&player.pos, &right);
 	};
-	if (istate.move & movement::RIGHT != 0) {
+	if (player.move & movement::RIGHT != 0) {
 		player.pos = glm::v3_add(&player.pos, &right);
 	};
-	if (istate.move & movement::UP != 0 && FLYING) {
+	if (player.move & movement::UP != 0 && FLYING) {
 		player.pos = glm::v3_add(&player.pos, &up);
 	};
-	if (istate.move & movement::DOWN != 0 && FLYING) {
+	if (player.move & movement::DOWN != 0 && FLYING) {
 		player.pos = glm::v3_sub(&player.pos, &up);
 	};
 
@@ -155,15 +138,4 @@ fn input_update(mod: *module, state: *state) void = {
 
 	if (player.pitch < PITCH_MIN) player.pitch = PITCH_MIN;
 	if (player.pitch > PITCH_MAX) player.pitch = PITCH_MAX;
-
-	if (istate.move != 0 || mx != 0 || my != 0) {
-		camera.pos = [
-			player.pos[0],
-			player.pos[1] + player.stance,
-			player.pos[2],
-		];
-		camera.pitch = player.pitch;
-		camera.yaw = player.yaw;
-		gfx::camera_apply(camera);
-	};
 };

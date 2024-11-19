@@ -26,8 +26,7 @@ export fn run(state: *state) void = {
 			mod.update(mod, state);
 		};
 
-		gfx::camera_matrix(&state.camera, &state.vp);
-		glm::frustrum_planes(&state.vp, &state.frustrum);
+		update_camera(state);
 
 		// TODO: Move to module
 		gfx::render_sky(&state.camera, state.ticks);
@@ -39,4 +38,27 @@ export fn run(state: *state) void = {
 
 		sdl2::SDL_GL_SwapWindow(state.win);
 	};
+};
+
+fn update_camera(state: *state) void = {
+	let camera = &state.camera;
+	let player = &state.player;
+
+	let camera_current = glm::v3_equal(camera.pos, player.pos);
+	camera_current &&= camera.yaw == player.yaw;
+	camera_current &&= camera.pitch == player.pitch;
+	if (camera_current) {
+		return;
+	};
+
+	camera.pos = [
+		player.pos[0],
+		player.pos[1] + player.stance,
+		player.pos[2],
+	];
+	camera.pitch = player.pitch;
+	camera.yaw = player.yaw;
+	gfx::camera_apply(camera);
+	gfx::camera_matrix(&state.camera, &state.vp);
+	glm::frustrum_planes(&state.vp, &state.frustrum);
 };
