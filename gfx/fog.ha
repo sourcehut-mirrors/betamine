@@ -26,7 +26,7 @@ fn fog_init() void = {
 // Current fog configuration.
 export let fog_config = fog_params {
 	factor = 1.0,
-	near = 0.5,
+	near = 0.2,
 	far = 256.0,
 	color = [1.0, 1.0, 1.0],
 };
