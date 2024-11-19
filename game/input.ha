@@ -56,6 +56,9 @@ fn input_update(mod: *module, state: *state) void = {
 				player.move |= movement::DOWN;
 			case SDL_Scancode::SPACE =>
 				player.move |= movement::UP;
+				if (player.ground) {
+					player.vel[1] += engine::PLAYER_JUMP;
+				};
 			case => void;
 			};
 		case SDL_EventType::KEYUP =>

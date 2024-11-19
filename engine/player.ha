@@ -10,6 +10,9 @@ export def STANCE_UPRIGHT: f32 = 1.6;
 // Camera height when player is crouching.
 export def STANCE_CROUCH: f32 = 1.5;
 
+// Jump impulse in m/s
+export def PLAYER_JUMP: f32 = 0.42 * 20.0;
+
 // Initial health points for player entities
 export def PLAYER_HEALTH: uint = 20;
 

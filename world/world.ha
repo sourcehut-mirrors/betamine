@@ -173,8 +173,13 @@ export fn get_chunk(
 	const cix = sort::lbisect(w.chunks, size(*chunk),
 		&model, &coords2D_cmp);
 	if (cix < len(w.chunks) && coords2D_equal(w.chunks[cix].coords, c)) {
-		w.chunks[cix].refs += 1;
-		return w.chunks[cix];
+		let chunk = w.chunks[cix];
+		const populated = chunk.flags & chunk_flag::POPULATED != 0;
+		if (is_memory(w) && mode == mode::ERROR && !populated) {
+			return nochunk;
+		};
+		chunk.refs += 1;
+		return chunk;
 	};
 
 	if (mode == mode::ERROR) {

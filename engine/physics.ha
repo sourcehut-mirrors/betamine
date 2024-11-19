@@ -8,6 +8,13 @@ use world;
 // (This might be on a per-entity basis?)
 def SPEED: f32 = 4.317;
 
+// Acceleration due to gravity in m/s²
+//
+// Note: I have doubled the value that is used by Minecraft because it was
+// too... floaty without. There's something off about my physics sim but
+// whatever.
+def GRAVITY: f32 = 0.8 * 40.0;
+
 // Physics simulation state.
 export type physics_sim = struct {
 	world: *world::world,
@@ -68,9 +75,24 @@ export fn physics_entity_tick(
 		physics_living_tick(sim, living, &move, delta);
 	};
 
+	// TODO:
+	// - Slippery blocks
+	// - Water, lava, and web movement
+	const v: glm::v3 = [
+		ent.vel[0] * delta,
+		ent.vel[1] * delta,
+		ent.vel[2] * delta,
+	];
+
+	move = glm::v3_add(&move, &v);
+
 	static let collisions: [][2]glm::v3 = [];
 	collisions = collisions[..0];
-	physics_gather_collisions(&collisions, sim, &aabb, &move);
+	const valid = physics_gather_collisions(&collisions, sim, &aabb, &move);
+	if (!valid) {
+		// Entity is not in a valid chunk, abort
+		return;
+	};
 
 	// Only update ground state if the entity is moving in the Y axis
 	let ground = ent.ground;
@@ -81,7 +103,10 @@ export fn physics_entity_tick(
 	// Y axis
 	for (let nearby &.. collisions) {
 		const outcome = collision_test(&move, &aabb, nearby, 1);
-		ground ||= outcome;
+		if (outcome) {
+			ground = true;
+			ent.vel[1] = 0.0;
+		};
 	};
 
 	ent.pos[1] += move[1];
@@ -106,6 +131,8 @@ export fn physics_entity_tick(
 	ent.pos[2] += move[2];
 	aabb[0][2] += move[2];
 	aabb[1][2] += move[2];
+
+	ent.vel[1] -= GRAVITY * delta;
 };
 
 fn collision_test(
@@ -182,13 +209,13 @@ fn physics_living_tick(
 	if (ent.move & movement::RIGHT != 0) {
 		*move = glm::v3_add(move, &right);
 	};
-	// XXX: Disable flying by default
-	if (ent.move & movement::UP != 0) {
-		*move = glm::v3_add(move, &up);
-	};
-	if (ent.move & movement::DOWN != 0) {
-		*move = glm::v3_sub(move, &up);
-	};
+	// TODO: Flying?
+	//if (ent.move & movement::UP != 0) {
+	//	*move = glm::v3_add(move, &up);
+	//};
+	//if (ent.move & movement::DOWN != 0) {
+	//	*move = glm::v3_sub(move, &up);
+	//};
 };
 
 fn physics_gather_collisions(
@@ -196,7 +223,7 @@ fn physics_gather_collisions(
 	sim: *physics_sim,
 	aabb: const *[2]glm::v3,
 	move: *glm::v3,
-) void = {
+) bool = {
 	let aabb = *aabb;
 
 	if (move[0] < 0.0)	aabb[0][0] += move[0]
@@ -228,9 +255,11 @@ fn physics_gather_collisions(
 	for (let x = aabbi[0][0]; x <= aabbi[1][0]; x += 1)
 	for (let y = aabbi[0][1]; y <= aabbi[1][1]; y += 1)
 	for (let z = aabbi[0][2]; z <= aabbi[1][2]; z += 1) {
-		match (world::get(sim.world, &vox, (x, y, z))) {
+		match (world::get(sim.world, &vox, (x, y, z), world::mode::ERROR)) {
 		case world::range =>
 			continue;
+		case world::nochunk =>
+			return false;
 		case world::error =>
 			abort();
 		case => void;
@@ -255,4 +284,6 @@ fn physics_gather_collisions(
 			],
 		]);
 	};
+
+	return true;
 };

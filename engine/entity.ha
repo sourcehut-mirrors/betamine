@@ -43,7 +43,9 @@ export type entity = struct {
 	pitch: f32,
 	ground: bool,
 
+	// Entity dimensions, X/Z×Y
 	dims: glm::v2,
+	// Entity velocity in m/s
 	vel: glm::v3,
 };
 
