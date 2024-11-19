@@ -1,4 +1,5 @@
 use encoding::ucs2;
+use engine::{entity_flag};
 use fmt;
 use game;
 use getopt;
@@ -22,6 +23,7 @@ export fn main() void = {
 		('u', "username", "set client username"),
 		('d', "enable debug overlay at startup"),
 		('f', "set fullscreen"),
+		('F', "enable flying"),
 		"hostname[:port]",
 	];
 	const cmd = getopt::parse(os::args, usage...);
@@ -33,11 +35,12 @@ export fn main() void = {
 	};
 
 	let username = "betamine";
-	let fullscreen = false, debug = false;
+	let fullscreen = false, debug = false, flying = false;
 	for (const (opt, val) .. cmd.opts) {
 		switch (opt) {
 		case 'd' => debug = true;
 		case 'f' => fullscreen = true;
+		case 'F' => flying = true;
 		case 'u' => username = val;
 		case => abort();
 		};
@@ -96,6 +99,10 @@ export fn main() void = {
 
 	let state = game::init(win, &conn, &login, username);
 	state.debug = debug;
+	if (flying) {
+		state.player.flags |= entity_flag::FLYING;
+		state.player.speed *= 2.0;
+	};
 
 	game::run(state);
 	game::destroy(state);

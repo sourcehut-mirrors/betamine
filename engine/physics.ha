@@ -4,10 +4,6 @@ use math;
 use sort;
 use world;
 
-// Entity speed in meters per second
-// (This might be on a per-entity basis?)
-def SPEED: f32 = 4.317;
-
 // Acceleration due to gravity in m/s²
 //
 // Note: I have doubled the value that is used by Minecraft because it was
@@ -74,10 +70,14 @@ export fn physics_entity_tick(
 		],
 	];
 	let move: glm::v3 = glm::V3_ZERO;
+	let gravity = GRAVITY;
 
 	if (entity_isliving(ent)) {
 		let living = ent: *living_entity;
 		physics_living_tick(sim, living, &move, delta);
+		if (living.flags & entity_flag::FLYING != 0) {
+			gravity = 0.0;
+		};
 	};
 
 	// TODO:
@@ -141,7 +141,7 @@ export fn physics_entity_tick(
 	aabb[0][2] += move[2];
 	aabb[1][2] += move[2];
 
-	ent.vel[1] -= GRAVITY * delta;
+	ent.vel[1] -= gravity * delta;
 };
 
 fn collision_test(
@@ -195,16 +195,16 @@ fn physics_living_tick(
 	delta: f32,
 ) void = {
 	const forward: glm::v3 = [
-		math::sinf64(ent.yaw): f32 * delta * SPEED,
+		math::sinf64(ent.yaw): f32 * delta * ent.speed,
 		0.0,
-		math::cosf64(ent.yaw): f32 * delta * SPEED,
+		math::cosf64(ent.yaw): f32 * delta * ent.speed,
 	];
 	const right: glm::v3 = [
-		math::sinf64(ent.yaw - 3.14 / 2.0): f32 * delta * SPEED,
+		math::sinf64(ent.yaw - 3.14 / 2.0): f32 * delta * ent.speed,
 		0.0,
-		math::cosf64(ent.yaw - 3.14 / 2.0): f32 * delta * SPEED,
+		math::cosf64(ent.yaw - 3.14 / 2.0): f32 * delta * ent.speed,
 	];
-	const up: glm::v3 = [0.0, delta * SPEED * 2.0, 0.0];
+	const up: glm::v3 = [0.0, delta * ent.speed, 0.0];
 
 	if (ent.move & movement::FORWARD != 0) {
 		*move = glm::v3_add(move, &forward);
@@ -218,13 +218,15 @@ fn physics_living_tick(
 	if (ent.move & movement::RIGHT != 0) {
 		*move = glm::v3_add(move, &right);
 	};
-	// TODO: Flying?
-	//if (ent.move & movement::UP != 0) {
-	//	*move = glm::v3_add(move, &up);
-	//};
-	//if (ent.move & movement::DOWN != 0) {
-	//	*move = glm::v3_sub(move, &up);
-	//};
+
+	if (ent.flags & entity_flag::FLYING != 0) {
+		if (ent.move & movement::UP != 0) {
+			*move = glm::v3_add(move, &up);
+		};
+		if (ent.move & movement::DOWN != 0) {
+			*move = glm::v3_sub(move, &up);
+		};
+	};
 
 	// Collect blocks which are of interest to other parts of the game
 	// engine, such as the type of block beneath the entity's feet

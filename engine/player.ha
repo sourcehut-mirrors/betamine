@@ -16,6 +16,9 @@ export def PLAYER_JUMP: f32 = 0.42 * 20.0;
 // Initial health points for player entities
 export def PLAYER_HEALTH: uint = 20;
 
+// Player speed in meters per second
+export def SPEED_WALK: f32 = 4.317;
+
 // Player state
 export type player = struct {
 	living_entity,
@@ -29,6 +32,7 @@ export fn player_init(p: *player, id: int, username: str) void = {
 		entity_type::PLAYER,
 		PLAYER_WIDTH,
 		PLAYER_HEIGHT);
+	p.speed = SPEED_WALK;
 	p.stance = STANCE_UPRIGHT;
 	p.name = username;
 	p.health = PLAYER_HEALTH;

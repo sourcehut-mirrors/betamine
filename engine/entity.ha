@@ -69,12 +69,14 @@ export type entity_flag = enum uint {
 	FEET_IN_LAVA	= 1 << 1,
 	HEAD_IN_WATER	= 1 << 2,
 	HEAD_IN_LAVA	= 1 << 3,
+	FLYING		= 1 << 4,
 };
 
 // Living entity
 export type living_entity = struct {
 	entity,
 	move: movement,
+	speed: f32,
 	health: uint,
 	flags: entity_flag,
 

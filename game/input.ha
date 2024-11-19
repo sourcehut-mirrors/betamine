@@ -1,5 +1,5 @@
 use engine;
-use engine::{movement};
+use engine::{entity_flag, movement};
 use gfx;
 use glm;
 use math;
@@ -55,10 +55,7 @@ fn input_update(mod: *module, state: *state) void = {
 			case SDL_Scancode::LSHIFT =>
 				player.move |= movement::DOWN;
 			case SDL_Scancode::SPACE =>
-				player.move |= movement::UP;
-				if (player.ground) {
-					player.vel[1] += engine::PLAYER_JUMP;
-				};
+				do_jump(player);
 			case => void;
 			};
 		case SDL_EventType::KEYUP =>
@@ -97,4 +94,12 @@ fn input_update(mod: *module, state: *state) void = {
 	if (player.pitch > PITCH_MAX) player.pitch = PITCH_MAX;
 
 	engine::physics_entity_tick(&state.physics, &state.player, delta);
+};
+
+fn do_jump(player: *engine::player) void = {
+	if (player.flags & entity_flag::FLYING != 0) {
+		player.move |= movement::UP;
+	} else if (player.ground) {
+		player.vel[1] += engine::PLAYER_JUMP;
+	};
 };
