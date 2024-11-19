@@ -95,3 +95,13 @@ export def REPEATER_DIM: u8 = 93;
 export def REPEATER_LIT: u8 = 94;
 export def LOCKED_CHEST: u8 = 95;
 export def TRAPDOOR: u8 = 96;
+
+// Returns true if this ID represents a water block.
+export fn is_water(id: u8) bool = {
+	return id == WATER || id == WATER_STATIONARY;
+};
+
+// Returns true if this ID represents a lava block.
+export fn is_lava(id: u8) bool = {
+	return id == LAVA || id == LAVA_STATIONARY;
+};

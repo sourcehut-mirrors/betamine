@@ -226,64 +226,40 @@ fn physics_living_tick(
 	//	*move = glm::v3_sub(move, &up);
 	//};
 
-	// Collect blocks of interest
-	const ground_coords: world::coords3D = (
-		ent.pos[0]: int,
-		ent.pos[1]: int - 1,
-		ent.pos[2]: int,
-	);
-	match (world::get(sim.world, &ent.blocks.ground, ground_coords)) {
-	case world::error =>
-		ent.blocks.ground = world::voxel { ... };
-	case void => void;
+	// Collect blocks which are of interest to other parts of the game
+	// engine, such as the type of block beneath the entity's feet
+	const pos = [ent.pos[0]: int, ent.pos[1]: int, ent.pos[2]: int];
+	const head = ent.pos[1] + ent.dims[1];
+	const blocks_of_interest: [_](*world::voxel, world::coords3D) = [
+		(&ent.blocks.ground, (pos[0], pos[1] - 1, pos[2])),
+		(&ent.blocks.feet,   (pos[0], pos[1], pos[2])),
+		(&ent.blocks.head,   (pos[0], head: int, pos[2])),
+	];
+	for (let (voxel, coords) .. blocks_of_interest) {
+		match (world::get(sim.world, voxel, coords)) {
+		case world::error =>
+			*voxel = world::voxel { ... };
+		case void => void;
+		};
 	};
 
-	const feet_coords: world::coords3D = (
-		ent.pos[0]: int,
-		ent.pos[1]: int,
-		ent.pos[2]: int,
-	);
-	match (world::get(sim.world, &ent.blocks.feet, feet_coords)) {
-	case world::error =>
-		ent.blocks.feet = world::voxel { ... };
-	case void => void;
-	};
-
-	const head_coords: world::coords3D = (
-		ent.pos[0]: int,
-		(ent.pos[1] + ent.dims[1]): int,
-		ent.pos[2]: int,
-	);
-	match (world::get(sim.world, &ent.blocks.head, head_coords)) {
-	case world::error =>
-		ent.blocks.feet = world::voxel { ... };
-	case void => void;
-	};
-
-	const feet_id = ent.blocks.feet.id;
-	const head_id = ent.blocks.head.id;
-	if (feet_id == block::WATER || feet_id == block::WATER_STATIONARY) {
-		ent.flags |= entity_flag::FEET_IN_WATER;
-	} else {
-		ent.flags &= ~entity_flag::FEET_IN_WATER;
-	};
-
-	if (feet_id == block::LAVA || feet_id == block::LAVA_STATIONARY) {
-		ent.flags |= entity_flag::FEET_IN_LAVA;
-	} else {
-		ent.flags &= ~entity_flag::FEET_IN_LAVA;
-	};
-
-	if (head_id == block::WATER || head_id == block::WATER_STATIONARY) {
-		ent.flags |= entity_flag::HEAD_IN_WATER;
-	} else {
-		ent.flags &= ~entity_flag::HEAD_IN_WATER;
-	};
-
-	if (head_id == block::LAVA || head_id == block::LAVA_STATIONARY) {
-		ent.flags |= entity_flag::HEAD_IN_LAVA;
-	} else {
-		ent.flags &= ~entity_flag::HEAD_IN_LAVA;
+	const feet = ent.blocks.feet.id;
+	const head = ent.blocks.head.id;
+	const flags = [
+		(feet, entity_flag::FEET_IN_WATER, entity_flag::FEET_IN_LAVA),
+		(head, entity_flag::HEAD_IN_WATER, entity_flag::HEAD_IN_LAVA),
+	];
+	for (let (id, water, lava) .. flags) {
+		if (block::is_water(id)) {
+			ent.flags |= water;
+		} else {
+			ent.flags &= ~water;
+		};
+		if (block::is_lava(id)) {
+			ent.flags |= lava;
+		} else {
+			ent.flags &= ~lava;
+		};
 	};
 };
 
