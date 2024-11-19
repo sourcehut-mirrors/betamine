@@ -72,7 +72,7 @@ export fn physics_entity_tick(
 	collisions = collisions[..0];
 	physics_gather_collisions(&collisions, sim, &aabb, &move);
 
-	// Only update ground status if the entity is moving in the Y axis
+	// Only update ground state if the entity is moving in the Y axis
 	let ground = ent.ground;
 	if (move[1] != 0.0) {
 		ground = false;
@@ -81,7 +81,7 @@ export fn physics_entity_tick(
 	// Y axis
 	for (let nearby &.. collisions) {
 		const outcome = collision_test(&move, &aabb, nearby, 1);
-		ground &&= outcome;
+		ground ||= outcome;
 	};
 
 	ent.pos[1] += move[1];

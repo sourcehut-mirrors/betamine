@@ -47,10 +47,11 @@ fn debug_draw(layer: *layer, state: *state) void = {
 	gfx::font_draw(&glm::v2_new(0.0, 1.0 * 24.0), pos);
 
 	const dir = engine::radtocard(state.camera.yaw);
-	const look = fmt::bsprintf(buf, "  look: {}\n   yaw: {}\npitch: {}",
+	const look = fmt::bsprintf(buf, "ground: {}\n        look: {}\n         yaw: {}\n      pitch: {}",
+		state.player.ground,
 		engine::cardtostr(dir),
 		state.camera.pitch, state.camera.yaw);
-	gfx::font_draw(&glm::v2_new(300.0, 2.0 * 24.0), look);
+	gfx::font_draw(&glm::v2_new(300.0, 1.0 * 24.0), look);
 
 	const ccoords = world::world_to_chunk((
 		state.camera.pos[0]: int,
