@@ -41,7 +41,12 @@ export fn physics_spawn(sim: *physics_sim, ent: *entity) void = {
 export fn physics_tick(sim: *physics_sim) void = {
 	for (let e .. sim.entities) {
 		if (e.etype == entity_type::PLAYER) {
-			// Handled separately
+			// Player entities are not handled during a normal tick.
+			// THE player's physics simulation runs every frame, to
+			// ensure smooth motion, and OTHER players are not
+			// simulated at all, since their motion is governed by
+			// their own clients (and moderated by the server --
+			// either way, not us).
 			continue;
 		};
 
