@@ -121,7 +121,9 @@ export fn physics_entity_tick(
 
 	// X axis
 	for (let nearby &.. collisions) {
-		collision_test(&move, &aabb, nearby, 0);
+		if (collision_test(&move, &aabb, nearby, 0)) {
+			ent.vel[0] = 0.0;
+		};
 	};
 
 	ent.pos[0] += move[0];
@@ -130,7 +132,9 @@ export fn physics_entity_tick(
 
 	// Z axis
 	for (let nearby &.. collisions) {
-		collision_test(&move, &aabb, nearby, 2);
+		if (collision_test(&move, &aabb, nearby, 2)) {
+			ent.vel[2] = 0.0;
+		};
 	};
 
 	ent.pos[2] += move[2];
