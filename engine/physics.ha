@@ -257,9 +257,9 @@ fn physics_gather_collisions(
 	];
 
 	let vox = world::voxel { ... };
-	for (let x = aabbi[0][0]; x <= aabbi[1][0]; x += 1)
-	for (let y = aabbi[0][1]; y <= aabbi[1][1]; y += 1)
-	for (let z = aabbi[0][2]; z <= aabbi[1][2]; z += 1) {
+	for (let x = aabbi[0][0]; x < aabbi[1][0]; x += 1)
+	for (let y = aabbi[0][1]; y < aabbi[1][1]; y += 1)
+	for (let z = aabbi[0][2]; z < aabbi[1][2]; z += 1) {
 		match (world::get(sim.world, &vox, (x, y, z), world::mode::ERROR)) {
 		case world::range =>
 			continue;
