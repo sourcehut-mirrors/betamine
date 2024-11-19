@@ -32,38 +32,6 @@ twoquad_models = [
     "SUGARCANE",
 ]
 
-no_aabb = [
-    "WATER",
-    "WATER_STATIONARY",
-    "LAVA",
-    "LAVA_STATIONARY",
-    "TORCH",
-    "REDSTONE_TORCH_DIM",
-    "REDSTONE_TORCH_LIT",
-    "SNOW",
-    "PORTAL",
-    "REPEATER_LIT",
-    "REPEATER_DIM",
-    "BUTTON",
-    "SIGN_WALL",
-    "SIGNPOST",
-    "PLATE_STONE",
-    "PLATE_WOOD",
-    "LEVER",
-]
-
-custom_aabb = {
-    # TODO:
-    # CAKE
-    # PISTON_HEAD
-    # BED
-    # SLAB
-    # DOOR
-    # CACTUS
-    # TRAPDOOR
-    # FENCE
-}
-
 custom_models = {
     "GRASS": "grass",
     "SNOW": "snow",
@@ -86,6 +54,41 @@ custom_models = {
     "PISTON_HEAD": "piston_head",
 }
 
+# Blocks with no bounding box
+no_aabb = [
+    "WATER",
+    "WATER_STATIONARY",
+    "LAVA",
+    "LAVA_STATIONARY",
+    "TORCH",
+    "REDSTONE_TORCH_DIM",
+    "REDSTONE_TORCH_LIT",
+    "SNOW",
+    "PORTAL",
+    "REPEATER_LIT",
+    "REPEATER_DIM",
+    "BUTTON",
+    "SIGN_WALL",
+    "SIGNPOST",
+    "PLATE_STONE",
+    "PLATE_WOOD",
+    "LEVER",
+]
+
+# Blocks with a custom bounding box
+custom_aabb = {
+    # TODO:
+    # CAKE
+    # PISTON_HEAD
+    # BED
+    # SLAB
+    # DOOR
+    # CACTUS
+    # TRAPDOOR
+    # FENCE
+}
+
+# Blocks that do not fully occlude their neighbors
 non_occluding = [
     "LEAVES",
     "SNOW",
@@ -112,6 +115,7 @@ non_occluding = [
     "PISTON_STICKY",
 ]
 
+# Blocks which are transparent or translucent
 transparent_blocks = [
     "WATER",
     "WATER_STATIONARY",
