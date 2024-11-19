@@ -16,17 +16,22 @@ export fn init(
 	sdl2::SDL_GL_GetDrawableSize(win, &w, &h);
 	gfx::init(w, h);
 
-	// TODO: I want to refactor this so that all of the standard gameplay
-	// modules/etc are accessible via a scene object
 	let state = alloc(state {
 		quit = false,
 		conn = conn,
+
 		win = win,
 		width = w: uint,
 		height = h: uint,
+
 		world = world::memory(),
 		chunkmgr = null: *chunk_manager,
 		chat = null: *chat_layer,
+
+		physics = engine::physics_sim {
+			world = null: *world::world,
+			...
+		},
 		...
 	});
 
@@ -35,6 +40,8 @@ export fn init(
 
 	state.camera = gfx::camera_new();
 	engine::player_init(&state.player, login.entity_id, username);
+	engine::physics_init(&state.physics, &state.world);
+	engine::physics_spawn(&state.physics, &state.player);
 
 	// Initialize modules
 	input_init(state);

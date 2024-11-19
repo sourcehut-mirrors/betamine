@@ -1,3 +1,4 @@
+use engine;
 use gfx;
 use glm;
 use sdl2;
@@ -15,15 +16,16 @@ export fn run(state: *state) void = {
 		state.frame_time = frame_time;
 		defer state.prev_frame_time = state.frame_time;
 
+		// Update
+		for (let mod .. state.modules) {
+			mod.update(mod, state);
+		};
+
 		// Run ticks 20x/sec
 		if (frame_time > next_tick) {
 			state.ticks += TIMESCALE;
 			next_tick = frame_time + 50 / TIMESCALE;
-		};
-
-		// Update
-		for (let mod .. state.modules) {
-			mod.update(mod, state);
+			engine::physics_tick(&state.physics);
 		};
 
 		update_camera(state);

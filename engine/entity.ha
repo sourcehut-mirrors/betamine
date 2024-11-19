@@ -3,17 +3,6 @@ use glm;
 // Entity type.
 export type entity_type = enum uint {
 	PLAYER,
-	BOAT,
-	MINECART,
-	STORAGE_CART,
-	POWERED_CART,
-	TNT,
-	ARROW,
-	SNOWBALL,
-	EGG,
-	SAND,
-	GRAVEL,
-	FISHING_FLOAT,
 	CREEPER,
 	SKELETON,
 	SPIDER,
@@ -28,6 +17,20 @@ export type entity_type = enum uint {
 	CHICKEN,
 	SQUID,
 	WOLF,
+	MAX_ANIMATE = WOLF,
+
+	BOAT,
+	MINECART,
+	STORAGE_CART,
+	POWERED_CART,
+	TNT,
+	ARROW,
+	SNOWBALL,
+	EGG,
+	SAND,
+	GRAVEL,
+	FISHING_FLOAT,
+	MAX_INANIMATE = FISHING_FLOAT,
 };
 
 // Entity.
@@ -63,6 +66,11 @@ export type living_entity = struct {
 	health: uint,
 };
 
+// Returns true if this is a [[living_entity]].
+export fn entity_isliving(ent: *entity) bool = {
+	return ent.etype <= entity_type::MAX_ANIMATE;
+};
+
 // Initializes entity state.
 export fn entity_init(
 	ent: *entity,
@@ -77,5 +85,22 @@ export fn entity_init(
 		dims = [width, height],
 		ground = true,
 		...
+	};
+};
+
+// Entity comparison function for sorted lists. Compares *[[entity]] to
+// *[[entity]] (and not [[entity]] to [[entity]]).
+export fn entity_cmp(
+	a: const *opaque,
+	b: const *opaque,
+) int = {
+	const a = a: const **entity;
+	const b = b: const **entity;
+	if (a.id < b.id) {
+		return -1;
+	} else if (a.id > b.id) {
+		return 1;
+	} else {
+		return 0;
 	};
 };

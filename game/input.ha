@@ -1,3 +1,4 @@
+use engine;
 use engine::{movement};
 use gfx;
 use glm;
@@ -7,12 +8,6 @@ use sdl2::{
 	SDL_EventType,
 	SDL_Scancode,
 };
-
-// Enable flying in any direction
-def FLYING: bool = false;
-
-// Player speed in meters per second
-def SPEED: f32 = 4.317;
 
 // Mouse speed modifier
 def MOUSE_SPEED: f32 = 2.0;
@@ -92,50 +87,11 @@ fn input_update(mod: *module, state: *state) void = {
 
 	const delta = (state.frame_time - state.prev_frame_time): f32 / 1000.0;
 
-	let forward: glm::v3 = glm::V3_ZERO;
-	if (FLYING) {
-		forward = [
-			camera.dir[0] * delta: f32 * SPEED * 2.5,
-			camera.dir[1] * delta: f32 * SPEED * 2.5,
-			camera.dir[2] * delta: f32 * SPEED * 2.5,
-		];
-	} else {
-		forward = [
-			math::sinf64(player.yaw): f32 * delta * SPEED,
-			0.0,
-			math::cosf64(player.yaw): f32 * delta * SPEED,
-		];
-	};
-
-	const right: glm::v3 = [
-		camera.right[0] * delta * SPEED,
-		0.0,
-		camera.right[2] * delta * SPEED,
-	];
-	const up: glm::v3 = [0.0, delta * SPEED * 2.0, 0.0];
-
-	if (player.move & movement::FORWARD != 0) {
-		player.pos = glm::v3_add(&player.pos, &forward);
-	};
-	if (player.move & movement::BACKWARD != 0) {
-		player.pos = glm::v3_sub(&player.pos, &forward);
-	};
-	if (player.move & movement::LEFT != 0) {
-		player.pos = glm::v3_sub(&player.pos, &right);
-	};
-	if (player.move & movement::RIGHT != 0) {
-		player.pos = glm::v3_add(&player.pos, &right);
-	};
-	if (player.move & movement::UP != 0 && FLYING) {
-		player.pos = glm::v3_add(&player.pos, &up);
-	};
-	if (player.move & movement::DOWN != 0 && FLYING) {
-		player.pos = glm::v3_sub(&player.pos, &up);
-	};
-
 	player.yaw += MOUSE_SPEED * delta * -mx: f32;
 	player.pitch += MOUSE_SPEED * delta * -my: f32;
 
 	if (player.pitch < PITCH_MIN) player.pitch = PITCH_MIN;
 	if (player.pitch > PITCH_MAX) player.pitch = PITCH_MAX;
+
+	engine::physics_entity_tick(&state.physics, &state.player, delta);
 };

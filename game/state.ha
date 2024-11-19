@@ -41,6 +41,7 @@ export type state = struct {
 	world: world::world,
 	chunkmgr: *chunk_manager,
 	chat: *chat_layer,
+	physics: engine::physics_sim,
 
 	// Number of game ticks ellapsed
 	ticks: u64,
