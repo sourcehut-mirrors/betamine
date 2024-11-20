@@ -5,7 +5,7 @@ limited in its capabilities.
 
 Dependencies:
 
-* Hare ([patched](https://lists.sr.ht/~sircmpwn/hare-dev/patches/55954))
+* Hare ([patched](https://lists.sr.ht/~sircmpwn/hare-dev/patches/56009))
 * sdl2 & hare-sdl2
 * hare-compress
 * hare-gl

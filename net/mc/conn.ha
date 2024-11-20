@@ -28,8 +28,8 @@ fn newconn(
 	sock: io::file,
 	mode: conn_mode = conn_mode::CLIENT,
 ) conn = {
-	const fl = os::getfl(sock)!;
-	os::setfl(sock, fl | fs::flag::NONBLOCK)!;
+	const fl = os::getflags(sock)!;
+	os::setflags(sock, fl | fs::flag::NONBLOCK)!;
 	return conn {
 		sock = sock,
 		mode = mode,
