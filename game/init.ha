@@ -51,6 +51,7 @@ export fn init(
 	hud_init(state);
 	debug_init(state);
 	chat_init(state);
+	items_init();
 
 	return state;
 };

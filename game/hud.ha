@@ -68,7 +68,12 @@ fn hud_draw_hotbar(state: *state) void = {
 	glm::translate(&model, &pos);
 	gfx::sprite_draw(&tex_gui, &model, clip);
 
-	// Selected item (TODO)
+	for (let item &.. state.player.inventory.hotbar) {
+		draw_item(item, x, y);
+		x += 20 * GUI_SCALE;
+	};
+
+	// Selected item (TODO: move to appropriate location)
 	let clip: glm::v4 = [
 		0.0,
 		HOTBAR_HEIGHT: f32,

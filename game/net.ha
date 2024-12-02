@@ -207,6 +207,7 @@ fn network_incoming(
 		const dec = mc::slots_decode(wi.items);
 		for (const slot => mc::slots_next(&dec)) {
 			win.slots[i] = slot;
+			i += 1;
 		};
 	case => void;
 	};
