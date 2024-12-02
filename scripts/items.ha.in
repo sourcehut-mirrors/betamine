@@ -1,0 +1,17 @@
+// File generated with scripts/genitems.py
+
+// Item information database, sorted by item ID.
+export const items: [_]*item = [
+{%- for item in item_names.values() %}
+	&item_{{item.lower()}},
+{%- endfor %}
+];
+
+{%- for item in items %}
+
+const item_{{item_names[item.id].lower()}} = item {
+	id = {{item_names[item.id]}},
+	display_name = "{{item.display_name}}",
+	tex = ({{item.icon.x}}, {{item.icon.y}}),
+};
+{%- endfor %}
