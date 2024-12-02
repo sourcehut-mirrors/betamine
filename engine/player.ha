@@ -24,6 +24,8 @@ export type player = struct {
 	living_entity,
 	stance: f32,
 	name: str,
+
+	inventory: inventory,
 };
 
 // Initializes a player entity.
@@ -36,4 +38,5 @@ export fn player_init(p: *player, id: int, username: str) void = {
 	p.stance = STANCE_UPRIGHT;
 	p.name = username;
 	p.health = PLAYER_HEALTH;
+	p.inventory.id = 0;
 };

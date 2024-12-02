@@ -197,6 +197,17 @@ fn network_incoming(
 		};
 
 		chunkmgr_enqueue(state.chunkmgr, chunk);
+	case mc::WINDOW_ITEMS =>
+		const wi = &packet.window_items;
+		if (wi.window_id != 0) yield;
+
+		let i = 0z;
+		let win = &state.player.inventory;
+
+		const dec = mc::slots_decode(wi.items);
+		for (const slot => mc::slots_next(&dec)) {
+			win.slots[i] = slot;
+		};
 	case => void;
 	};
 };

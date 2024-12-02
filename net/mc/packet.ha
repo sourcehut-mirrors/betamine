@@ -542,13 +542,6 @@ export type window_close = struct {
 	window_id: i8,
 };
 
-// An inventory slot.
-export type slot = struct {
-	id: i16,
-	count: i8,
-	metadata: i16,
-};
-
 // Window click packet
 export type window_click = struct {
 	window_id: i8,
