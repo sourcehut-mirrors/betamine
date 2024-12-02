@@ -3,6 +3,7 @@ use engine::{entity_flag, movement};
 use gfx;
 use glm;
 use math;
+use net::mc;
 use sdl2;
 use sdl2::{
 	SDL_EventType,
@@ -56,6 +57,16 @@ fn input_update(mod: *module, state: *state) void = {
 				player.move |= movement::DOWN;
 			case SDL_Scancode::SPACE =>
 				do_jump(player);
+			case SDL_Scancode::ONE, SDL_Scancode::TWO,
+				SDL_Scancode::THREE, SDL_Scancode::FOUR,
+				SDL_Scancode::FIVE, SDL_Scancode::SIX,
+				SDL_Scancode::SEVEN, SDL_Scancode::EIGHT,
+				SDL_Scancode::NINE, SDL_Scancode::ZERO =>
+				const ix = (ev.key.keysym.scancode - SDL_Scancode::ONE): uint;
+				state.hotbar_ix = ix;
+				mc::write_hold_change(state.conn, &mc::held_item_change {
+					slot_id = ix: i16,
+				})!;
 			case => void;
 			};
 		case SDL_EventType::KEYUP =>

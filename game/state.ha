@@ -19,6 +19,7 @@ export type state = struct {
 
 	// Player state
 	player: engine::player,
+	hotbar_ix: uint,
 
 	// SDL window
 	win: *sdl2::SDL_Window,

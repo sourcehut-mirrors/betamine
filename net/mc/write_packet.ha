@@ -110,6 +110,16 @@ export fn write_player_pos_look(
 	write_end(c)?;
 };
 
+// Writes a [[held_item_change]] packet to the connection.
+export fn write_hold_change(
+	c: *conn,
+	packet: *held_item_change,
+) (void | io::error) = {
+	write_begin(c, HOLD_CHANGE);
+	write_i16(c, packet.slot_id);
+	write_end(c)?;
+};
+
 // Writes a [[disconnect_packet]] to the connection. Does not close the socket
 // or otherwise clean up the connection -- just sends a DISCONNECT packet.
 export fn write_disconnect(

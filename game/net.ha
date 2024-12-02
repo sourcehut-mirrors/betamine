@@ -209,6 +209,9 @@ fn network_incoming(
 			win.slots[i] = slot;
 			i += 1;
 		};
+	case mc::HOLD_CHANGE =>
+		const hc = &packet.held_item_change;
+		state.hotbar_ix = hc.slot_id: uint;
 	case => void;
 	};
 };
