@@ -92,6 +92,18 @@ fn input_update(mod: *module, state: *state) void = {
 		case SDL_EventType::MOUSEMOTION =>
 			mx = ev.motion.xrel;
 			my = ev.motion.yrel;
+		case SDL_EventType::MOUSEWHEEL =>
+			const ilen = len(state.player.inventory.hotbar): i32;
+			let ix = state.hotbar_ix: i32 - ev.wheel.y;
+			if (ix < 0) {
+				ix = ilen - 1;
+			} else if (ix >= ilen) {
+				ix = 0;
+			};
+			state.hotbar_ix = ix: uint;
+			mc::write_hold_change(state.conn, &mc::held_item_change {
+				slot_id = ix: i16,
+			})!;
 		case => void;
 		};
 	};
