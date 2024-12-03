@@ -6,3 +6,8 @@ export type aabbfunc = fn(
 	v: *voxel,
 	out: *[][2]glm::v3,
 ) void;
+
+def aabb_slab: [2]glm::v3 = [
+	[0.0, 0.0, 0.0],
+	[1.0, 0.5, 1.0],
+];

@@ -77,6 +77,7 @@ no_aabb = [
 
 # Blocks with a custom bounding box
 custom_aabb = {
+    "SLAB_SINGLE": "aabb_slab",
     # TODO:
     # CAKE
     # PISTON_HEAD

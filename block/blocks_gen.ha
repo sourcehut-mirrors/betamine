@@ -720,7 +720,7 @@ const block_slab_single = block {
 	display_name = "stoneSlab",
 	tex = (6, 0),
 	hardness = 2.00,
-	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	aabb = aabb_slab,
 	...
 };
 

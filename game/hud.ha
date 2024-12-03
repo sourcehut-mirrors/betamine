@@ -54,10 +54,7 @@ fn hud_draw_selection(state: *state) void = {
 	const scale: glm::v3 = [1.001, 1.001, 1.001];
 	glm::scale(&model, &scale);
 
-	glm::translate(&model, &glm::v3_new(
-		box[0][0] + 0.5,
-		box[0][1] + 0.5,
-		box[0][2] + 0.5));
+	glm::translate(&model, &box[0]);
 	glm::m4_mul_to(&vp, &model, &mvp);
 
 	const color: glm::v4 = [0.0, 0.0, 0.0, 1.0];
