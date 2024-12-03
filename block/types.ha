@@ -38,3 +38,13 @@ export type flag = enum uint {
 	// Block stores useful tile entities (e.g. chests).
 	TILEDATA	= 1 << 4,
 };
+
+// Faces of a cube.
+export type face = enum uint {
+	T = 0,
+	B = 1,
+	N = 2,
+	S = 3,
+	W = 4,
+	E = 5,
+};

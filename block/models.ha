@@ -9,16 +9,6 @@ export type vertex = struct @packed {
 	uv: glm::v2,
 };
 
-// Faces of a cube.
-export type face = enum uint {
-	T = 0,
-	B = 1,
-	N = 2,
-	S = 3,
-	W = 4,
-	E = 5,
-};
-
 // Function that generates a 3D model for a [[block]].
 export type modelfunc = fn(
 	b: *block,
