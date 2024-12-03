@@ -19,6 +19,9 @@ export def PLAYER_HEALTH: uint = 20;
 // Player speed in meters per second
 export def SPEED_WALK: f32 = 4.317;
 
+// Distance the player can reach (to build, mine, etc), in meters.
+export def PLAYER_REACH: f32 = 3.0;
+
 // Player state
 export type player = struct {
 	living_entity,
