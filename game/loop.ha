@@ -128,6 +128,7 @@ fn update_camera(state: *state) void = {
 				state.lookat.face = face;
 				state.lookat.pos = coords;
 				state.lookat.vox = voxel;
+				state.lookat.aabb = aabb;
 			};
 		};
 	};

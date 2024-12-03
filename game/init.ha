@@ -48,9 +48,11 @@ export fn init(
 	network_init(state);
 	chunk_manager_init(state);
 	clouds_init(state);
+
 	hud_init(state);
 	debug_init(state);
 	chat_init(state);
+
 	items_init();
 
 	return state;

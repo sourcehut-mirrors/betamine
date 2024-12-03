@@ -30,6 +30,7 @@ export fn init(width: i32, height: i32) void = {
 	// Load shader meta
 	fog_init();
 	shaders_init();
+	boxes_init();
 
 	// Initialize subsystems
 	textures_init();

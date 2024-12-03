@@ -26,9 +26,42 @@ export fn hud_init(state: *state) void = {
 
 // Draw the head's-up display.
 export fn hud_draw(layer: *layer, state: *state) void = {
+	hud_draw_selection(state);
 	hud_draw_crosshair(state);
 	hud_draw_hotbar(state);
 	hud_draw_health(state);
+};
+
+fn hud_draw_selection(state: *state) void = {
+	if (state.lookat.vox.id == 0) {
+		return;
+	};
+
+	let vp = glm::M4_ZERO;
+	let model = glm::M4_IDENT, mvp = glm::M4_ZERO;
+	gfx::camera_matrix(&state.camera, &vp);
+
+	const box = state.lookat.aabb;
+
+	const scale: glm::v3 = [
+		box[1][0] - box[0][0],
+		box[1][1] - box[0][1],
+		box[1][2] - box[0][2],
+	];
+	glm::scale(&model, &scale);
+
+	// Hack to reduce z fighting
+	const scale: glm::v3 = [1.001, 1.001, 1.001];
+	glm::scale(&model, &scale);
+
+	glm::translate(&model, &glm::v3_new(
+		box[0][0] + 0.5,
+		box[0][1] + 0.5,
+		box[0][2] + 0.5));
+	glm::m4_mul_to(&vp, &model, &mvp);
+
+	const color: glm::v4 = [0.0, 0.0, 0.0, 1.0];
+	gfx::render_box(&mvp, &color);
 };
 
 fn hud_draw_crosshair(state: *state) void = {

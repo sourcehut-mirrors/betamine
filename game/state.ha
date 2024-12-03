@@ -25,6 +25,7 @@ export type state = struct {
 		pos: world::coords3D,
 		face: block::face,
 		vox: world::voxel,
+		aabb: [2]glm::v3,
 	},
 
 	// SDL window
