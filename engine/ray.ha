@@ -20,7 +20,7 @@ export fn ray_aabb_intersect(
 	def Y = 1;
 	def Z = 2;
 	def MIN = 0;
-	def MAX = 0;
+	def MAX = 1;
 
 	// Defer setting the out parameters
 	let dist = 0.0f32;

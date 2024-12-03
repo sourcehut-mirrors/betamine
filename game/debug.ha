@@ -53,6 +53,13 @@ fn debug_draw(layer: *layer, state: *state) void = {
 		state.camera.pitch, state.camera.yaw);
 	gfx::font_draw(&glm::v2_new(300.0, 1.0 * 24.0), look);
 
+	const lookat = fmt::bsprintf(buf, "lookat: <{}, {}, {}> ID: {}",
+		state.lookat.pos.0,
+		state.lookat.pos.1,
+		state.lookat.pos.2,
+		state.lookat.vox.id);
+	gfx::font_draw(&glm::v2_new(0.0, 5.0 * 24.0), lookat);
+
 	const ccoords = world::world_to_chunk((
 		state.camera.pos[0]: int,
 		state.camera.pos[1]: int,

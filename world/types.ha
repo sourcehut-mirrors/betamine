@@ -9,6 +9,12 @@ export type voxel = struct {
 // Block coordinates in three dimensions, X, Y, and Z.
 export type coords3D = (int, int, int);
 
+// Returns true if the given coordinates are within the world bounds (which is
+// to say that Y is positive and less than 128).
+export fn coords3D_valid(c: coords3D) bool = {
+	return c.1 >= 0 && c.1 < 128;
+};
+
 // Block coordinates in two dimensions, X and Z.
 export type coords2D = (int, int);
 

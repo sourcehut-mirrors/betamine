@@ -1,3 +1,4 @@
+use block;
 use engine;
 use gfx;
 use glm;
@@ -20,6 +21,11 @@ export type state = struct {
 	// Player state
 	player: engine::player,
 	hotbar_ix: uint,
+	lookat: struct {
+		pos: world::coords3D,
+		face: block::face,
+		vox: world::voxel,
+	},
 
 	// SDL window
 	win: *sdl2::SDL_Window,

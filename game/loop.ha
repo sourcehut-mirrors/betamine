@@ -1,7 +1,9 @@
+use block;
 use engine;
 use gfx;
 use glm;
 use sdl2;
+use world;
 
 // Set the scale at which ticks pass
 def TIMESCALE: u32 = 1;
@@ -63,4 +65,75 @@ fn update_camera(state: *state) void = {
 	gfx::camera_apply(camera);
 	gfx::camera_matrix(&state.camera, &state.vp);
 	glm::frustrum_planes(&state.vp, &state.frustrum);
+
+	let min = engine::PLAYER_REACH: f32 * 2.0;
+	const look = engine::ray {
+		orig = camera.pos,
+		dir = camera.dir,
+	};
+
+	for (let x: int = -engine::PLAYER_REACH; x <= engine::PLAYER_REACH; x += 1)
+	for (let y: int = -engine::PLAYER_REACH; y <= engine::PLAYER_REACH; y += 1)
+	for (let z: int = -engine::PLAYER_REACH; z <= engine::PLAYER_REACH; z += 1) {
+		const coords: world::coords3D = (
+			look.orig[0]: int + x,
+			look.orig[1]: int + y,
+			look.orig[2]: int + z,
+		);
+		if (!world::coords3D_valid(coords)) {
+			continue;
+		};
+
+		let voxel = world::voxel { ... };
+		world::get(&state.world, &voxel, coords)!;
+		if (voxel.id == 0) {
+			continue;
+		};
+
+		const block = block::blocks[voxel.id];
+		let aabb: [2]glm::v3 = [glm::V3_ZERO...];
+		match (block.aabb) {
+		case let ref: [2]glm::v3 =>
+			aabb = ref;
+		case let func: *block::aabbfunc =>
+			let boxes: [][2]glm::v3 = [];
+			func(block, &block::voxel {
+				id = voxel.id,
+				data = voxel.data,
+				...
+			}, &boxes);
+			// TODO: Minecraft has separate physics and interaction
+			// AABBs. This only matters for stairs, which should use
+			// the full voxel's volume as its AABB for interactions
+			// and two separate AABBs for physics.
+			aabb = boxes[0];
+			free(boxes);
+		case void =>
+			continue;
+		};
+
+		// Translate voxel AABB to its world position
+		let vox_pos: glm::v3 = [
+			coords.0: f32,
+			coords.1: f32,
+			coords.2: f32,
+		];
+		aabb[0] = glm::v3_add(&aabb[0], &vox_pos);
+		aabb[1] = glm::v3_add(&aabb[1], &vox_pos);
+
+		let dist = 0.0f32, face = block::face::N;
+		if (engine::ray_aabb_intersect(&look, &aabb, &dist, &face)) {
+			if (dist < min) {
+				min = dist;
+				state.lookat.face = face;
+				state.lookat.pos = coords;
+				state.lookat.vox = voxel;
+			};
+		};
+	};
+
+	if (min > engine::PLAYER_REACH: f32) {
+		state.lookat.pos = (-1, -1, -1);
+		state.lookat.vox = world::voxel { ... };
+	};
 };
