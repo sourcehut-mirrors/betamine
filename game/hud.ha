@@ -100,7 +100,7 @@ fn hud_draw_hotbar(state: *state) void = {
 
 	// Item sprites/models
 	for (let item &.. state.player.inventory.hotbar) {
-		draw_item(item, x, y);
+		draw_item(state, item, x, y);
 		x += 20 * GUI_SCALE;
 	};
 
