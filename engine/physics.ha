@@ -46,7 +46,7 @@ export fn physics_tick(sim: *physics_sim) void = {
 			continue;
 		};
 
-		physics_entity_tick(sim, e, 1.0 / 2.0);
+		physics_entity_tick(sim, e, 1.0 / 20.0);
 	};
 };
 
