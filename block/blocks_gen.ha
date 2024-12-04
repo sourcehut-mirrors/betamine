@@ -1,5 +1,7 @@
 // File generated with scripts/genblocks.py
 
+use item::{tool, material};
+
 // Block information database, indexed by block ID.
 export const blocks: [256]*block = [
 	&block_air,
@@ -275,6 +277,8 @@ const block_stone = block {
 	tex = (1, 0),
 	hardness = 1.50,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::PICKAXE,
+	material = material::ANY,
 	...
 };
 
@@ -285,6 +289,8 @@ const block_grass = block {
 	tex = (3, 0),
 	hardness = 0.60,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::SHOVEL,
+	material = material::NONE,
 	...
 };
 
@@ -295,6 +301,8 @@ const block_dirt = block {
 	tex = (2, 0),
 	hardness = 0.50,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::SHOVEL,
+	material = material::NONE,
 	...
 };
 
@@ -305,6 +313,8 @@ const block_cobble = block {
 	tex = (0, 1),
 	hardness = 2.00,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::PICKAXE,
+	material = material::ANY,
 	...
 };
 
@@ -315,6 +325,8 @@ const block_wood_plank = block {
 	tex = (4, 0),
 	hardness = 2.00,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::AXE,
+	material = material::NONE,
 	...
 };
 
@@ -326,6 +338,8 @@ const block_sapling = block {
 	tex = (15, 0),
 	hardness = 0.00,
 	aabb = void,
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -336,6 +350,8 @@ const block_bedrock = block {
 	tex = (1, 1),
 	hardness = 0.00,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::NONE,
+	material = material::NONE,
 	...
 };
 
@@ -346,6 +362,8 @@ const block_water = block {
 	display_name = "Water",
 	hardness = 100.00,
 	aabb = void,
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -356,6 +374,8 @@ const block_water_stationary = block {
 	display_name = "Water",
 	hardness = 100.00,
 	aabb = void,
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -366,6 +386,8 @@ const block_lava = block {
 	display_name = "Lava",
 	hardness = 0.00,
 	aabb = void,
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -376,6 +398,8 @@ const block_lava_stationary = block {
 	display_name = "Lava",
 	hardness = 100.00,
 	aabb = void,
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -386,6 +410,8 @@ const block_sand = block {
 	tex = (2, 1),
 	hardness = 0.50,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::SHOVEL,
+	material = material::NONE,
 	...
 };
 
@@ -396,6 +422,8 @@ const block_gravel = block {
 	tex = (3, 1),
 	hardness = 0.60,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::SHOVEL,
+	material = material::NONE,
 	...
 };
 
@@ -406,6 +434,8 @@ const block_gold_ore = block {
 	tex = (0, 2),
 	hardness = 3.00,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::PICKAXE,
+	material = material::STONE | material::IRON | material::DIAMOND,
 	...
 };
 
@@ -416,6 +446,8 @@ const block_iron_ore = block {
 	tex = (1, 2),
 	hardness = 3.00,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::PICKAXE,
+	material = material::STONE | material::IRON | material::DIAMOND,
 	...
 };
 
@@ -426,6 +458,8 @@ const block_coal_ore = block {
 	tex = (2, 2),
 	hardness = 3.00,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::PICKAXE,
+	material = material::ANY,
 	...
 };
 
@@ -436,6 +470,8 @@ const block_wood = block {
 	tex = (4, 1),
 	hardness = 2.00,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::AXE,
+	material = material::NONE,
 	...
 };
 
@@ -447,6 +483,8 @@ const block_leaves = block {
 	tex = (4, 3),
 	hardness = 0.20,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -457,6 +495,8 @@ const block_sponge = block {
 	tex = (0, 3),
 	hardness = 0.60,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -468,6 +508,8 @@ const block_glass = block {
 	tex = (1, 3),
 	hardness = 0.30,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -478,6 +520,8 @@ const block_lapis_ore = block {
 	tex = (0, 10),
 	hardness = 3.00,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::PICKAXE,
+	material = material::STONE | material::IRON | material::DIAMOND,
 	...
 };
 
@@ -488,6 +532,8 @@ const block_lapis_block = block {
 	tex = (0, 9),
 	hardness = 3.00,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::PICKAXE,
+	material = material::STONE | material::IRON | material::DIAMOND,
 	...
 };
 
@@ -498,6 +544,8 @@ const block_dispenser = block {
 	tex = (13, 2),
 	hardness = 3.50,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::PICKAXE,
+	material = material::NONE,
 	...
 };
 
@@ -508,6 +556,8 @@ const block_sandstone = block {
 	tex = (0, 12),
 	hardness = 0.80,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::PICKAXE,
+	material = material::ANY,
 	...
 };
 
@@ -518,6 +568,8 @@ const block_note = block {
 	tex = (10, 4),
 	hardness = 0.80,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -529,6 +581,8 @@ const block_bed = block {
 	tex = (6, 8),
 	hardness = 0.20,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -540,6 +594,8 @@ const block_rail_powered = block {
 	tex = (3, 11),
 	hardness = 0.70,
 	aabb = void,
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -551,6 +607,8 @@ const block_rail_detector = block {
 	tex = (3, 12),
 	hardness = 0.70,
 	aabb = void,
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -562,6 +620,8 @@ const block_piston_sticky = block {
 	tex = (10, 6),
 	hardness = 0.00,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -573,6 +633,8 @@ const block_web = block {
 	tex = (11, 0),
 	hardness = 4.00,
 	aabb = void,
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -584,6 +646,8 @@ const block_tall_grass = block {
 	tex = (7, 2),
 	hardness = 0.00,
 	aabb = void,
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -595,6 +659,8 @@ const block_dry_bush = block {
 	tex = (7, 3),
 	hardness = 0.00,
 	aabb = void,
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -606,6 +672,8 @@ const block_piston = block {
 	tex = (11, 6),
 	hardness = 0.00,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -617,6 +685,8 @@ const block_piston_head = block {
 	tex = (11, 6),
 	hardness = 0.00,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -627,6 +697,8 @@ const block_wool = block {
 	tex = (0, 4),
 	hardness = 0.80,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -636,6 +708,8 @@ const block_piston_placeholder = block {
 	display_name = "",
 	hardness = 0.00,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -647,6 +721,8 @@ const block_dandelion = block {
 	tex = (13, 0),
 	hardness = 0.00,
 	aabb = void,
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -658,6 +734,8 @@ const block_rose = block {
 	tex = (12, 0),
 	hardness = 0.00,
 	aabb = void,
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -669,6 +747,8 @@ const block_mushroom_brown = block {
 	tex = (13, 1),
 	hardness = 0.00,
 	aabb = void,
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -680,6 +760,8 @@ const block_mushroom_red = block {
 	tex = (12, 1),
 	hardness = 0.00,
 	aabb = void,
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -690,6 +772,8 @@ const block_gold_block = block {
 	tex = (7, 1),
 	hardness = 3.00,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::PICKAXE,
+	material = material::IRON | material::DIAMOND,
 	...
 };
 
@@ -700,6 +784,8 @@ const block_iron_block = block {
 	tex = (6, 1),
 	hardness = 5.00,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::PICKAXE,
+	material = material::IRON | material::DIAMOND,
 	...
 };
 
@@ -710,6 +796,8 @@ const block_slab_double = block {
 	tex = (6, 0),
 	hardness = 2.00,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::PICKAXE,
+	material = material::ANY,
 	...
 };
 
@@ -721,6 +809,8 @@ const block_slab_single = block {
 	tex = (6, 0),
 	hardness = 2.00,
 	aabb = aabb_slab,
+	tool = tool::PICKAXE,
+	material = material::ANY,
 	...
 };
 
@@ -731,6 +821,8 @@ const block_bricks = block {
 	tex = (7, 0),
 	hardness = 2.00,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::PICKAXE,
+	material = material::ANY,
 	...
 };
 
@@ -741,6 +833,8 @@ const block_tnt = block {
 	tex = (8, 0),
 	hardness = 0.00,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -751,6 +845,8 @@ const block_bookshelf = block {
 	tex = (3, 2),
 	hardness = 1.50,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::AXE,
+	material = material::NONE,
 	...
 };
 
@@ -761,6 +857,8 @@ const block_cobble_moss = block {
 	tex = (4, 2),
 	hardness = 2.00,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::PICKAXE,
+	material = material::ANY,
 	...
 };
 
@@ -771,6 +869,8 @@ const block_obsidian = block {
 	tex = (5, 2),
 	hardness = 10.00,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::PICKAXE,
+	material = material::DIAMOND,
 	...
 };
 
@@ -782,6 +882,8 @@ const block_torch = block {
 	tex = (0, 5),
 	hardness = 0.00,
 	aabb = void,
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -793,6 +895,8 @@ const block_fire = block {
 	tex = (15, 1),
 	hardness = 0.00,
 	aabb = void,
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -804,6 +908,8 @@ const block_spawner = block {
 	tex = (1, 4),
 	hardness = 5.00,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::PICKAXE,
+	material = material::NONE,
 	...
 };
 
@@ -814,6 +920,8 @@ const block_stairs_wooden = block {
 	display_name = "Wooden Stairs",
 	hardness = 0.00,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -824,6 +932,8 @@ const block_chest = block {
 	tex = (10, 1),
 	hardness = 2.50,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::AXE,
+	material = material::NONE,
 	...
 };
 
@@ -835,6 +945,8 @@ const block_redstone = block {
 	tex = (4, 10),
 	hardness = 0.00,
 	aabb = void,
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -845,6 +957,8 @@ const block_diamond_ore = block {
 	tex = (2, 3),
 	hardness = 3.00,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::PICKAXE,
+	material = material::IRON | material::DIAMOND,
 	...
 };
 
@@ -855,6 +969,8 @@ const block_diamond_block = block {
 	tex = (8, 1),
 	hardness = 5.00,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::PICKAXE,
+	material = material::IRON | material::DIAMOND,
 	...
 };
 
@@ -865,6 +981,8 @@ const block_craft_bench = block {
 	tex = (11, 3),
 	hardness = 2.50,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -876,6 +994,8 @@ const block_seeds = block {
 	tex = (8, 5),
 	hardness = 0.00,
 	aabb = void,
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -886,6 +1006,8 @@ const block_farmland = block {
 	tex = (7, 5),
 	hardness = 0.60,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -896,6 +1018,8 @@ const block_furnace = block {
 	tex = (13, 2),
 	hardness = 3.50,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::PICKAXE,
+	material = material::NONE,
 	...
 };
 
@@ -906,6 +1030,8 @@ const block_furnace_lit = block {
 	tex = (13, 2),
 	hardness = 3.50,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::PICKAXE,
+	material = material::NONE,
 	...
 };
 
@@ -916,6 +1042,8 @@ const block_signpost = block {
 	tex = (4, 0),
 	hardness = 1.00,
 	aabb = void,
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -927,6 +1055,8 @@ const block_door = block {
 	tex = (1, 6),
 	hardness = 3.00,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -938,6 +1068,8 @@ const block_ladder = block {
 	tex = (3, 5),
 	hardness = 0.40,
 	aabb = void,
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -949,6 +1081,8 @@ const block_rail = block {
 	tex = (0, 8),
 	hardness = 0.70,
 	aabb = void,
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -959,6 +1093,8 @@ const block_stairs_stone = block {
 	display_name = "Stone Stairs",
 	hardness = 0.00,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::ANY,
+	material = material::ANY,
 	...
 };
 
@@ -969,6 +1105,8 @@ const block_sign_wall = block {
 	tex = (4, 0),
 	hardness = 1.00,
 	aabb = void,
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -980,6 +1118,8 @@ const block_lever = block {
 	tex = (0, 6),
 	hardness = 0.50,
 	aabb = void,
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -990,6 +1130,8 @@ const block_plate_stone = block {
 	display_name = "Pressure Plate",
 	hardness = 0.50,
 	aabb = void,
+	tool = tool::PICKAXE,
+	material = material::ANY,
 	...
 };
 
@@ -1001,6 +1143,8 @@ const block_door_iron = block {
 	tex = (1, 6),
 	hardness = 5.00,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::PICKAXE,
+	material = material::ANY,
 	...
 };
 
@@ -1011,6 +1155,8 @@ const block_plate_wood = block {
 	display_name = "Pressure Plate",
 	hardness = 0.50,
 	aabb = void,
+	tool = tool::PICKAXE,
+	material = material::ANY,
 	...
 };
 
@@ -1021,6 +1167,8 @@ const block_redstone_ore_dim = block {
 	tex = (3, 3),
 	hardness = 3.00,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::ANY,
+	material = material::IRON | material::DIAMOND,
 	...
 };
 
@@ -1031,6 +1179,8 @@ const block_redstone_ore_lit = block {
 	tex = (3, 3),
 	hardness = 3.00,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::ANY,
+	material = material::IRON | material::DIAMOND,
 	...
 };
 
@@ -1042,6 +1192,8 @@ const block_redstone_torch_dim = block {
 	tex = (3, 7),
 	hardness = 0.00,
 	aabb = void,
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -1053,6 +1205,8 @@ const block_redstone_torch_lit = block {
 	tex = (3, 6),
 	hardness = 0.00,
 	aabb = void,
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -1062,6 +1216,8 @@ const block_button = block {
 	display_name = "Button",
 	hardness = 0.50,
 	aabb = void,
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -1073,6 +1229,8 @@ const block_snow = block {
 	tex = (2, 4),
 	hardness = 0.10,
 	aabb = void,
+	tool = tool::SHOVEL,
+	material = material::ANY,
 	...
 };
 
@@ -1084,6 +1242,8 @@ const block_ice = block {
 	tex = (3, 4),
 	hardness = 0.50,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::PICKAXE,
+	material = material::ANY,
 	...
 };
 
@@ -1094,6 +1254,8 @@ const block_snow_block = block {
 	tex = (2, 4),
 	hardness = 0.20,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::SHOVEL,
+	material = material::ANY,
 	...
 };
 
@@ -1105,6 +1267,8 @@ const block_cactus = block {
 	tex = (6, 4),
 	hardness = 0.40,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -1115,6 +1279,8 @@ const block_clay = block {
 	tex = (8, 4),
 	hardness = 0.60,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::SHOVEL,
+	material = material::NONE,
 	...
 };
 
@@ -1126,6 +1292,8 @@ const block_sugarcane = block {
 	tex = (9, 4),
 	hardness = 0.00,
 	aabb = void,
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -1136,6 +1304,8 @@ const block_jukebox = block {
 	tex = (10, 4),
 	hardness = 2.00,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -1146,6 +1316,8 @@ const block_fence = block {
 	tex = (4, 0),
 	hardness = 2.00,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -1156,6 +1328,8 @@ const block_pumpkin = block {
 	tex = (6, 6),
 	hardness = 1.00,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -1166,6 +1340,8 @@ const block_netherrack = block {
 	tex = (7, 6),
 	hardness = 0.40,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::PICKAXE,
+	material = material::ANY,
 	...
 };
 
@@ -1176,6 +1352,8 @@ const block_soul_sand = block {
 	tex = (8, 6),
 	hardness = 0.50,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -1186,6 +1364,8 @@ const block_glowstone = block {
 	tex = (9, 6),
 	hardness = 0.30,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -1197,6 +1377,8 @@ const block_portal = block {
 	tex = (14, 0),
 	hardness = -1.00,
 	aabb = void,
+	tool = tool::NONE,
+	material = material::NONE,
 	...
 };
 
@@ -1207,6 +1389,8 @@ const block_jack_o_lantern = block {
 	tex = (6, 6),
 	hardness = 1.00,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -1218,6 +1402,8 @@ const block_cake = block {
 	tex = (9, 7),
 	hardness = 0.50,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -1228,6 +1414,8 @@ const block_repeater_dim = block {
 	tex = (6, 0),
 	hardness = 0.00,
 	aabb = void,
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -1238,6 +1426,8 @@ const block_repeater_lit = block {
 	tex = (6, 0),
 	hardness = 0.00,
 	aabb = void,
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -1248,6 +1438,8 @@ const block_locked_chest = block {
 	tex = (10, 1),
 	hardness = 0.00,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };
 
@@ -1259,5 +1451,7 @@ const block_trapdoor = block {
 	tex = (4, 5),
 	hardness = 3.00,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
+	tool = tool::ANY,
+	material = material::NONE,
 	...
 };

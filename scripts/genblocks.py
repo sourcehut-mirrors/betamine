@@ -126,6 +126,84 @@ transparent_blocks = [
     "PORTAL",
 ]
 
+# https://minecraft.wiki/w/Breaking?oldid=138286
+# Tools effective for mining this block
+tools = {
+    "BEDROCK": ["tool::NONE"],
+    "PORTAL": ["tool::NONE"],
+    "OBSIDIAN": ["tool::PICKAXE"],
+    "DOOR_IRON": ["tool::PICKAXE"],
+    "DIAMOND_BLOCK": ["tool::PICKAXE"],
+    "IRON_BLOCK": ["tool::PICKAXE"],
+    "SPAWNER": ["tool::PICKAXE"],
+    "DISPENSER": ["tool::PICKAXE"],
+    "FURNACE": ["tool::PICKAXE"],
+    "FURNACE_LIT": ["tool::PICKAXE"],
+    "COAL_ORE": ["tool::PICKAXE"],
+    "IRON_ORE": ["tool::PICKAXE"],
+    "GOLD_ORE": ["tool::PICKAXE"],
+    "DIAMOND_ORE": ["tool::PICKAXE"],
+    "LAPIS_ORE": ["tool::PICKAXE"],
+    "REDSTONE_ORE": ["tool::PICKAXE"],
+    "GOLD_BLOCK": ["tool::PICKAXE"],
+    "LAPIS_BLOCK": ["tool::PICKAXE"],
+    "BRICKS": ["tool::PICKAXE"],
+    "COBBLE": ["tool::PICKAXE"],
+    "COBBLE_MOSS": ["tool::PICKAXE"],
+    "SLAB_DOUBLE": ["tool::PICKAXE"],
+    "SLAB_SINGLE": ["tool::PICKAXE"],
+    "CHEST": ["tool::AXE"],
+    "WOOD": ["tool::AXE"],
+    "WOOD_PLANK": ["tool::AXE"],
+    "BOOKSHELF": ["tool::AXE"],
+    "STONE": ["tool::PICKAXE"],
+    "SANDSTONE": ["tool::PICKAXE"],
+    "CLAY": ["tool::SHOVEL"],
+    "GRASS": ["tool::SHOVEL"],
+    "GRAVEL": ["tool::SHOVEL"],
+    "DIRT": ["tool::SHOVEL"],
+    "ICE": ["tool::PICKAXE"],
+    "PLATE_STONE": ["tool::PICKAXE"],
+    "PLATE_WOOD": ["tool::PICKAXE"],
+    "SAND": ["tool::SHOVEL"],
+    "NETHERRACK": ["tool::PICKAXE"],
+    "SNOW_BLOCK": ["tool::SHOVEL"],
+    "SNOW": ["tool::SHOVEL"],
+}
+
+# Tool materials effective for mining this block
+#
+# ANY: Requires a tool to be mined
+materials = {
+    "COAL_ORE": ["material::ANY"],
+    "COBBLE": ["material::ANY"],
+    "COBBLE_MOSS": ["material::ANY"],
+    "BRICKS": ["material::ANY"],
+    "SLAB_SINGLE": ["material::ANY"],
+    "SLAB_DOUBLE": ["material::ANY"],
+    "STAIRS_STONE": ["material::ANY"],
+    "STONE": ["material::ANY"],
+    "DOOR_IRON": ["material::ANY"],
+    "SANDSTONE": ["material::ANY"],
+    "ICE": ["material::ANY"],
+    "PLATE_WOOD": ["material::ANY"],
+    "PLATE_STONE": ["material::ANY"],
+    "NETHERRACK": ["material::ANY"],
+    "SNOW": ["material::ANY"],
+    "SNOW_BLOCK": ["material::ANY"],
+    "OBSIDIAN": ["material::DIAMOND"],
+    "DIAMOND_BLOCK": ["material::IRON", "material::DIAMOND"],
+    "IRON_BLOCK": ["material::IRON", "material::DIAMOND"],
+    "DIAMOND_ORE": ["material::IRON", "material::DIAMOND"],
+    "GOLD_ORE": ["material::STONE", "material::IRON", "material::DIAMOND"],
+    "IRON_ORE": ["material::STONE", "material::IRON", "material::DIAMOND"],
+    "LAPIS_ORE": ["material::STONE", "material::IRON", "material::DIAMOND"],
+    "REDSTONE_ORE_DIM": ["material::IRON", "material::DIAMOND"],
+    "REDSTONE_ORE_LIT": ["material::IRON", "material::DIAMOND"],
+    "GOLD_BLOCK": ["material::IRON", "material::DIAMOND"],
+    "LAPIS_BLOCK": ["material::STONE", "material::IRON", "material::DIAMOND"],
+}
+
 # betamine uses more intuitive names than Minecraft, so we hardcode these
 # instead of using the Burger dump
 block_names = [
@@ -275,4 +353,6 @@ print(template.render(
     model=getmodel,
     aabb=getaabb,
     flags=getflags,
+    tools=tools,
+    materials=materials,
 ))

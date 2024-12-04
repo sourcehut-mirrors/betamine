@@ -16,8 +16,6 @@ STONE = "STONE"
 IRON = "IRON"
 GOLD = "GOLD"
 DIAMOND = "DIAMOND"
-LEATHER = "LEATHER"
-CHAINMAIL = "CHAINMAIL"
 SWORD = "SWORD"
 SHOVEL = "SHOVEL"
 PICKAXE = "PICKAXE"
@@ -60,26 +58,26 @@ addendums = {
     "HOE_IRON": Addendum(material=IRON, tool=HOE),
     "HOE_DIAMOND": Addendum(material=DIAMOND, tool=HOE),
     "HOE_GOLD": Addendum(material=GOLD, tool=HOE),
-    "CAP_LEATHER": Addendum(material=LEATHER, armor=HELMET),
-    "TUNIC_LEATHER": Addendum(material=LEATHER, armor=CHESTPLATE),
-    "PANTS_LEATHER": Addendum(material=LEATHER, armor=LEGGINGS),
-    "BOOTS_LEATHER": Addendum(material=LEATHER, armor=BOOTS),
-    "HELMET_CHAIN": Addendum(material=CHAINMAIL, armor=HELMET),
-    "CHESTPLATE_CHAIN": Addendum(material=CHAINMAIL, armor=CHESTPLATE),
-    "LEGGINGS_CHAIN": Addendum(material=CHAINMAIL, armor=LEGGINGS),
-    "BOOTS_CHAIN": Addendum(material=CHAINMAIL, armor=BOOTS),
-    "HELMET_IRON": Addendum(material=IRON, armor=HELMET),
-    "CHESTPLATE_IRON": Addendum(material=IRON, armor=CHESTPLATE),
-    "LEGGINGS_IRON": Addendum(material=IRON, armor=LEGGINGS),
-    "BOOTS_IRON": Addendum(material=IRON, armor=BOOTS),
-    "HELMET_DIAMOND": Addendum(material=DIAMOND, armor=HELMET),
-    "CHESTPLATE_DIAMOND": Addendum(material=DIAMOND, armor=CHESTPLATE),
-    "LEGGINGS_DIAMOND": Addendum(material=DIAMOND, armor=LEGGINGS),
-    "BOOTS_DIAMOND": Addendum(material=DIAMOND, armor=BOOTS),
-    "HELMET_GOLD": Addendum(material=GOLD, armor=HELMET),
-    "CHESTPLATE_GOLD": Addendum(material=GOLD, armor=CHESTPLATE),
-    "LEGGINGS_GOLD": Addendum(material=GOLD, armor=LEGGINGS),
-    "BOOTS_GOLD": Addendum(material=GOLD, armor=BOOTS),
+    "CAP_LEATHER": Addendum(armor=HELMET),
+    "TUNIC_LEATHER": Addendum(armor=CHESTPLATE),
+    "PANTS_LEATHER": Addendum(armor=LEGGINGS),
+    "BOOTS_LEATHER": Addendum(armor=BOOTS),
+    "HELMET_CHAIN": Addendum(armor=HELMET),
+    "CHESTPLATE_CHAIN": Addendum(armor=CHESTPLATE),
+    "LEGGINGS_CHAIN": Addendum(armor=LEGGINGS),
+    "BOOTS_CHAIN": Addendum(armor=BOOTS),
+    "HELMET_IRON": Addendum(armor=HELMET),
+    "CHESTPLATE_IRON": Addendum(armor=CHESTPLATE),
+    "LEGGINGS_IRON": Addendum(armor=LEGGINGS),
+    "BOOTS_IRON": Addendum(armor=BOOTS),
+    "HELMET_DIAMOND": Addendum(armor=HELMET),
+    "CHESTPLATE_DIAMOND": Addendum(armor=CHESTPLATE),
+    "LEGGINGS_DIAMOND": Addendum(armor=LEGGINGS),
+    "BOOTS_DIAMOND": Addendum(armor=BOOTS),
+    "HELMET_GOLD": Addendum(armor=HELMET),
+    "CHESTPLATE_GOLD": Addendum(armor=CHESTPLATE),
+    "LEGGINGS_GOLD": Addendum(armor=LEGGINGS),
+    "BOOTS_GOLD": Addendum(armor=BOOTS),
 }
 
 food = {

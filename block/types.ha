@@ -1,4 +1,5 @@
 use glm;
+use item;
 
 // Data structures defining game engine data for a block.
 export type block = struct {
@@ -10,13 +11,28 @@ export type block = struct {
 	display_name: str,
 	// Mesh generation implementation
 	model: *modelfunc,
-	// Row & column of texture from terrain.png (only used for simple cube
-	// models)
+	// Row & column of texture from terrain.png
 	tex: (int, int),
 	// Block hardness.
 	hardness: f64,
 	// Axis-aligned bounding box
 	aabb: ([2]glm::v3 | *aabbfunc | void),
+	// Tools effective for mining this block.
+	//
+	// Note that NONE is distinct from HAND is distinct from ANY. NONE is
+	// used for blocks which cannot be mined under any circumstances, such
+	// as bedrock. HAND is used for tools which can be mined by hand, such
+	// as dirt. ANY is blocks which can be mined with any tool, including by
+	// hand.
+	tool: item::tool,
+	// Tool materials effective for mining this block.
+	//
+	// Note that NONE is distinct from ANY. NONE refers to blocks which can
+	// be mined with tools of any or no particular material, such as dirt,
+	// which can be mined with a shovel or with a loaf of bread, it doesn't
+	// matter. ANY refers to blocks which can be mined with any tool
+	// material, but not by hand.
+	material: item::material,
 };
 
 // Flags that apply to a block descriptor.

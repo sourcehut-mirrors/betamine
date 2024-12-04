@@ -1,5 +1,7 @@
 // File generated with scripts/genblocks.py
 
+use item::{tool, material};
+
 // Block information database, indexed by block ID.
 export const blocks: [256]*block = [
 {%- for block in block_names %}
@@ -18,9 +20,13 @@ const block_air = block {
 	...
 };
 {%- for block in blocks %}
-{% set flag = flags(block) %}
-const block_{{block_names[block.id].lower()}} = block {
-	id = {{block_names[block.id]}},
+{%- set flag = flags(block) %}
+{%- set name = block_names[block.id] %}
+{%- set tool = tools.get(name) %}
+{%- set material = materials.get(name) %}
+
+const block_{{name.lower()}} = block {
+	id = {{name}},
 	model = &{{model(block)}},
 	{%- if flag %}
 	flags = {{flag}},
@@ -34,6 +40,14 @@ const block_{{block_names[block.id].lower()}} = block {
 	{%- endif %}
 	hardness = {{"{:.2f}".format(block["hardness"])}},
 	aabb = {{aabb(block)}},
+	tool =
+		{%- if tool %} {{" | ".join(tool)}}
+		{%- else %} tool::ANY
+		{%- endif -%},
+	material =
+		{%- if material %} {{" | ".join(material)}}
+		{%- else %} material::NONE
+		{%- endif -%},
 	...
 };
 {%- endfor %}

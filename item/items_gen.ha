@@ -461,7 +461,6 @@ const item_cap_leather = item {
 	id = CAP_LEATHER,
 	display_name = "Leather Cap",
 	tex = (0, 0),
-	material = material::LEATHER,
 	armor = armor::HELMET,
 	...
 };
@@ -470,7 +469,6 @@ const item_tunic_leather = item {
 	id = TUNIC_LEATHER,
 	display_name = "Leather Tunic",
 	tex = (0, 1),
-	material = material::LEATHER,
 	armor = armor::CHESTPLATE,
 	...
 };
@@ -479,7 +477,6 @@ const item_pants_leather = item {
 	id = PANTS_LEATHER,
 	display_name = "Leather Pants",
 	tex = (0, 2),
-	material = material::LEATHER,
 	armor = armor::LEGGINGS,
 	...
 };
@@ -488,7 +485,6 @@ const item_boots_leather = item {
 	id = BOOTS_LEATHER,
 	display_name = "Leather Boots",
 	tex = (0, 3),
-	material = material::LEATHER,
 	armor = armor::BOOTS,
 	...
 };
@@ -497,7 +493,6 @@ const item_helmet_chain = item {
 	id = HELMET_CHAIN,
 	display_name = "Chain Helmet",
 	tex = (1, 0),
-	material = material::CHAINMAIL,
 	armor = armor::HELMET,
 	...
 };
@@ -506,7 +501,6 @@ const item_chestplate_chain = item {
 	id = CHESTPLATE_CHAIN,
 	display_name = "Chain Chestplate",
 	tex = (1, 1),
-	material = material::CHAINMAIL,
 	armor = armor::CHESTPLATE,
 	...
 };
@@ -515,7 +509,6 @@ const item_leggings_chain = item {
 	id = LEGGINGS_CHAIN,
 	display_name = "Chain Leggings",
 	tex = (1, 2),
-	material = material::CHAINMAIL,
 	armor = armor::LEGGINGS,
 	...
 };
@@ -524,7 +517,6 @@ const item_boots_chain = item {
 	id = BOOTS_CHAIN,
 	display_name = "Chain Boots",
 	tex = (1, 3),
-	material = material::CHAINMAIL,
 	armor = armor::BOOTS,
 	...
 };
@@ -533,7 +525,6 @@ const item_helmet_iron = item {
 	id = HELMET_IRON,
 	display_name = "Iron Helmet",
 	tex = (2, 0),
-	material = material::IRON,
 	armor = armor::HELMET,
 	...
 };
@@ -542,7 +533,6 @@ const item_chestplate_iron = item {
 	id = CHESTPLATE_IRON,
 	display_name = "Iron Chestplate",
 	tex = (2, 1),
-	material = material::IRON,
 	armor = armor::CHESTPLATE,
 	...
 };
@@ -551,7 +541,6 @@ const item_leggings_iron = item {
 	id = LEGGINGS_IRON,
 	display_name = "Iron Leggings",
 	tex = (2, 2),
-	material = material::IRON,
 	armor = armor::LEGGINGS,
 	...
 };
@@ -560,7 +549,6 @@ const item_boots_iron = item {
 	id = BOOTS_IRON,
 	display_name = "Iron Boots",
 	tex = (2, 3),
-	material = material::IRON,
 	armor = armor::BOOTS,
 	...
 };
@@ -569,7 +557,6 @@ const item_helmet_diamond = item {
 	id = HELMET_DIAMOND,
 	display_name = "Diamond Helmet",
 	tex = (3, 0),
-	material = material::DIAMOND,
 	armor = armor::HELMET,
 	...
 };
@@ -578,7 +565,6 @@ const item_chestplate_diamond = item {
 	id = CHESTPLATE_DIAMOND,
 	display_name = "Diamond Chestplate",
 	tex = (3, 1),
-	material = material::DIAMOND,
 	armor = armor::CHESTPLATE,
 	...
 };
@@ -587,7 +573,6 @@ const item_leggings_diamond = item {
 	id = LEGGINGS_DIAMOND,
 	display_name = "Diamond Leggings",
 	tex = (3, 2),
-	material = material::DIAMOND,
 	armor = armor::LEGGINGS,
 	...
 };
@@ -596,7 +581,6 @@ const item_boots_diamond = item {
 	id = BOOTS_DIAMOND,
 	display_name = "Diamond Boots",
 	tex = (3, 3),
-	material = material::DIAMOND,
 	armor = armor::BOOTS,
 	...
 };
@@ -605,7 +589,6 @@ const item_helmet_gold = item {
 	id = HELMET_GOLD,
 	display_name = "Golden Helmet",
 	tex = (4, 0),
-	material = material::GOLD,
 	armor = armor::HELMET,
 	...
 };
@@ -614,7 +597,6 @@ const item_chestplate_gold = item {
 	id = CHESTPLATE_GOLD,
 	display_name = "Golden Chestplate",
 	tex = (4, 1),
-	material = material::GOLD,
 	armor = armor::CHESTPLATE,
 	...
 };
@@ -623,7 +605,6 @@ const item_leggings_gold = item {
 	id = LEGGINGS_GOLD,
 	display_name = "Golden Leggings",
 	tex = (4, 2),
-	material = material::GOLD,
 	armor = armor::LEGGINGS,
 	...
 };
@@ -632,7 +613,6 @@ const item_boots_gold = item {
 	id = BOOTS_GOLD,
 	display_name = "Golden boots",
 	tex = (4, 3),
-	material = material::GOLD,
 	armor = armor::BOOTS,
 	...
 };
