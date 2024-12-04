@@ -158,15 +158,19 @@ fn network_incoming(
 		};
 	case mc::BLOCK_CHANGE =>
 		const bc = &packet.block_change;
-		world::set(&state.world, (bc.x, bc.y, bc.z),
+		match (world::set(&state.world, (bc.x, bc.y, bc.z),
 			&world::voxel {
 				id = bc.block_id: u8,
 				data = bc.metadata: u8,
 				...
-			})!;
-		const coords = world::world_to_chunk((bc.x, bc.y, bc.z));
-		const chunk = world::get_chunk(&state.world, coords)!;
-		chunkmgr_enqueue(state.chunkmgr, chunk);
+			})) {
+		// Ignore errors from e.g. unloaded chunks
+		case world::error => void;
+		case void =>
+			const coords = world::world_to_chunk((bc.x, bc.y, bc.z));
+			const chunk = world::get_chunk(&state.world, coords)!;
+			chunkmgr_enqueue(state.chunkmgr, chunk);
+		};
 	case mc::BULK_BLOCK_CHANGE =>
 		const bc = &packet.bulk_block_change;
 		let chunk = world::get_chunk(&state.world,
@@ -199,7 +203,7 @@ fn network_incoming(
 		chunkmgr_enqueue(state.chunkmgr, chunk);
 	case mc::WINDOW_ITEMS =>
 		const wi = &packet.window_items;
-		if (wi.window_id != 0) yield;
+		if (wi.window_id != 0) yield; // TODO
 
 		let i = 0z;
 		let win = &state.player.inventory;
@@ -209,6 +213,12 @@ fn network_incoming(
 			win.slots[i] = slot;
 			i += 1;
 		};
+	case mc::WINDOW_SET_SLOT =>
+		const ss = &packet.window_set_slot;
+		if (ss.window_id != 0) yield; // TODO
+
+		let win = &state.player.inventory;
+		win.slots[ss.index] = ss.item;
 	case mc::HOLD_CHANGE =>
 		const hc = &packet.held_item_change;
 		state.hotbar_ix = hc.slot_id: uint;
