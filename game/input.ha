@@ -109,9 +109,19 @@ fn input_update(mod: *module, state: *state) void = {
 				slot_id = ix: i16,
 			})!;
 		case SDL_EventType::MOUSEBUTTONDOWN =>
-			begin_mine(state);
+			switch (ev.button.button) {
+			case sdl2::SDL_BUTTON_LEFT =>
+				begin_mine(state);
+			case sdl2::SDL_BUTTON_RIGHT =>
+				place_block(state);
+			case => void;
+			};
 		case SDL_EventType::MOUSEBUTTONUP =>
-			abort_mine(state);
+			switch (ev.button.button) {
+			case sdl2::SDL_BUTTON_RIGHT =>
+				abort_mine(state);
+			case => void;
+			};
 		case => void;
 		};
 	};
@@ -211,4 +221,25 @@ fn update_mine(state: *state) void = {
 
 fn abort_mine(state: *state) void = {
 	state.mining = void;
+};
+
+fn place_block(state: *state) void = {
+	let pos = state.lookat.pos;
+
+	if (state.lookat.vox.id == 0) {
+		pos = (-1, -1, -1);
+	};
+
+	const inventory = &state.player.inventory;
+	const held = &inventory.hotbar[state.hotbar_ix];
+
+	mc::write_player_placeblock(state.conn, &mc::player_placeblock {
+		x = pos.0,
+		y = pos.1: i8,
+		z = pos.2,
+		face = state.lookat.face: mc::face,
+		item_id = if (held.id == 0) -1 else held.id,
+		amount = held.count,
+		metadata = held.metadata,
+	})!;
 };

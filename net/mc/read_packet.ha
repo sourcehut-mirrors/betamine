@@ -140,8 +140,10 @@ fn read_player_placeblock(c: *conn, payload: *opaque) (void | io::error) = {
 	p.z = read_int(c)?;
 	p.face = read_i8(c)?: face;
 	p.item_id = read_i16(c)?;
-	p.amount = read_i8(c)?;
-	p.metadata = read_i16(c)?;
+	if (p.item_id >= 0) {
+		p.amount = read_i8(c)?;
+		p.metadata = read_i16(c)?;
+	};
 };
 
 fn read_hold_change(c: *conn, payload: *opaque) (void | io::error) = {

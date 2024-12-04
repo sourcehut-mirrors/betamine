@@ -124,6 +124,27 @@ export fn write_player_digging(
 	write_end(c)?;
 };
 
+// Writes a [[player_placeblock]] packet to the connection.
+export fn write_player_placeblock(
+	c: *conn,
+	packet: *player_placeblock,
+) (void | io::error) = {
+	write_begin(c, PLAYER_PLACEBLOCK);
+
+	write_i32(c, packet.x);
+	write_i8(c, packet.y);
+	write_i32(c, packet.z);
+	write_i8(c, packet.face);
+
+	write_i16(c, packet.item_id);
+	if (packet.item_id >= 0) {
+		write_i8(c, packet.amount);
+		write_i16(c, packet.metadata);
+	};
+
+	write_end(c)?;
+};
+
 // Writes a [[held_item_change]] packet to the connection.
 export fn write_hold_change(
 	c: *conn,
