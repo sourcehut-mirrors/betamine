@@ -20,4 +20,4 @@ official assets from Mojang's servers.
 You can find a Minecraft beta 1.7.3 server jar
 [here](https://files.betacraft.uk/server-archive/beta/b1.7.3.jar).
 
-![Screenshot of betamine](https://redacted.moe/f/a0c2f3ff.png)
+![Screenshot of betamine](https://redacted.moe/f/6a5160eb.png)
