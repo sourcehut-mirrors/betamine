@@ -17,9 +17,7 @@ const item_{{item_names[item.id].lower()}} = item {
 	id = {{item_names[item.id]}},
 	display_name = "{{item.display_name}}",
 	tex = ({{item.icon.x}}, {{item.icon.y}}),
-	{%- if material != "NONE" %}
 	material = material::{{material}},
-	{%- endif %}
 	{%- if tool != "NONE" %}
 	tool = tool::{{item_tool(item)}},
 	{%- endif %}

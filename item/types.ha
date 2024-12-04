@@ -25,12 +25,12 @@ export type item = struct {
 
 // Tool material, if applicable.
 export type material = enum uint {
-	NONE,
-	WOOD		= 1 << 0,
-	STONE		= 1 << 1,
-	IRON		= 1 << 2,
-	GOLD		= 1 << 3,
-	DIAMOND		= 1 << 4,
+	NONE		= 1 << 0,
+	WOOD		= 1 << 1,
+	STONE		= 1 << 2,
+	IRON		= 1 << 3,
+	GOLD		= 1 << 4,
+	DIAMOND		= 1 << 5,
 	ANY		= WOOD | STONE | IRON | GOLD | DIAMOND,
 };
 

@@ -1,7 +1,11 @@
+use block;
 use engine;
 use engine::{entity_flag, movement};
+use errors;
 use gfx;
 use glm;
+use item;
+use log;
 use math;
 use net::mc;
 use sdl2;
@@ -104,6 +108,10 @@ fn input_update(mod: *module, state: *state) void = {
 			mc::write_hold_change(state.conn, &mc::held_item_change {
 				slot_id = ix: i16,
 			})!;
+		case SDL_EventType::MOUSEBUTTONDOWN =>
+			begin_mine(state);
+		case SDL_EventType::MOUSEBUTTONUP =>
+			abort_mine(state);
 		case => void;
 		};
 	};
@@ -125,4 +133,37 @@ fn do_jump(player: *engine::player) void = {
 	} else if (player.ground) {
 		player.vel[1] += engine::PLAYER_JUMP;
 	};
+};
+
+fn begin_mine(state: *state) void = {
+	if (state.lookat.vox.id == 0) {
+		return;
+	};
+
+	const inventory = &state.player.inventory;
+	const held = inventory.hotbar[state.hotbar_ix];
+
+	const block = block::blocks[state.lookat.vox.id];
+	const item = match (item::lookup(held.id)) {
+	case let i: *item::item =>
+		yield i;
+	case errors::noentry =>
+		yield null;
+	};
+
+	let damage = 0i16;
+	const ms = engine::calc_mining_time(block, item, &damage);
+	const item_name = match (item) {
+	case let i: *item::item =>
+		yield i.display_name;
+	case null =>
+		yield "Hand";
+	};
+
+	log::printfln("Mine {} with {}: {}ms + {} damage",
+		block.display_name, item_name, ms, damage);
+};
+
+fn abort_mine(state: *state) void = {
+	void;
 };

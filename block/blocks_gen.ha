@@ -267,6 +267,7 @@ const block_air = block {
 	model = &model_none,
 	flags = flag::NON_OCCLUDING,
 	aabb = void,
+	material = 0,
 	...
 };
 
@@ -348,7 +349,7 @@ const block_bedrock = block {
 	model = &model_cube,
 	display_name = "Bedrock",
 	tex = (1, 1),
-	hardness = 0.00,
+	hardness = -1.00,
 	aabb = [[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]],
 	tool = tool::NONE,
 	material = material::NONE,

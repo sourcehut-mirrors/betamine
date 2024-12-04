@@ -12,8 +12,7 @@ use world;
 use world::{CHUNK_WIDTH, CHUNK_HEIGHT, mode};
 
 // Maximum amount of time spent on tesselation in a single update
-// (No more than half a frame at 60 FPS)
-def MAX_TESS_TIME = 8 * time::MILLISECOND;
+def MAX_TESS_TIME = 10 * time::MILLISECOND;
 
 // Neighbors of a chunk.
 export type chunk_neighbor = enum uint {

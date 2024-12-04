@@ -309,6 +309,10 @@ block_names = [
 f = open("scripts/burger-b1.7.json")
 db = json.loads(f.read())
 blocks = db[0]["blocks"]["block"]
+
+# Fix up hardness of bedrock, should be -1
+blocks["7"]["hardness"] = -1
+
 blocks = [blocks[key] for key in blocks]
 
 def getmodel(block):

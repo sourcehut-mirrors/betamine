@@ -17,6 +17,7 @@ const block_air = block {
 	model = &model_none,
 	flags = flag::NON_OCCLUDING,
 	aabb = void,
+	material = 0,
 	...
 };
 {%- for block in blocks %}
