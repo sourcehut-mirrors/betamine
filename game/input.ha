@@ -125,6 +125,10 @@ fn input_update(mod: *module, state: *state) void = {
 	if (player.pitch > PITCH_MAX) player.pitch = PITCH_MAX;
 
 	engine::physics_entity_tick(&state.physics, &state.player, delta);
+
+	if (state.mining is mine_op) {
+		update_mine(state);
+	};
 };
 
 fn do_jump(player: *engine::player) void = {
@@ -136,6 +140,7 @@ fn do_jump(player: *engine::player) void = {
 };
 
 fn begin_mine(state: *state) void = {
+	// TODO: Mining several blocks with mouse held down
 	if (state.lookat.vox.id == 0) {
 		return;
 	};
@@ -162,8 +167,48 @@ fn begin_mine(state: *state) void = {
 
 	log::printfln("Mine {} with {}: {}ms + {} damage",
 		block.display_name, item_name, ms, damage);
+
+	const op = mine_op {
+		pos = state.lookat.pos,
+		face = state.lookat.face,
+		vox = state.lookat.vox,
+		start = state.frame_time,
+		finish = state.frame_time + ms: u32,
+	};
+	state.mining = op;
+
+	mc::write_player_digging(state.conn, &mc::player_digging {
+		status = mc::dig_status::DIG_BEGIN,
+		face = op.face: mc::face,
+		x = op.pos.0,
+		y = op.pos.1: i8,
+		z = op.pos.2,
+	})!;
+};
+
+fn update_mine(state: *state) void = {
+	const op = match (&state.mining) {
+	case let op: *mine_op =>
+		yield op;
+	case void =>
+		return;
+	};
+
+	if (state.frame_time < op.finish) {
+		return;
+	};
+
+	mc::write_player_digging(state.conn, &mc::player_digging {
+		status = mc::dig_status::DIG_END,
+		face = op.face: mc::face,
+		x = op.pos.0,
+		y = op.pos.1: i8,
+		z = op.pos.2,
+	})!;
+
+	state.mining = void;
 };
 
 fn abort_mine(state: *state) void = {
-	void;
+	state.mining = void;
 };

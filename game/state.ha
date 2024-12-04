@@ -13,6 +13,21 @@ export type input_focus = enum uint {
 	CHAT,
 };
 
+// In-progress mining operation.
+export type mine_op = struct {
+	// Coordinates of block being mined
+	pos: world::coords3D,
+	// Face being mined
+	face: block::face,
+	// Voxel being mined
+	vox: world::voxel,
+
+	// frame_time at which the operation commenced
+	start: u32,
+	// frame_time at which the operation will complete
+	finish: u32,
+};
+
 // Game state type.
 export type state = struct {
 	quit: bool,
@@ -27,6 +42,7 @@ export type state = struct {
 		vox: world::voxel,
 		aabb: [2]glm::v3,
 	},
+	mining: (mine_op | void),
 
 	// SDL window
 	win: *sdl2::SDL_Window,

@@ -110,6 +110,20 @@ export fn write_player_pos_look(
 	write_end(c)?;
 };
 
+// Writes a [[player_digging]] packet to the connection.
+export fn write_player_digging(
+	c: *conn,
+	packet: *player_digging,
+) (void | io::error) = {
+	write_begin(c, PLAYER_DIGGING);
+	write_i8(c, packet.status);
+	write_i32(c, packet.x);
+	write_i8(c, packet.y);
+	write_i32(c, packet.z);
+	write_i8(c, packet.face);
+	write_end(c)?;
+};
+
 // Writes a [[held_item_change]] packet to the connection.
 export fn write_hold_change(
 	c: *conn,

@@ -32,6 +32,8 @@ export fn init(
 			world = null: *world::world,
 			...
 		},
+
+		mining = void,
 		...
 	});
 
