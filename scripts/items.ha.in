@@ -8,10 +8,27 @@ export const items: [_]*item = [
 ];
 
 {%- for item in items %}
+{%- set material = item_material(item) %}
+{%- set tool = item_tool(item) %}
+{%- set armor = item_armor(item) %}
+{%- set name = item_names[item.id] %}
 
 const item_{{item_names[item.id].lower()}} = item {
 	id = {{item_names[item.id]}},
 	display_name = "{{item.display_name}}",
 	tex = ({{item.icon.x}}, {{item.icon.y}}),
+	{%- if material != "NONE" %}
+	material = material::{{material}},
+	{%- endif %}
+	{%- if tool != "NONE" %}
+	tool = tool::{{item_tool(item)}},
+	{%- endif %}
+	{%- if armor != "NONE" %}
+	armor = armor::{{item_armor(item)}},
+	{%- endif %}
+	{%- if name in food %}
+	food = {{food[name]}},
+	{%- endif %}
+	...
 };
 {%- endfor %}

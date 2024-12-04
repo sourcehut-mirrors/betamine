@@ -11,6 +11,89 @@ env = Environment(
     autoescape=select_autoescape(default=False),
 )
 
+WOOD = "WOOD"
+STONE = "STONE"
+IRON = "IRON"
+GOLD = "GOLD"
+DIAMOND = "DIAMOND"
+LEATHER = "LEATHER"
+CHAINMAIL = "CHAINMAIL"
+SWORD = "SWORD"
+SHOVEL = "SHOVEL"
+PICKAXE = "PICKAXE"
+AXE = "AXE"
+HOE = "HOE"
+HELMET = "HELMET"
+CHESTPLATE = "CHESTPLATE"
+LEGGINGS = "LEGGINGS"
+BOOTS = "BOOTS"
+
+class Addendum:
+    def __init__(self, material="NONE", tool="NONE", armor="NONE"):
+        self.material = material
+        self.tool = tool
+        self.armor = armor
+
+addendums = {
+    "SHOVEL_IRON": Addendum(material=IRON, tool=SHOVEL),
+    "PICK_IRON": Addendum(material=IRON, tool=PICKAXE),
+    "AXE_IRON": Addendum(material=IRON, tool=AXE),
+    "SWORD_IRON": Addendum(material=IRON, tool=SWORD),
+    "SWORD_WOOD": Addendum(material=WOOD, tool=SWORD),
+    "SHOVEL_WOOD": Addendum(material=WOOD, tool=SHOVEL),
+    "PICK_WOOD": Addendum(material=WOOD, tool=PICKAXE),
+    "AXE_WOOD": Addendum(material=WOOD, tool=AXE),
+    "SWORD_STONE": Addendum(material=STONE, tool=SWORD),
+    "SHOVEL_STONE": Addendum(material=STONE, tool=SHOVEL),
+    "PICK_STONE": Addendum(material=STONE, tool=PICKAXE),
+    "AXE_STONE": Addendum(material=STONE, tool=AXE),
+    "SWORD_DIAMOND": Addendum(material=DIAMOND, tool=SWORD),
+    "SHOVEL_DIAMOND": Addendum(material=DIAMOND, tool=SHOVEL),
+    "PICK_DIAMOND": Addendum(material=DIAMOND, tool=PICKAXE),
+    "AXE_DIAMOND": Addendum(material=DIAMOND, tool=AXE),
+    "SWORD_GOLD": Addendum(material=GOLD, tool=SWORD),
+    "SHOVEL_GOLD": Addendum(material=GOLD, tool=SHOVEL),
+    "PICK_GOLD": Addendum(material=GOLD, tool=PICKAXE),
+    "AXE_GOLD": Addendum(material=GOLD, tool=AXE),
+    "HOE_WOOD": Addendum(material=WOOD, tool=HOE),
+    "HOE_STONE": Addendum(material=STONE, tool=HOE),
+    "HOE_IRON": Addendum(material=IRON, tool=HOE),
+    "HOE_DIAMOND": Addendum(material=DIAMOND, tool=HOE),
+    "HOE_GOLD": Addendum(material=GOLD, tool=HOE),
+    "CAP_LEATHER": Addendum(material=LEATHER, armor=HELMET),
+    "TUNIC_LEATHER": Addendum(material=LEATHER, armor=CHESTPLATE),
+    "PANTS_LEATHER": Addendum(material=LEATHER, armor=LEGGINGS),
+    "BOOTS_LEATHER": Addendum(material=LEATHER, armor=BOOTS),
+    "HELMET_CHAIN": Addendum(material=CHAINMAIL, armor=HELMET),
+    "CHESTPLATE_CHAIN": Addendum(material=CHAINMAIL, armor=CHESTPLATE),
+    "LEGGINGS_CHAIN": Addendum(material=CHAINMAIL, armor=LEGGINGS),
+    "BOOTS_CHAIN": Addendum(material=CHAINMAIL, armor=BOOTS),
+    "HELMET_IRON": Addendum(material=IRON, armor=HELMET),
+    "CHESTPLATE_IRON": Addendum(material=IRON, armor=CHESTPLATE),
+    "LEGGINGS_IRON": Addendum(material=IRON, armor=LEGGINGS),
+    "BOOTS_IRON": Addendum(material=IRON, armor=BOOTS),
+    "HELMET_DIAMOND": Addendum(material=DIAMOND, armor=HELMET),
+    "CHESTPLATE_DIAMOND": Addendum(material=DIAMOND, armor=CHESTPLATE),
+    "LEGGINGS_DIAMOND": Addendum(material=DIAMOND, armor=LEGGINGS),
+    "BOOTS_DIAMOND": Addendum(material=DIAMOND, armor=BOOTS),
+    "HELMET_GOLD": Addendum(material=GOLD, armor=HELMET),
+    "CHESTPLATE_GOLD": Addendum(material=GOLD, armor=CHESTPLATE),
+    "LEGGINGS_GOLD": Addendum(material=GOLD, armor=LEGGINGS),
+    "BOOTS_GOLD": Addendum(material=GOLD, armor=BOOTS),
+}
+
+food = {
+    "BREAD": 5,
+    "PORKCHOP_RAW": 3,
+    "PORKCHOP_COOKED": 8,
+    "APPLE_GOLDEN": 20,
+    "MUSHROOM_SOUP": 10,
+    "FISH_RAW": 2,
+    "FISH_COOKED": 5,
+    "COOKIE": 1,
+    "APPLE": 4,
+}
+
 # betamine uses more intuitive names than Minecraft, so we hardcode these
 # instead of using the Burger dump
 item_names = {
@@ -127,8 +210,30 @@ db = json.loads(f.read())
 items = db[0]["items"]["item"]
 items = [items[key] for key in items]
 
+def item_material(item):
+    name = item_names[item["id"]]
+    if name in addendums:
+        return addendums[name].material
+    return "NONE"
+
+def item_tool(item):
+    name = item_names[item["id"]]
+    if name in addendums:
+        return addendums[name].tool
+    return "NONE"
+
+def item_armor(item):
+    name = item_names[item["id"]]
+    if name in addendums:
+        return addendums[name].armor
+    return "NONE"
+
 template = env.get_template("items.ha.in")
 print(template.render(
     items=items,
     item_names=item_names,
+    item_material=item_material,
+    item_tool=item_tool,
+    item_armor=item_armor,
+    food=food,
 ))
