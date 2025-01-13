@@ -73,7 +73,7 @@ fn draw_item(
 
 	defer if (slot.count > 1) {
 		let buf: [8]u8 = [0...];
-		const count = fmt::bsprintf(buf, "{}", slot.count);
+		const count = fmt::bsprintf(buf, "{}", slot.count)!;
 		const (w, h) = gfx::font_measure(count);
 
 		const pos: glm::v2 = [

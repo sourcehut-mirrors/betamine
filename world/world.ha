@@ -66,7 +66,7 @@ export fn open(path: str) (world | fs::error | io::error) = {
 	path::pop(&pathbuf);
 
 	return world {
-		basedir = strings::dup(path::string(&pathbuf)),
+		basedir = strings::dup(path::string(&pathbuf))!,
 		level = level,
 		...
 	};
@@ -297,7 +297,7 @@ fn world_mapregion(w: *world, c: coords2D, ix: size) (*region | error) = {
 	assert(!is_memory(w));
 
 	let buf: [32]u8 = [0...];
-	const filename = fmt::bsprintf(buf, "r.{}.{}.mcr", c.0, c.1);
+	const filename = fmt::bsprintf(buf, "r.{}.{}.mcr", c.0, c.1)!;
 	const path = path::init(w.basedir, "region", filename)!;
 	const path = path::string(&path);
 

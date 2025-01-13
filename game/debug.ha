@@ -41,7 +41,7 @@ fn debug_draw(layer: *layer, state: *state) void = {
 	const pos = fmt::bsprintf(buf, "x: {}\ny: {}\nz: {}",
 		state.camera.pos[0],
 		state.camera.pos[1],
-		state.camera.pos[2]);
+		state.camera.pos[2])!;
 
 	gfx::font_draw(&glm::v2_new(0.0, 0.0 * 24.0), "Betamine 0.0.0");
 	gfx::font_draw(&glm::v2_new(0.0, 1.0 * 24.0), pos);
@@ -50,14 +50,14 @@ fn debug_draw(layer: *layer, state: *state) void = {
 	const look = fmt::bsprintf(buf, "ground: {}\n        look: {}\n         yaw: {}\n      pitch: {}",
 		state.player.ground,
 		engine::cardtostr(dir),
-		state.camera.pitch, state.camera.yaw);
+		state.camera.pitch, state.camera.yaw)!;
 	gfx::font_draw(&glm::v2_new(300.0, 1.0 * 24.0), look);
 
 	const lookat = fmt::bsprintf(buf, "lookat: <{}, {}, {}> ID: {}",
 		state.lookat.pos.0,
 		state.lookat.pos.1,
 		state.lookat.pos.2,
-		state.lookat.vox.id);
+		state.lookat.vox.id)!;
 	gfx::font_draw(&glm::v2_new(0.0, 5.0 * 24.0), lookat);
 
 	const ccoords = world::world_to_chunk((
@@ -67,21 +67,21 @@ fn debug_draw(layer: *layer, state: *state) void = {
 	));
 	const rcoords = world::chunk_to_region(ccoords);
 	const world_pos = fmt::bsprintf(buf, "C: <{},{}> R: <{},{}>",
-		ccoords.0, ccoords.1, rcoords.0, rcoords.1);
+		ccoords.0, ccoords.1, rcoords.0, rcoords.1)!;
 	gfx::font_draw(&glm::v2_new(0.0, 4.0 * 24.0), world_pos);
 
-	const fps = fmt::bsprintf(buf, "FPS: {}", mod.fps);
+	const fps = fmt::bsprintf(buf, "FPS: {}", mod.fps)!;
 	const (fw, _) = gfx::font_measure(fps);
 	gfx::font_draw(&glm::v2_new((state.width - fw): f32, 0.0), fps);
 
 	const time = fmt::bsprintf(buf, "ticks: {} (time: {})",
-		state.ticks, state.ticks % 24000);
+		state.ticks, state.ticks % 24000)!;
 	const (fw, _) = gfx::font_measure(time);
 	gfx::font_draw(&glm::v2_new((state.width - fw): f32, 1.0 * 24.0), time);
 
 	const gfx = fmt::bsprintf(buf, "C: ({}/{}) V: {} V/C: {}",
 		state.chunks_rendered, state.nchunk, state.nvertex,
-		if (state.nchunk == 0) 0 else state.nvertex / state.nchunk);
+		if (state.nchunk == 0) 0 else state.nvertex / state.nchunk)!;
 	const (fw, _) = gfx::font_measure(gfx);
 	gfx::font_draw(&glm::v2_new((state.width - fw): f32, 2.0 * 24.0), gfx);
 };

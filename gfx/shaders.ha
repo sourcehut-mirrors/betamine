@@ -68,10 +68,10 @@ export fn shader_loadfrom(vert: str, frag: str) (uint | glerror) = {
 
 // Loads a shader from the given vertex and fragment GLSL.
 export fn shader_load(vert: str, frag: str) (uint | glerror) = {
-	const vert_src = c::fromstr(vert);
+	const vert_src = c::fromstr(vert)!;
 	defer free(vert_src);
 
-	const frag_src = c::fromstr(frag);
+	const frag_src = c::fromstr(frag)!;
 	defer free(frag_src);
 
 	const vert_id = glCreateShader(gl::GL_VERTEX_SHADER);
