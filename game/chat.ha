@@ -32,10 +32,10 @@ export fn chat_init(state: *state) void = {
 		draw = &chat_draw,
 		buffer = memio::dynamic(),
 		...
-	});
+	})!;
 	state.chat = chat;
-	append(state.modules, chat);
-	append(state.layers, chat);
+	append(state.modules, chat)!;
+	append(state.layers, chat)!;
 };
 
 // Appends a chat message to the chat window.
@@ -44,7 +44,7 @@ export fn chat_receivemsg(state: *state, msg: str) void = {
 	insert(state.chat.messages[0], chat_message {
 		time = state.frame_time,
 		text = text,
-	});
+	})!;
 };
 
 // Begin a new chat message
@@ -70,7 +70,7 @@ fn chat_commit(state: *state) void = {
 		return;
 	};
 
-	const msg = ucs2::toucs2(input);
+	const msg = ucs2::toucs2(input)!;
 	defer free(msg);
 	mc::write_chat_message(state.conn, &mc::chat_message {
 		message = msg,

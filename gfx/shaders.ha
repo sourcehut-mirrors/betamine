@@ -82,7 +82,7 @@ export fn shader_load(vert: str, frag: str) (uint | glerror) = {
 	glGetShaderiv(vert_id, gl::GL_COMPILE_STATUS, &result);
 	glGetShaderiv(vert_id, gl::GL_INFO_LOG_LENGTH, &log_length);
 	if (log_length != 0) {
-		let log: []i8 = alloc([0...], log_length: size);
+		let log: []i8 = alloc([0...], log_length: size)!;
 		defer free(log);
 		glGetShaderInfoLog(vert_id, log_length, null, &log[0]);
 		fmt::fatalf("Error loading vertex: {}",
@@ -96,7 +96,7 @@ export fn shader_load(vert: str, frag: str) (uint | glerror) = {
 	glGetShaderiv(frag_id, gl::GL_COMPILE_STATUS, &result);
 	glGetShaderiv(frag_id, gl::GL_INFO_LOG_LENGTH, &log_length);
 	if (log_length != 0) {
-		let log: []i8 = alloc([0...], log_length: size);
+		let log: []i8 = alloc([0...], log_length: size)!;
 		defer free(log);
 		glGetShaderInfoLog(frag_id, log_length, null, &log[0]);
 		fmt::fatalf("Error loading fragment: {}",
@@ -111,7 +111,7 @@ export fn shader_load(vert: str, frag: str) (uint | glerror) = {
 	glGetProgramiv(prog_id, gl::GL_LINK_STATUS, &result);
 	glGetProgramiv(prog_id, gl::GL_INFO_LOG_LENGTH, &log_length);
 	if (log_length != 0) {
-		let log: []i8 = alloc([0...], log_length: size);
+		let log: []i8 = alloc([0...], log_length: size)!;
 		defer free(log);
 		glGetProgramInfoLog(prog_id, log_length, null, &log[0]);
 		fmt::fatalf("Error linking {}+{}: {}", vert, frag,

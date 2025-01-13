@@ -15,7 +15,7 @@ export fn clouds_init(state: *state) void = {
 	append(state.layers, alloc(layer {
 		update = &no_update,
 		draw = &clouds_draw,
-	}));
+	})!)!;
 };
 
 fn clouds_draw(layer: *layer, state: *state) void = {

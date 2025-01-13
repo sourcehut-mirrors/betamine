@@ -20,8 +20,8 @@ export fn hud_init(state: *state) void = {
 	const hud = alloc(layer {
 		update = &no_update,
 		draw = &hud_draw,
-	});
-	append(state.layers, hud);
+	})!;
+	append(state.layers, hud)!;
 };
 
 // Draw the head's-up display.

@@ -23,8 +23,8 @@ export fn network_init(state: *state) void = {
 		next_pos = types::U32_MAX,
 		last_pos = *(&state.player: *engine::entity),
 		...
-	});
-	append(state.modules, netmgr);
+	})!;
+	append(state.modules, netmgr)!;
 };
 
 fn network_update(mod: *module, state: *state) void = {
@@ -116,7 +116,7 @@ fn network_incoming(
 ) void = {
 	switch (packet.id) {
 	case mc::CHAT_MESSAGE =>
-		const msg = ucs2::fromucs2(packet.chat_message.message);
+		const msg = ucs2::fromucs2(packet.chat_message.message)!;
 		defer free(msg);
 		chat_receivemsg(state, msg);
 	case mc::TIME_UPDATE =>

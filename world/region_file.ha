@@ -49,7 +49,7 @@ export fn region_open(
 		length = length,
 		data = addr: *region_file,
 		refs = 1,
-	});
+	})!;
 };
 
 // Increments the reference count for a [[region]].

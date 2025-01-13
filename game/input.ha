@@ -28,8 +28,8 @@ export type input_module = struct {
 fn input_init(state: *state) void = {
 	const input = alloc(input_module {
 		update = &input_update,
-	});
-	append(state.modules, input);
+	})!;
+	append(state.modules, input)!;
 };
 
 fn input_update(mod: *module, state: *state) void = {

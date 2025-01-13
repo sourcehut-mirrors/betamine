@@ -192,8 +192,8 @@ export fn get_chunk(
 				refs = 1,
 				coords = c,
 				...
-			});
-			insert(w.chunks[cix], chunk);
+			})!;
+			insert(w.chunks[cix], chunk)!;
 			return chunk;
 		} else {
 			return &empty_chunk;
@@ -244,7 +244,7 @@ export fn get_chunk(
 	let chunk = alloc(chunk {
 		refs = 1,
 		...
-	});
+	})!;
 	match (chunk_fromnbt(chunk, &rd)) {
 	case let err: io::error =>
 		log::printfln("[world]: WARNING: Error loading chunk <{},{}>: {}",
@@ -253,7 +253,7 @@ export fn get_chunk(
 	};
 
 	chunk.coords = c;
-	insert(w.chunks[cix], chunk);
+	insert(w.chunks[cix], chunk)!;
 	return chunk;
 };
 
@@ -302,6 +302,6 @@ fn world_mapregion(w: *world, c: coords2D, ix: size) (*region | error) = {
 	const path = path::string(&path);
 
 	const region = region_open(c, path)?;
-	insert(w.regions[ix], region);
+	insert(w.regions[ix], region)!;
 	return region;
 };

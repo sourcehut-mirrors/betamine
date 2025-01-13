@@ -34,7 +34,7 @@ fn newconn(
 		sock = sock,
 		mode = mode,
 		wbuf = memio::dynamic(),
-		rbuf = alloc([0...], INIT_BUFSZ),
+		rbuf = alloc([0...], INIT_BUFSZ)!,
 		...
 	};
 };
@@ -92,7 +92,7 @@ fn read(c: *conn, n: size) ([]u8 | io::error) = {
 
 	const need = c.roff + n - c.ravail;
 	if (c.roff + need > len(c.rbuf)) {
-		append(c.rbuf, [0...], c.roff + need - len(c.rbuf));
+		append(c.rbuf, [0...], c.roff + need - len(c.rbuf))!;
 	};
 
 	for (c.ravail < c.roff + n) {

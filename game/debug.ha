@@ -16,9 +16,9 @@ fn debug_init(state: *state) void = {
 		update = &debug_update,
 		draw = &debug_draw,
 		...
-	});
-	append(state.layers, debug);
-	append(state.modules, debug);
+	})!;
+	append(state.layers, debug)!;
+	append(state.modules, debug)!;
 };
 
 fn debug_update(mod: *module, state: *state) void = {

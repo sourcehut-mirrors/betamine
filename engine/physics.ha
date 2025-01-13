@@ -30,7 +30,7 @@ export fn physics_init(sim: *physics_sim, world: *world::world) void = {
 export fn physics_spawn(sim: *physics_sim, ent: *entity) void = {
 	const i = sort::lbisect(sim.entities, size(*entity),
 		&ent, &entity_cmp);
-	insert(sim.entities[i], ent);
+	insert(sim.entities[i], ent)!;
 };
 
 // Advances the physics simulation by one tick (1/20th of a second).
@@ -320,7 +320,7 @@ fn physics_gather_collisions(
 		case let aabb: [2]glm::v3 =>
 			aabb[0] = glm::v3_add(&aabb[0], &pos);
 			aabb[1] = glm::v3_add(&aabb[1], &pos);
-			append(out, aabb);
+			append(out, aabb)!;
 		case let func: *block::aabbfunc =>
 			abort(); // TODO
 		case void => continue;

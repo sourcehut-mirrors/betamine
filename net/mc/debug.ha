@@ -15,18 +15,18 @@ export fn log_packet(
 		packet_id_str(packet.id));
 	switch (packet.id) {
 	case HANDSHAKE =>
-		const user = ucs2::fromucs2(packet.handshake.username);
+		const user = ucs2::fromucs2(packet.handshake.username)!;
 		defer free(user);
 		log::printfln("   username: {}", user);
 	case LOGIN_REQ =>
-		const user = ucs2::fromucs2(packet.login_request.username);
+		const user = ucs2::fromucs2(packet.login_request.username)!;
 		defer free(user);
 		log::printfln("   version: {}", packet.login_request.version);
 		log::printfln("   username: {}", user);
 		log::printfln("   seed: {}", packet.login_request.seed);
 		log::printfln("   dimension: {}", packet.login_request.dimension);
 	case CHAT_MESSAGE =>
-		const msg = ucs2::fromucs2(packet.chat_message.message);
+		const msg = ucs2::fromucs2(packet.chat_message.message)!;
 		defer free(msg);
 		log::printfln("   message: {}", msg);
 	case PLAYER_POS =>

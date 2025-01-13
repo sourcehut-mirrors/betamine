@@ -35,7 +35,7 @@ export fn init(
 
 		mining = void,
 		...
-	});
+	})!;
 
 	let level = &state.world.level;
 	level.seed = login.seed;

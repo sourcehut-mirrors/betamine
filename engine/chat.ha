@@ -127,7 +127,7 @@ fn chat_append_span(
 	append(spans, chat_text {
 		text = strings::dup(text),
 		color = color,
-	});
+	})!;
 
 	memio::reset(buf);
 };

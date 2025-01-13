@@ -26,7 +26,7 @@ export fn close(conn: *conn) void = {
 
 // Disconnects with the given reason and closes the socket.
 export fn disconnect(conn: *conn, reason: str) void = {
-	const reason = ucs2::toucs2(reason);
+	const reason = ucs2::toucs2(reason)!;
 	defer free(reason);
 	write_disconnect(conn, &disconnect_packet {
 		reason = reason,
@@ -40,7 +40,7 @@ export fn login(
 	conn: *conn,
 	user: str,
 ) (login_request | disconnect_packet | io::error) = {
-	const user = ucs2::toucs2(user);
+	const user = ucs2::toucs2(user)!;
 	defer free(user);
 
 	write_handshake(conn, &handshake {
@@ -61,7 +61,7 @@ export fn login(
 		switch (packet.id) {
 		case HANDSHAKE =>
 			const hs = &packet.handshake;
-			const chash = ucs2::fromucs2(hs.connection_hash);
+			const chash = ucs2::fromucs2(hs.connection_hash)!;
 			defer free(chash);
 			if (chash != "-") {
 				log::println("Error: online mode servers are not supported");

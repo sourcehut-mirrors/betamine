@@ -56,9 +56,9 @@ export fn chunk_manager_init(state: *state) void = {
 		world = &state.world,
 		player_cc = (types::INT_MIN, types::INT_MIN),
 		...
-	});
-	append(state.modules, chunkmgr);
-	append(state.layers, chunkmgr);
+	})!;
+	append(state.modules, chunkmgr)!;
+	append(state.layers, chunkmgr)!;
 	state.chunkmgr = chunkmgr;
 };
 
@@ -186,7 +186,7 @@ fn chunkmgr_queue_insert(
 	if (ix < len(mgr.queue) && mgr.queue[ix] == chunk) {
 		return;
 	};
-	insert(mgr.queue[ix], chunk);
+	insert(mgr.queue[ix], chunk)!;
 };
 
 // Schedules a chunk for unloading.
@@ -267,7 +267,7 @@ fn chunkmgr_procqueue(mgr: *chunk_manager) void = {
 				mesh = mesh,
 				aabb = aabb,
 				unload = types::U32_MAX,
-			});
+			})!;
 		};
 
 		// Put reference held by queue

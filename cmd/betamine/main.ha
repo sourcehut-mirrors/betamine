@@ -57,7 +57,7 @@ export fn main() void = {
 	case let login: mc::login_request =>
 		yield login;
 	case let dc: mc::disconnect_packet =>
-		const reason = ucs2::fromucs2(dc.reason);
+		const reason = ucs2::fromucs2(dc.reason)!;
 		defer free(reason);
 		mc::close(&conn);
 		log::fatal(reason);

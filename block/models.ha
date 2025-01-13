@@ -82,7 +82,7 @@ fn model_face(
 				vert_uv[1] * (1.0 / 16.0) + model.uv[1],
 			],
 			color = light(v, mask, &model.color),
-		});
+		})!;
 	};
 };
 
@@ -312,7 +312,7 @@ fn model_twoquad(
 					vert_uv[1] * (1.0 / 16.0) + uv_y,
 				],
 				color = color,
-			});
+			})!;
 		};
 	};
 };
@@ -392,7 +392,7 @@ fn model_snow(
 			vx.pos[2] += pos[2];
 		};
 
-		append(out, verticies...);
+		append(out, verticies...)!;
 	};
 };
 
@@ -487,7 +487,7 @@ fn model_slab(
 			vx.pos[2] += pos[2];
 		};
 
-		append(out, verticies...);
+		append(out, verticies...)!;
 	};
 };
 
@@ -554,7 +554,7 @@ fn model_torch(
 				norm = cube_norm[mask],
 				uv = uv[i],
 				color = glm::V3_ONE,
-			});
+			})!;
 		};
 	};
 };
@@ -659,7 +659,7 @@ fn model_trapdoor(
 			vx.uv[1] = vuv1 + uy;
 		};
 
-		append(out, verticies...);
+		append(out, verticies...)!;
 	};
 };
 
@@ -770,7 +770,7 @@ fn model_door(
 			vx.uv[1] = vuv1 + uy;
 		};
 
-		append(out, verticies...);
+		append(out, verticies...)!;
 	};
 };
 
@@ -818,7 +818,7 @@ fn model_stairs(
 				1.0 - vert_uv[1],
 			],
 			color = color,
-		});
+		})!;
 	};
 };
 
@@ -847,7 +847,7 @@ fn model_cactus(
 				1.0 - vert_uv[1],
 			],
 			color = color,
-		});
+		})!;
 	};
 };
 
@@ -902,7 +902,7 @@ fn model_piston(
 				1.0 - vert_uv[1],
 			],
 			color = glm::V3_ONE,
-		});
+		})!;
 	};
 };
 
@@ -957,6 +957,6 @@ fn model_piston_head(
 				1.0 - vert_uv[1],
 			],
 			color = glm::V3_ONE,
-		});
+		})!;
 	};
 };

@@ -30,7 +30,7 @@ export fn read(in: io::handle) reader = {
 	insert(rd.stack[0], rdstate {
 		tag = nbt_tag::COMPOUND,
 		...
-	});
+	})!;
 	return rd;
 };
 
@@ -145,12 +145,12 @@ export fn next(rd: *reader) (value | io::EOF | io::error) = {
 			tag = val.tag,
 			length = val.length,
 			etype = etype: nbt_tag,
-		});
+		})!;
 	case nbt_tag::COMPOUND =>
 		insert(rd.stack[0], rdstate {
 			tag = nbt_tag::COMPOUND,
 			...
-		});
+		})!;
 	case =>
 		return errors::invalid;
 	};
