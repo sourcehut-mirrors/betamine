@@ -3,7 +3,7 @@ use engine;
 use gfx;
 use glm;
 use net::mc;
-use sdl2;
+use sdl3;
 use world;
 
 // Which module has input focus
@@ -23,9 +23,9 @@ export type mine_op = struct {
 	vox: world::voxel,
 
 	// frame_time at which the operation commenced
-	start: u32,
+	start: u64,
 	// frame_time at which the operation will complete
-	finish: u32,
+	finish: u64,
 };
 
 // Game state type.
@@ -45,7 +45,7 @@ export type state = struct {
 	mining: (mine_op | void),
 
 	// SDL window
-	win: *sdl2::SDL_Window,
+	win: *sdl3::Window,
 	width: uint,
 	height: uint,
 
@@ -78,9 +78,9 @@ export type state = struct {
 	// Total number of frames rendered
 	frames: uint,
 	// Monotonic timestamp of current frame, ms
-	frame_time: u32,
+	frame_time: u64,
 	// Monotonic timestamp of previous frame, ms
-	prev_frame_time: u32,
+	prev_frame_time: u64,
 
 	// Render stats
 	nvertex: size,

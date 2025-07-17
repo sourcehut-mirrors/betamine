@@ -1,7 +1,7 @@
 .POSIX:
 .SUFFIXES:
 
-LIBS=-lc -lSDL2_image -lSDL2 -lEGL
+LIBS != pkg-config --libs-only-l --libs-only-L sdl3 sdl3-image egl
 
 betamine:
 	hare build $(LIBS) cmd/betamine

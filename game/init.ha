@@ -2,18 +2,18 @@ use engine;
 use gfx;
 use net::mc;
 use os;
-use sdl2;
+use sdl3;
 use world;
 
 // Initializes the game engine.
 export fn init(
-	win: *sdl2::SDL_Window,
+	win: *sdl3::Window,
 	conn: *mc::conn,
 	login: *mc::login_request,
 	username: str,
 ) *state = {
 	let w = 0, h = 0;
-	sdl2::SDL_GL_GetDrawableSize(win, &w, &h);
+	sdl3::GetWindowSizeInPixels(win, &w, &h);
 	gfx::init(w, h);
 
 	let state = alloc(state {

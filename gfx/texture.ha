@@ -6,8 +6,9 @@ use gl::{
 	glTexImage2D,
 	glTexParameteri,
 };
-use sdl2;
-use sdl2::image;
+use sdl3;
+use sdl3::image;
+use types::c;
 
 // Texture of a 1x1 opaque white pixel
 export let white1x1 = texture { ... };
@@ -35,16 +36,19 @@ fn textures_init() void = {
 };
 
 // Loads a texture from the filesystem.
-export fn texture_load(path: str) (texture | sdl2::error | glerror) = {
-	const surf = image::IMG_Load(path)?;
-	defer sdl2::SDL_FreeSurface(surf);
-	return texture_fromsurf(surf)?;
+export fn texture_load(path: str) (texture | sdl3::error | glerror) = {
+	const path = c::fromstr(path)!;
+	defer free(path);
+	const surf = image::Load(path);
+	sdl3::get_error()?;
+	defer sdl3::DestroySurface(surf);
+	return texture_fromsurf(surf as *sdl3::Surface)?;
 };
 
-// Similar to [[texture_load]] but the caller provides an [[sdl2::SDL_Surface]]
+// Similar to [[texture_load]] but the caller provides an [[sdl3::Surface]]
 // to load from.
-export fn texture_fromsurf(surf: *sdl2::SDL_Surface) (texture | glerror) = {
-	assert(surf.format.format == 0x16762004); // SDL_PIXELFORMAT_ABGR8888
+export fn texture_fromsurf(surf: *sdl3::Surface) (texture | glerror) = {
+	assert(surf.format == sdl3::PixelFormat::ABGR8888);
 
 	let id = 0u;
 	glGenTextures(1, &id);

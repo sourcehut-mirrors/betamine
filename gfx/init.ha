@@ -6,7 +6,6 @@ use gl::{
 	glViewport,
 };
 use glm;
-use sdl2;
 
 export let dims = (0i32, 0i32);
 export let ortho = glm::M4_ZERO;

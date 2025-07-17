@@ -11,9 +11,9 @@ use world;
 // The network manager manages the state of the network connection.
 export type network_manager = struct {
 	module,
-	next_keepalive: u32,
+	next_keepalive: u64,
 	last_pos: engine::entity,
-	next_pos: u32,
+	next_pos: u64,
 };
 
 // Initializes the network manager.

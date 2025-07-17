@@ -2,7 +2,7 @@ use fmt;
 use fs;
 use gl;
 use io;
-use sdl2;
+use sdl3;
 
 // An OpenGL error.
 export type glerror = !gl::gl_enum;
@@ -26,4 +26,4 @@ fn glassert() void = {
 };
 
 // Possible errors produced by the game engine.
-export type error = !(fs::error | io::error | sdl2::error | glerror);
+export type error = !(fs::error | io::error | sdl3::error | glerror);

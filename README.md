@@ -6,7 +6,7 @@ limited in its capabilities.
 Dependencies:
 
 * Hare (0.25.2)
-* sdl2 & hare-sdl2
+* sdl3 & hare-sdl3
 * hare-compress
 * hare-gl
 * hare-glm ([forked](https://git.sr.ht/~sircmpwn/hare-glm))

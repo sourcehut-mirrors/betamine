@@ -8,9 +8,10 @@ use log;
 use net::dial;
 use net::mc;
 use os;
-use sdl2;
-use sdl2::{SDL_RendererFlags, SDL_WindowFlags, SDL_EventType, SDL_Scancode};
-use sdl2::image;
+use sdl3;
+use sdl3::image;
+use sdl3::{InitFlags, WindowFlags};
+use types::c;
 
 def WIN_WIDTH = 1280;
 def WIN_HEIGHT = 720;
@@ -66,26 +67,24 @@ export fn main() void = {
 	};
 	defer mc::disconnect(&conn, "Player quit");
 
-	sdl2::SDL_Init(sdl2::SDL_INIT_VIDEO | sdl2::SDL_INIT_AUDIO)!;
-	defer sdl2::SDL_Quit();
+	sdl3::Init(InitFlags::VIDEO);
+	sdl3::get_error()!;
+	defer sdl3::Quit();
 
-	image::IMG_Init(image::IMG_InitFlags::PNG)!;
-	defer image::IMG_Quit();
-
-	let winflags = SDL_WindowFlags::OPENGL | SDL_WindowFlags::INPUT_GRABBED;
+	let winflags = WindowFlags::OPENGL | WindowFlags::MOUSE_GRABBED;
 	if (fullscreen) {
-		winflags |= SDL_WindowFlags::FULLSCREEN;
+		winflags |= WindowFlags::FULLSCREEN;
 	};
 
-	const win = sdl2::SDL_CreateWindow("betamine",
-		sdl2::SDL_WINDOWPOS_UNDEFINED, sdl2::SDL_WINDOWPOS_UNDEFINED,
-		WIN_WIDTH, WIN_HEIGHT,
-		winflags)!;
-	defer sdl2::SDL_DestroyWindow(win);
-	sdl2::SDL_SetRelativeMouseMode(true);
+	const win = sdl3::CreateWindow(c::nulstr("betamine\0"),
+		WIN_WIDTH, WIN_HEIGHT, winflags): *sdl3::Window;
+	sdl3::get_error()!;
+	defer sdl3::DestroyWindow(win);
+	sdl3::SetWindowRelativeMouseMode(win, true);
 
-	const ctx = sdl2::SDL_GL_CreateContext(win);
-	sdl2::SDL_GL_SetSwapInterval(VSYNC);
+	const ctx = sdl3::GL_CreateContext(win);
+	sdl3::get_error()!;
+	sdl3::GL_SetSwapInterval(VSYNC);
 
 	let state = game::init(win, &conn, &login, username);
 	state.debug = debug;

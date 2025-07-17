@@ -2,19 +2,19 @@ use block;
 use engine;
 use gfx;
 use glm;
-use sdl2;
+use sdl3;
 use world;
 
 // Set the scale at which ticks pass
-def TIMESCALE: u32 = 1;
+def TIMESCALE: u64 = 1;
 
 // Runs the client game loop.
 export fn run(state: *state) void = {
 	state.quit = false;
 
-	let next_tick = 0u32;
+	let next_tick = 0u64;
 	for (!state.quit; state.frames += 1) {
-		const frame_time = sdl2::SDL_GetTicks();
+		const frame_time = sdl3::GetTicks();
 		state.frame_time = frame_time;
 		defer state.prev_frame_time = state.frame_time;
 
@@ -40,7 +40,7 @@ export fn run(state: *state) void = {
 			layer.draw(layer, state);
 		};
 
-		sdl2::SDL_GL_SwapWindow(state.win);
+		sdl3::GL_SwapWindow(state.win);
 	};
 };
 

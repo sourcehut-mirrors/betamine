@@ -1,8 +1,9 @@
 use ascii;
 use glm;
-use sdl2;
-use sdl2::image;
+use sdl3;
+use sdl3::image;
 use strings;
+use types::c;
 
 export def CHAR_WIDTH = 8;
 export def CHAR_HEIGHT = 8;
@@ -19,8 +20,10 @@ export type fontmap = struct {
 export let font = fontmap { ... };
 
 fn font_init() void = {
-	const surf = image::IMG_Load("assets/font/default.png")!;
-	defer sdl2::SDL_FreeSurface(surf);
+	const surf = image::Load(c::nulstr("assets/font/default.png\0"));
+	sdl3::get_error()!;
+	defer sdl3::DestroySurface(surf);
+	const surf = surf as *sdl3::Surface;
 
 	// Calculate horizontal advance
 	const pixels = surf.pixels: *[*]u32;

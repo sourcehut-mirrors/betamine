@@ -6,15 +6,15 @@ use glm;
 use io;
 use memio;
 use net::mc;
-use sdl2;
-use sdl2::{SDL_EventType, SDL_Scancode};
+use sdl3;
+use sdl3::{EventType, Scancode};
 use strings;
 use types::c;
 
 def CHAT_MARGIN = gfx::CHAR_WIDTH * 2;
 
 export type chat_message = struct {
-	time: u32,
+	time: u64,
 	text: []engine::chat_text,
 };
 
@@ -52,14 +52,14 @@ export fn chat_begin(state: *state) void = {
 	let chat = state.chat;
 	memio::reset(&chat.buffer);
 	state.focus = input_focus::CHAT;
-	sdl2::SDL_SetRelativeMouseMode(false);
-	sdl2::SDL_StartTextInput(state.win);
+	sdl3::SetWindowRelativeMouseMode(state.win, false);
+	sdl3::StartTextInput(state.win);
 };
 
 fn chat_abort(state: *state) void = {
 	state.focus = input_focus::GAMEPLAY;
-	sdl2::SDL_SetRelativeMouseMode(true);
-	sdl2::SDL_StopTextInput(state.win);
+	sdl3::SetWindowRelativeMouseMode(state.win, true);
+	sdl3::StopTextInput(state.win);
 };
 
 fn chat_commit(state: *state) void = {
@@ -85,27 +85,28 @@ fn chat_update(mod: *module, state: *state) void = {
 	};
 
 	let chat = mod: *chat_layer;
-	let ev = sdl2::event { ... };
-	for (sdl2::SDL_PollEvent(&ev)! == 1) {
+	let ev = sdl3::Event { ... };
+	for (sdl3::PollEvent(&ev)) {
 		switch (ev.event_type) {
-		case SDL_EventType::QUIT =>
+		case EventType::QUIT =>
 			state.quit = true;
-		case SDL_EventType::KEYUP =>
-			switch (ev.key.keysym.scancode) {
-			case SDL_Scancode::RETURN =>
+		case EventType::KEY_UP =>
+			switch (ev.key.scancode) {
+			case Scancode::S_RETURN =>
 				chat_commit(state);
-			case SDL_Scancode::ESCAPE =>
+			case Scancode::S_ESCAPE =>
 				chat_abort(state);
-			case SDL_Scancode::BACKSPACE =>
+			case Scancode::S_BACKSPACE =>
 				void; // TODO
 			case => void;
 			};
-		case SDL_EventType::TEXTINPUT =>
-			const input = c::tostr(&ev.text.text[0])!;
+		case EventType::TEXT_INPUT =>
+			const input = c::tostr(ev.text.text: *c::char)!;
 			io::write(&chat.buffer, strings::toutf8(input))!;
 		case => void;
 		};
 	};
+	sdl3::get_error()!;
 };
 
 fn chat_draw(layer: *layer, state: *state) void = {

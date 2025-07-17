@@ -8,11 +8,8 @@ use item;
 use log;
 use math;
 use net::mc;
-use sdl2;
-use sdl2::{
-	SDL_EventType,
-	SDL_Scancode,
-};
+use sdl3;
+use sdl3::{EventType, Scancode};
 
 // Mouse speed modifier
 def MOUSE_SPEED: f32 = 2.0;
@@ -41,64 +38,64 @@ fn input_update(mod: *module, state: *state) void = {
 	let camera = &state.camera;
 	let player = &state.player;
 
-	let mx = 0i32, my = 0i32;
-	let ev = sdl2::event { ... };
-	for (sdl2::SDL_PollEvent(&ev)! == 1) {
+	let mx = 0.0f32, my = 0.0f32;
+	let ev = sdl3::Event { ... };
+	for (sdl3::PollEvent(&ev)) {
 		switch (ev.event_type) {
-		case SDL_EventType::QUIT =>
+		case EventType::QUIT =>
 			state.quit = true;
-		case SDL_EventType::KEYDOWN =>
-			switch (ev.key.keysym.scancode) {
-			case SDL_Scancode::W =>
+		case EventType::KEY_DOWN =>
+			switch (ev.key.scancode) {
+			case Scancode::S_W =>
 				player.move |= movement::FORWARD;
-			case SDL_Scancode::S =>
+			case Scancode::S_S =>
 				player.move |= movement::BACKWARD;
-			case SDL_Scancode::A =>
+			case Scancode::S_A =>
 				player.move |= movement::LEFT;
-			case SDL_Scancode::D =>
+			case Scancode::S_D =>
 				player.move |= movement::RIGHT;
-			case SDL_Scancode::LSHIFT =>
+			case Scancode::S_LSHIFT =>
 				player.move |= movement::DOWN;
-			case SDL_Scancode::SPACE =>
+			case Scancode::S_SPACE =>
 				do_jump(player);
-			case SDL_Scancode::ONE, SDL_Scancode::TWO,
-				SDL_Scancode::THREE, SDL_Scancode::FOUR,
-				SDL_Scancode::FIVE, SDL_Scancode::SIX,
-				SDL_Scancode::SEVEN, SDL_Scancode::EIGHT,
-				SDL_Scancode::NINE, SDL_Scancode::ZERO =>
-				const ix = (ev.key.keysym.scancode - SDL_Scancode::ONE): uint;
+			case Scancode::S_1, Scancode::S_2,
+				Scancode::S_3, Scancode::S_4,
+				Scancode::S_5, Scancode::S_6,
+				Scancode::S_7, Scancode::S_8,
+				Scancode::S_9, Scancode::S_0 =>
+				const ix = (ev.key.scancode - Scancode::S_1): uint;
 				state.hotbar_ix = ix;
 				mc::write_hold_change(state.conn, &mc::held_item_change {
 					slot_id = ix: i16,
 				})!;
 			case => void;
 			};
-		case SDL_EventType::KEYUP =>
-			switch (ev.key.keysym.scancode) {
-			case SDL_Scancode::W =>
+		case EventType::KEY_UP =>
+			switch (ev.key.scancode) {
+			case Scancode::S_W =>
 				player.move &= ~movement::FORWARD;
-			case SDL_Scancode::S =>
+			case Scancode::S_S =>
 				player.move &= ~movement::BACKWARD;
-			case SDL_Scancode::A =>
+			case Scancode::S_A =>
 				player.move &= ~movement::LEFT;
-			case SDL_Scancode::D =>
+			case Scancode::S_D =>
 				player.move &= ~movement::RIGHT;
-			case SDL_Scancode::LSHIFT =>
+			case Scancode::S_LSHIFT =>
 				player.move &= ~movement::DOWN;
-			case SDL_Scancode::SPACE =>
+			case Scancode::S_SPACE =>
 				player.move &= ~movement::UP;
-			case SDL_Scancode::F3 =>
+			case Scancode::S_F3 =>
 				state.debug = !state.debug;
-			case SDL_Scancode::T =>
+			case Scancode::S_T =>
 				chat_begin(state);
 			case => void;
 			};
-		case SDL_EventType::MOUSEMOTION =>
+		case EventType::MOUSE_MOTION =>
 			mx = ev.motion.xrel;
 			my = ev.motion.yrel;
-		case SDL_EventType::MOUSEWHEEL =>
+		case EventType::MOUSE_WHEEL =>
 			const ilen = len(state.player.inventory.hotbar): i32;
-			let ix = state.hotbar_ix: i32 - ev.wheel.y;
+			let ix = state.hotbar_ix: i32 - ev.wheel.y: i32;
 			if (ix < 0) {
 				ix = ilen - 1;
 			} else if (ix >= ilen) {
@@ -108,28 +105,29 @@ fn input_update(mod: *module, state: *state) void = {
 			mc::write_hold_change(state.conn, &mc::held_item_change {
 				slot_id = ix: i16,
 			})!;
-		case SDL_EventType::MOUSEBUTTONDOWN =>
+		case EventType::MOUSE_BUTTON_DOWN =>
 			switch (ev.button.button) {
-			case sdl2::SDL_BUTTON_LEFT =>
+			case sdl3::MouseButton::LEFT =>
 				begin_mine(state);
-			case sdl2::SDL_BUTTON_RIGHT =>
+			case sdl3::MouseButton::RIGHT =>
 				place_block(state);
 			case => void;
 			};
-		case SDL_EventType::MOUSEBUTTONUP =>
+		case EventType::MOUSE_BUTTON_UP =>
 			switch (ev.button.button) {
-			case sdl2::SDL_BUTTON_RIGHT =>
+			case sdl3::MouseButton::RIGHT =>
 				abort_mine(state);
 			case => void;
 			};
 		case => void;
 		};
 	};
+	sdl3::get_error()!;
 
 	const delta = (state.frame_time - state.prev_frame_time): f32 / 1000.0;
 
-	player.yaw += MOUSE_SPEED * delta * -mx: f32;
-	player.pitch += MOUSE_SPEED * delta * -my: f32;
+	player.yaw += MOUSE_SPEED * delta * -mx;
+	player.pitch += MOUSE_SPEED * delta * -my;
 
 	if (player.pitch < PITCH_MIN) player.pitch = PITCH_MIN;
 	if (player.pitch > PITCH_MAX) player.pitch = PITCH_MAX;
