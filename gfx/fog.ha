@@ -12,7 +12,8 @@ export type fog_params = struct {
 	factor: f32,
 	near: f32,
 	far: f32,
-	@offset(size([4]f32)) color: glm::v3,
+	_: f32,
+	color: glm::v3,
 };
 
 let fog_ubo = 0u;

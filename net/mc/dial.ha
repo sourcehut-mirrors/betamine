@@ -8,7 +8,7 @@ use net::dial;
 export def VERSION: int = 14;
 
 @init fn init() void = {
-	dial::registersvc("tcp", "minecraft", [], 25565);
+	dial::registersvc("tcp", "minecraft", [], 25565)!;
 };
 
 // Dials a Minecraft server.

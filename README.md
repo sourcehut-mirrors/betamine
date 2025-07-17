@@ -5,7 +5,7 @@ limited in its capabilities.
 
 Dependencies:
 
-* Hare (master)
+* Hare (0.25.2)
 * sdl2 & hare-sdl2
 * hare-compress
 * hare-gl
