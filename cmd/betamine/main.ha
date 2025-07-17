@@ -11,7 +11,6 @@ use os;
 use sdl2;
 use sdl2::{SDL_RendererFlags, SDL_WindowFlags, SDL_EventType, SDL_Scancode};
 use sdl2::image;
-use sdl2::mixer;
 
 def WIN_WIDTH = 1280;
 def WIN_HEIGHT = 720;
@@ -72,15 +71,6 @@ export fn main() void = {
 
 	image::IMG_Init(image::IMG_InitFlags::PNG)!;
 	defer image::IMG_Quit();
-
-	mixer::Mix_Init(mixer::MIX_InitFlags::OGG)!;
-	defer mixer::Mix_Quit();
-
-	mixer::Mix_OpenAudio(mixer::MIX_DEFAULT_FREQUENCY,
-		mixer::MIX_DEFAULT_FORMAT,
-		mixer::MIX_DEFAULT_CHANNELS,
-		1024)!;
-	defer mixer::Mix_CloseAudio();
 
 	let winflags = SDL_WindowFlags::OPENGL | SDL_WindowFlags::INPUT_GRABBED;
 	if (fullscreen) {
