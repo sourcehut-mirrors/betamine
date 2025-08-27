@@ -122,7 +122,6 @@ fn input_update(mod: *module, state: *state) void = {
 		case => void;
 		};
 	};
-	sdl3::get_error()!;
 
 	const delta = (state.frame_time - state.prev_frame_time): f32 / 1000.0;
 

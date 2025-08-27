@@ -30,6 +30,7 @@ export let fog_config = fog_params {
 	near = 0.2,
 	far = 256.0,
 	color = [1.0, 1.0, 1.0],
+	...
 };
 
 // Applies the fog configuration.

@@ -40,7 +40,7 @@ export fn run(state: *state) void = {
 			layer.draw(layer, state);
 		};
 
-		sdl3::GL_SwapWindow(state.win);
+		sdl3::GL_SwapWindow(state.win)!;
 	};
 };
 

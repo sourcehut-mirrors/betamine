@@ -13,7 +13,7 @@ export fn init(
 	username: str,
 ) *state = {
 	let w = 0, h = 0;
-	sdl3::GetWindowSizeInPixels(win, &w, &h);
+	sdl3::GetWindowSizeInPixels(win, &w, &h)!;
 	gfx::init(w, h);
 
 	let state = alloc(state {

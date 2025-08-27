@@ -39,10 +39,9 @@ fn textures_init() void = {
 export fn texture_load(path: str) (texture | sdl3::error | glerror) = {
 	const path = c::fromstr(path)!;
 	defer free(path);
-	const surf = image::Load(path);
-	sdl3::get_error()?;
+	const surf = image::Load(path)!;
 	defer sdl3::DestroySurface(surf);
-	return texture_fromsurf(surf as *sdl3::Surface)?;
+	return texture_fromsurf(surf)?;
 };
 
 // Similar to [[texture_load]] but the caller provides an [[sdl3::Surface]]

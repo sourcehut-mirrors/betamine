@@ -52,14 +52,14 @@ export fn chat_begin(state: *state) void = {
 	let chat = state.chat;
 	memio::reset(&chat.buffer);
 	state.focus = input_focus::CHAT;
-	sdl3::SetWindowRelativeMouseMode(state.win, false);
-	sdl3::StartTextInput(state.win);
+	sdl3::SetWindowRelativeMouseMode(state.win, false)!;
+	sdl3::StartTextInput(state.win)!;
 };
 
 fn chat_abort(state: *state) void = {
 	state.focus = input_focus::GAMEPLAY;
-	sdl3::SetWindowRelativeMouseMode(state.win, true);
-	sdl3::StopTextInput(state.win);
+	sdl3::SetWindowRelativeMouseMode(state.win, true)!;
+	sdl3::StopTextInput(state.win)!;
 };
 
 fn chat_commit(state: *state) void = {
@@ -106,7 +106,6 @@ fn chat_update(mod: *module, state: *state) void = {
 		case => void;
 		};
 	};
-	sdl3::get_error()!;
 };
 
 fn chat_draw(layer: *layer, state: *state) void = {

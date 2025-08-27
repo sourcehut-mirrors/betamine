@@ -20,10 +20,8 @@ export type fontmap = struct {
 export let font = fontmap { ... };
 
 fn font_init() void = {
-	const surf = image::Load(c::nulstr("assets/font/default.png\0"));
-	sdl3::get_error()!;
+	const surf = image::Load(c::nulstr("assets/font/default.png\0"))!;
 	defer sdl3::DestroySurface(surf);
-	const surf = surf as *sdl3::Surface;
 
 	// Calculate horizontal advance
 	const pixels = surf.pixels: *[*]u32;

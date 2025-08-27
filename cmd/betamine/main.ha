@@ -67,8 +67,7 @@ export fn main() void = {
 	};
 	defer mc::disconnect(&conn, "Player quit");
 
-	sdl3::Init(InitFlags::VIDEO);
-	sdl3::get_error()!;
+	sdl3::Init(InitFlags::VIDEO)!;
 	defer sdl3::Quit();
 
 	let winflags = WindowFlags::OPENGL | WindowFlags::MOUSE_GRABBED;
@@ -77,14 +76,12 @@ export fn main() void = {
 	};
 
 	const win = sdl3::CreateWindow(c::nulstr("betamine\0"),
-		WIN_WIDTH, WIN_HEIGHT, winflags): *sdl3::Window;
-	sdl3::get_error()!;
+		WIN_WIDTH, WIN_HEIGHT, winflags)!;
 	defer sdl3::DestroyWindow(win);
-	sdl3::SetWindowRelativeMouseMode(win, true);
+	sdl3::SetWindowRelativeMouseMode(win, true)!;
 
 	const ctx = sdl3::GL_CreateContext(win);
-	sdl3::get_error()!;
-	sdl3::GL_SetSwapInterval(VSYNC);
+	sdl3::GL_SetSwapInterval(VSYNC)!;
 
 	let state = game::init(win, &conn, &login, username);
 	state.debug = debug;
